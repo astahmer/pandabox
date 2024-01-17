@@ -3,6 +3,12 @@
   "private": true,
   "packageManager": "pnpm@8.6.6+sha256.52f3e7d33884929f1902a7494a616d844b506ed46592e65463ba45e97cc25a1b",
   "devDependencies": {
-    "prettier": "^3.2.2"
+    "@arktype/attest": "^0.5.0",
+    "@pandacss/dev": "^0.27.1",
+    "@pandacss/types": "^0.27.1",
+    "@types/node": "^20.11.4",
+    "prettier": "^3.2.2",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
   }
 }

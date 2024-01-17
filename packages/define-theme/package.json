@@ -1,0 +1,15 @@
+{
+  "name": "@pandakit/define-theme",
+  "scripts": {
+    "trace-dir": "pnpm tsc -p tsconfig.bench.json --generateTrace trace-dir",
+    "analyze": "analyze-trace trace-dir --forceMillis=50 --skipMillis=50",
+    "simplify": "simplify-trace-types trace-dir/types.json trace-dir/simple.json",
+    "build": "pnpm trace-dir && pnpm analyze && pnpm simplify",
+    "report": "tsx ./scripts/trace-report.ts",
+    "bench": "tsx ./src/define-theme.bench.ts"
+  },
+  "devDependencies": {
+    "@pandacss/types": "^0.27.1",
+    "@typescript/analyze-trace": "^0.10.1"
+  }
+}
