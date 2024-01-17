@@ -178,7 +178,7 @@ export type PropertyValueTypes<
   TTokensByCategory,
   TLonghand = LonghandUtilityProps<TUtilities, TTokensByCategory>,
   TShorthandProps = ShorthandProps<TUtilities, TLonghand>,
-> = TLonghand & TShorthandProps
+> = TLonghand
 // > = TLonghand
 // TODO fix TShorthandProps TS instantiations count
 
