@@ -1,9 +1,9 @@
 import { bench } from '@arktype/attest'
 
-import { preset as presetBase } from '../sandbox/preset-base'
-import { preset as presetPanda } from '../sandbox/preset-panda'
+import { preset as presetBase } from './preset-base'
+import { preset as presetPanda } from './preset-panda'
 
-import { defineTheme } from './define-theme'
+import { defineTheme } from '../src/define-theme'
 
 const { conditions, utilities } = presetBase
 const { tokens } = presetPanda.theme

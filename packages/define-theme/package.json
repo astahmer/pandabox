@@ -1,16 +1,64 @@
 {
   "name": "@pandakit/define-theme",
+  "version": "0.0.1",
+  "description": "End-to-end type-safe theming for PandaCSS",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
   "scripts": {
     "trace-dir": "pnpm tsc -p tsconfig.bench.json --extendedDiagnostics --generateTrace trace-dir",
     "analyze": "analyze-trace trace-dir --forceMillis=50 --skipMillis=50",
     "simplify": "simplify-trace-types trace-dir/types.json trace-dir/simple.json",
-    "build": "pnpm trace-dir && pnpm analyze && pnpm simplify",
     "report": "tsx ./scripts/trace-report.ts",
+    "trace": "pnpm trace-dir && pnpm analyze && pnpm simplify && pnpm report",
     "bench": "tsx ./src/define-theme.bench.ts",
+    "build": "tsup",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@pandacss/types": "^0.27.2",
+    "deepmerge": "^4.3.1"
+  },
   "devDependencies": {
-    "@pandacss/types": "^0.27.1",
-    "@typescript/analyze-trace": "^0.10.1"
-  }
+    "@arethetypeswrong/cli": "^0.13.5",
+    "@typescript/analyze-trace": "^0.10.1",
+    "publint": "^0.2.7",
+    "tsup": "^8.0.1"
+  },
+  "homepage": "https://astahmer.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astahmer/pandakit.git",
+    "directory": "packages/define-theme"
+  },
+  "author": "Alexandre Stahmer",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "files": [
+    "src",
+    "dist"
+  ],
+  "keywords": [
+    "pandacss",
+    "panda",
+    "kit",
+    "define",
+    "theme",
+    "config",
+    "typesafety",
+    "typescript"
+  ]
 }

@@ -78,8 +78,8 @@ const theme = t
 
 const config = theme.build()
 
-config.defineStyles({ bg: 'text.background', background: 'text.foreground' })
-config.defineRecipe({
+const styles = config.defineStyles({ bg: 'text.background', background: 'text.foreground' })
+const recipe = config.defineRecipe({
   className: 'aaa',
   base: {
     _hover: {
@@ -105,3 +105,5 @@ config.defineRecipe({
     type: 'success',
   },
 })
+
+console.log(theme, config, { styles, recipe })

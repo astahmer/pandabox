@@ -9,6 +9,7 @@ import type {
   UtilityConfig,
 } from '@pandacss/types'
 import type { AnySelector, Selectors } from './selectors'
+import { ThemeBuilderImpl } from './runtime'
 
 /* -----------------------------------------------------------------------------
  * Theme builder types
@@ -76,7 +77,7 @@ export function defineTheme<Options extends ThemeOptions = DefaultThemeOptions>(
     strictPropertyValues: false,
   } as any,
 ): ThemeBuilder<Options, unknown, unknown, unknown, unknown, unknown, unknown> {
-  return {} as any
+  return new ThemeBuilderImpl(options) as any
 }
 
 export type TokenValuesByCategory<TTokens, TSemanticTokens> = {
