@@ -15,54 +15,72 @@ import type {
  * Theme builder types
  * -----------------------------------------------------------------------------*/
 
-interface ThemeBuilder<TConditions, TTokens, TSemanticTokens, TUtilities> {
+export interface ThemeBuilder<TOptions, TConditions, TTokens, TSemanticTokens, TUtilities> {
   // TODO breakpoints
-  conditions<const T>(defs: T): ThemeBuilder<Pretty<T & TConditions>, TTokens, TSemanticTokens, TUtilities>
+  conditions<const T>(defs: T): ThemeBuilder<TOptions, Pretty<T & TConditions>, TTokens, TSemanticTokens, TUtilities>
   tokens<const T>(
     tokens: T extends Tokens ? T : Tokens,
-  ): ThemeBuilder<TConditions, Pretty<T & TTokens>, TSemanticTokens, TUtilities>
+  ): ThemeBuilder<TOptions, TConditions, Pretty<T & TTokens>, TSemanticTokens, TUtilities>
   semanticTokens<const T>(
     tokens: TConditions extends { [Key in infer TCondKeys]: string }
       ? T extends SemanticTokens<TCondKeys extends string ? TCondKeys : never>
         ? T
         : SemanticTokens
       : never,
-  ): ThemeBuilder<TConditions, TTokens, Pretty<T & TSemanticTokens>, TUtilities>
+  ): ThemeBuilder<TOptions, TConditions, TTokens, Pretty<T & TSemanticTokens>, TUtilities>
   utilities: <const T extends UtilityConfig>(
     utilities: T,
-  ) => ThemeBuilder<TConditions, TTokens, TSemanticTokens, Pretty<T & TUtilities>>
+  ) => ThemeBuilder<TOptions, TConditions, TTokens, TSemanticTokens, Pretty<T & TUtilities>>
   // build: () => ThemeConfigFn<{
   //   conditions: TConditions
   //   tokens: TTokens
   //   semanticTokens: TSemanticTokens
   //   utilities: TUtilities
   // }>
-  build: () => ThemeConfigFn<TConditions, TTokens, TSemanticTokens, TUtilities>
+  build: () => ThemeConfigFn<TOptions, TConditions, TTokens, TSemanticTokens, TUtilities>
   //
-  // /**
-  //  * @internal The config.conditions of the theme. Only used for type inference.
-  //  */
-  // _conditions: TConditions
-  // /**
-  //  * @internal The config.tokens of the theme. Only used for type inference.
-  //  */
-  // _tokens: TTokens
-  // /**
-  //  * @internal The config.semanticTokens of the theme. Only used for type inference.
-  //  */
-  // _semanticTokens: TSemanticTokens
-  // /**
-  //  * @internal The config.utilities of the theme. Only used for type inference.
-  //  */
-  // _utilities: TUtilities
+  /**
+   * @internal The config.conditions of the theme. Only used for type inference.
+   */
+  _conditions: TConditions
+  /**
+   * @internal The config.tokens of the theme. Only used for type inference.
+   */
+  _tokens: TTokens
+  /**
+   * @internal The config.semanticTokens of the theme. Only used for type inference.
+   */
+  _semanticTokens: TSemanticTokens
+  /**
+   * @internal The config.utilities of the theme. Only used for type inference.
+   */
+  _utilities: TUtilities
 }
 
-export function defineTheme(): ThemeBuilder<unknown, unknown, unknown, unknown> {
+interface ThemeOptions {
+  shorthands?: boolean
+  strictTokens?: boolean
+  strictPropertyValues?: boolean
+}
+
+interface DefaultThemeOptions {
+  shorthands: true
+  strictTokens: false
+  strictPropertyValues: false
+}
+
+export function defineTheme<Options extends ThemeOptions = DefaultThemeOptions>(
+  options: Options = {
+    shorthands: true,
+    strictTokens: false,
+    strictPropertyValues: false,
+  } as any,
+): ThemeBuilder<Options, unknown, unknown, unknown, unknown> {
   return {} as any
 }
 
 export type TokenValuesByCategory<TTokens, TSemanticTokens> = {
-  [Cat in keyof (TTokens & SemanticTokens)]:
+  -readonly [Cat in keyof (TTokens & SemanticTokens)]:
     | (Cat extends keyof TTokens ? TokenPaths<TTokens[Cat]> : never)
     | (Cat extends keyof TSemanticTokens ? TokenPaths<TSemanticTokens[Cat]> : never)
 }
@@ -77,29 +95,30 @@ interface StyleFunctions<TProps, TConditions, TStyleObject = SystemStyleObject<T
 }
 
 interface ThemeConfigFn<
+  TOptions,
   TConditions,
   TTokens,
   TSemanticTokens,
   TUtilities,
   Conditions = UnderscoreConditions<TConditions>,
   TokenNames = TokenValuesByCategory<TTokens, TSemanticTokens>,
-  Shorthands = ShorthandMapping<TUtilities>,
-  PropertyValues = PropertyValueTypes<TUtilities, TokenNames>,
-  Properties = SystemProperties<PropertyValues, Conditions, Shorthands>,
+  ShorthandsMap = ShorthandMapping<TUtilities>,
+  PropertyValues = PropertyValueTypes<TOptions, TUtilities, TokenNames, ShorthandsMap>,
+  Properties = SystemProperties<PropertyValues, TOptions, Conditions, ShorthandsMap>,
   // Styles = SystemStyleObject<Properties, Conditions>,
 > extends StyleFunctions<Properties, Conditions> {
   // /**
   //  * @internal The names of all tokens using a dot-delimited path. Only used for type inference.
   //  */
   // _tokenNames: TokenNames
-  // /**
-  //  * @internal A record of known tokens/semanticTokens/utilities/shorthands properties with their possible values. Only used for type inference.
-  //  */
-  // _propertyValues: PropertyValues
+  /**
+   * @internal A record of known tokens/semanticTokens/utilities/shorthands properties with their possible values. Only used for type inference.
+   */
+  _propertyValues: PropertyValues
   // /**
   //  * @internal The system properties, including native CSS properties and values. Only used for type inference.
   //  */
-  // _properties: Properties
+  _properties: Properties
   // /**
   //  * @internal The system properties as a recursive nested style object with conditions and CSS variables. Only used for type inference.
   //  */
@@ -136,27 +155,6 @@ export type LonghandUtilityProps<TUtilities, TTokensByCategory> = {
     : never
 }
 
-// export type LonghandUtilityProps<TUtilities, TTokensByCategory> = {
-//   [K in keyof TUtilities as TUtilities[K] extends { values: any } ? K : never]: TUtilities[K] extends {
-//     values: infer TValues
-//   }
-//     ? UtilityValues<TTokensByCategory, TValues>
-//     : never
-// }
-
-// export type ShorthandMapping<TUtiliyConfig> = Pretty<
-//   UnionToIntersection<
-//     {
-//       [TProp in keyof TUtiliyConfig]: TUtiliyConfig[TProp] extends { shorthand: infer TShorthand }
-//         ? TShorthand extends string
-//           ? {
-//               [K in TShorthand]: TProp
-//             }
-//           : never
-//         : never
-//     }[keyof TUtiliyConfig]
-//   >
-// >
 export type ShorthandMapping<TUtilityConfig> = {
   [TProp in keyof TUtilityConfig as TUtilityConfig[TProp] extends { shorthand: infer TShorthand }
     ? TShorthand extends string
@@ -173,21 +171,99 @@ export type ShorthandProps<TUtiliyConfig, TLonghandProps, TMapping = ShorthandMa
     : never
 }
 
-export type PropertyValueTypes<
+type PropertyValueWithShorthands<
   TUtilities,
   TTokensByCategory,
+  ShorthandsMap,
   TLonghand = LonghandUtilityProps<TUtilities, TTokensByCategory>,
-  TShorthandProps = ShorthandProps<TUtilities, TLonghand>,
-> = TLonghand
-// > = TLonghand
-// TODO fix TShorthandProps TS instantiations count
+> = TLonghand & ShorthandProps<TUtilities, TLonghand, ShorthandsMap>
+
+type PropertyValueWithoutShorthands<TUtilities, TTokensByCategory> = LonghandUtilityProps<TUtilities, TTokensByCategory>
+
+export type PropertyValueTypes<TOptions, TUtilities, TTokensByCategory, ShorthandsMap> = TOptions extends {
+  shorthands?: true
+}
+  ? PropertyValueWithShorthands<TUtilities, TTokensByCategory, ShorthandsMap>
+  : PropertyValueWithoutShorthands<TUtilities, TTokensByCategory>
 
 /* -----------------------------------------------------------------------------
  * Property values
  * -----------------------------------------------------------------------------*/
 
-// TODO strictTokens + strictPropertyValues
-type StrictableProps = 'alignContent' | 'alignItems'
+type StrictableProps =
+  | 'alignContent'
+  | 'alignItems'
+  | 'alignSelf'
+  | 'all'
+  | 'animationComposition'
+  | 'animationDirection'
+  | 'animationFillMode'
+  | 'appearance'
+  | 'backfaceVisibility'
+  | 'backgroundAttachment'
+  | 'backgroundClip'
+  | 'borderCollapse'
+  | 'border'
+  | 'borderBlock'
+  | 'borderBlockEnd'
+  | 'borderBlockStart'
+  | 'borderBottom'
+  | 'borderInline'
+  | 'borderInlineEnd'
+  | 'borderInlineStart'
+  | 'borderLeft'
+  | 'borderRight'
+  | 'borderTop'
+  | 'borderBlockEndStyle'
+  | 'borderBlockStartStyle'
+  | 'borderBlockStyle'
+  | 'borderBottomStyle'
+  | 'borderInlineEndStyle'
+  | 'borderInlineStartStyle'
+  | 'borderInlineStyle'
+  | 'borderLeftStyle'
+  | 'borderRightStyle'
+  | 'borderTopStyle'
+  | 'boxDecorationBreak'
+  | 'boxSizing'
+  | 'breakAfter'
+  | 'breakBefore'
+  | 'breakInside'
+  | 'captionSide'
+  | 'clear'
+  | 'columnFill'
+  | 'columnRuleStyle'
+  | 'contentVisibility'
+  | 'direction'
+  | 'display'
+  | 'emptyCells'
+  | 'flexDirection'
+  | 'flexWrap'
+  | 'float'
+  | 'fontKerning'
+  | 'forcedColorAdjust'
+  | 'isolation'
+  | 'lineBreak'
+  | 'mixBlendMode'
+  | 'objectFit'
+  | 'outlineStyle'
+  | 'overflow'
+  | 'overflowX'
+  | 'overflowY'
+  | 'overflowBlock'
+  | 'overflowInline'
+  | 'overflowWrap'
+  | 'pointerEvents'
+  | 'position'
+  | 'resize'
+  | 'scrollBehavior'
+  | 'touchAction'
+  | 'transformBox'
+  | 'transformStyle'
+  | 'userSelect'
+  | 'visibility'
+  | 'wordBreak'
+  | 'writingMode'
 
 type WithEscapeHatch<T> = T | `[${string}]`
 
@@ -207,32 +283,55 @@ type Conditional<V, TConditions> =
     }
 
 type ConditionalValue<T, TConditions> = Conditional<T, TConditions>
-type PropOrCondition<_Key, Value, TConditions> = ConditionalValue<Value | (string & {}), TConditions>
+type PropOrCondition<Key, Value, TOptions, TConditions> = TOptions extends {
+  strictTokens?: true
+  strictPropertyValues?: true
+}
+  ? ConditionalValue<WithEscapeHatch<FilterVagueString<Key, Value>>, TConditions>
+  : TOptions extends { strictTokens?: true }
+    ? ConditionalValue<WithEscapeHatch<Value>, TConditions>
+    : TOptions extends { strictPropertyValues?: true }
+      ? ConditionalValue<Value, TConditions>
+      : ConditionalValue<Value | (string & {}), TConditions>
 
 type CssValue<T> = T extends keyof CssProperties ? CssProperties[T] : never
-type PropertyTypeValue<K extends string, TPropertyTypes, TConditions> = K extends keyof TPropertyTypes
-  ? PropOrCondition<K, TPropertyTypes[K] | CssValue<K>, TConditions>
-  : 2
+type PropertyTypeValue<K extends string, TPropertyTypes, TOptions, TConditions> = K extends keyof TPropertyTypes
+  ? PropOrCondition<
+      K,
+      TOptions extends {
+        strictTokens?: true
+        strictPropertyValues?: true
+      }
+        ? TPropertyTypes[K]
+        : TOptions extends { strictPropertyValues?: true }
+          ? K extends StrictableProps
+            ? TPropertyTypes[K]
+            : TPropertyTypes[K] | CssValue<K>
+          : TPropertyTypes[K] | CssValue<K>,
+      TOptions,
+      TConditions
+    >
+  : never
 
-type CssPropertyValue<T extends string, TConditions> = T extends keyof CssProperties
-  ? PropOrCondition<T, CssProperties[T], TConditions>
-  : 3
+type CssPropertyValue<K extends string, TOptions, TConditions> = K extends keyof CssProperties
+  ? PropOrCondition<K, CssProperties[K], TOptions, TConditions>
+  : never
 
-type PropertyValue<P extends string, TPropertyTypes, TConditions, TShorthands> = P extends keyof TShorthands
-  ? PropertyTypeValue<TShorthands[P] extends string ? TShorthands[P] : never, TPropertyTypes, TConditions>
-  : P extends keyof TPropertyTypes
-    ? PropertyTypeValue<P, TPropertyTypes, TConditions>
-    : P extends keyof CssProperties
-      ? CssPropertyValue<P, TConditions>
-      : PropOrCondition<P, string | number, TConditions>
+type PropertyValue<K extends string, TPropertyTypes, TOptions, TConditions, TShorthands> = K extends keyof TShorthands
+  ? PropertyTypeValue<TShorthands[K] extends string ? TShorthands[K] : never, TPropertyTypes, TOptions, TConditions>
+  : K extends keyof TPropertyTypes
+    ? PropertyTypeValue<K, TPropertyTypes, TOptions, TConditions>
+    : K extends keyof CssProperties
+      ? CssPropertyValue<K, TOptions, TConditions>
+      : PropOrCondition<K, string | number, TOptions, TConditions>
 
 /* -----------------------------------------------------------------------------
  * System style object types
  * -----------------------------------------------------------------------------*/
 
-export type SystemProperties<TPropertyTypes, TConditions, TShorthands> = {
+export type SystemProperties<TPropertyTypes, TOptions, TConditions, TShorthands> = {
   [TProp in keyof (TPropertyTypes & CssProperties)]?: TProp extends string
-    ? PropertyValue<TProp, TPropertyTypes, TConditions, TShorthands>
+    ? PropertyValue<TProp, TPropertyTypes, TOptions, TConditions, TShorthands>
     : never
 }
 
@@ -297,7 +396,7 @@ interface RecipeConfig<TStyleObject, T = RecipeVariantRecord<TStyleObject>>
  * Utility types
  * -----------------------------------------------------------------------------*/
 
-type TokenPaths<T, Prefix extends string = '', Depth extends number = 10> = Depth extends 0
+export type TokenPaths<T, Prefix extends string = '', Depth extends number = 10> = Depth extends 0
   ? never
   : T extends object
     ? {

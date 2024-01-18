@@ -1,8 +1,8 @@
 {
   "extends": "../../../tsconfig.build.json",
-  "include": ["./preset-base", "./preset-panda"],
   "compilerOptions": {
     "declaration": false
   },
+  "include": ["./preset-base", "./preset-panda"],
   "exclude": ["node_modules", "styled-system", "dist"]
 }

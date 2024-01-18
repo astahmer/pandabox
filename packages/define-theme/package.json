@@ -1,7 +1,7 @@
 {
   "name": "@pandakit/define-theme",
   "scripts": {
-    "trace-dir": "pnpm tsc -p tsconfig.bench.json --generateTrace trace-dir",
+    "trace-dir": "pnpm tsc -p tsconfig.bench.json --extendedDiagnostics --generateTrace trace-dir",
     "analyze": "analyze-trace trace-dir --forceMillis=50 --skipMillis=50",
     "simplify": "simplify-trace-types trace-dir/types.json trace-dir/simple.json",
     "build": "pnpm trace-dir && pnpm analyze && pnpm simplify",
