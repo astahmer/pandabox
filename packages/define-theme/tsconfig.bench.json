@@ -9,5 +9,5 @@
   },
   // "include": ["./src/define-theme.ts", "./sandbox/theme-preset.ts"]
   // "include": ["./theme-demo.ts", "./preset-base", "./preset-panda"],
-  "include": ["./sandbox/theme-preset.ts"]
+  "include": ["./src/define-theme.ts", "./sandbox/theme-preset.ts", "./sandbox/theme-preset-stresstest.ts"]
 }

@@ -40,10 +40,10 @@ export class SourceText {
     const _column = strict
       ? column
       : column < 0
-      ? 0
-      : column > this._lines[_line].length
-      ? this._lines[_line].length
-      : column
+        ? 0
+        : column > this._lines[_line].length
+          ? this._lines[_line].length
+          : column
 
     // Validation
     if (_line < 0 || _line >= this._lines.length) {
@@ -70,7 +70,7 @@ export class SourceText {
     }
 
     if (line === this._lines.length) {
-      throw new Error('Index out of range.')
+      return this.lastLineColumn
     }
 
     return { line, column } as LineColumn

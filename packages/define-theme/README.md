@@ -1,4 +1,12 @@
-import { defineTheme } from '../src/define-theme'
+# @pandakit/define-theme
+
+End to end type-safe theme definition (without any codegen step), so that the `panda.config.ts` can also benefit from
+type-safety and token/conditions/utilities autocomplete.
+
+## Usage
+
+```ts
+import { defineTheme } from '@pandakit/define-theme'
 
 const t = defineTheme()
 
@@ -78,6 +86,7 @@ const theme = t
 
 const config = theme.build()
 
+// Everything here will be typed, without any codegen
 config.defineStyles({ bg: 'text.background', background: 'text.foreground' })
 config.defineRecipe({
   className: 'aaa',
@@ -105,3 +114,4 @@ config.defineRecipe({
     type: 'success',
   },
 })
+```

@@ -3,6 +3,6 @@
   "compilerOptions": {
     "declaration": false
   },
-  "include": ["./preset-base", "./preset-panda"],
+  "include": ["./*.ts", "./preset-base", "./preset-panda"],
   "exclude": ["node_modules", "styled-system", "dist"]
 }

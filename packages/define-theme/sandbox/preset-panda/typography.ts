@@ -1,6 +1,6 @@
 import type { TextStyles, Tokens } from '@pandacss/types'
 
-export const fontSizes: Tokens['fontSizes'] = {
+export const fontSizes = {
   '2xs': { value: '0.5rem' },
   xs: { value: '0.75rem' },
   sm: { value: '0.875rem' },
@@ -15,9 +15,9 @@ export const fontSizes: Tokens['fontSizes'] = {
   '7xl': { value: '4.5rem' },
   '8xl': { value: '6rem' },
   '9xl': { value: '8rem' },
-}
+} satisfies Tokens['fontSizes']
 
-export const fontWeights: Tokens['fontWeights'] = {
+export const fontWeights = {
   thin: { value: '100' },
   extralight: { value: '200' },
   light: { value: '300' },
@@ -27,27 +27,27 @@ export const fontWeights: Tokens['fontWeights'] = {
   bold: { value: '700' },
   extrabold: { value: '800' },
   black: { value: '900' },
-}
+} satisfies Tokens['fontWeights']
 
-export const letterSpacings: Tokens['letterSpacings'] = {
+export const letterSpacings = {
   tighter: { value: '-0.05em' },
   tight: { value: '-0.025em' },
   normal: { value: '0em' },
   wide: { value: '0.025em' },
   wider: { value: '0.05em' },
   widest: { value: '0.1em' },
-}
+} satisfies Tokens['letterSpacings']
 
-export const lineHeights: Tokens['lineHeights'] = {
+export const lineHeights = {
   none: { value: '1' },
   tight: { value: '1.25' },
   snug: { value: '1.375' },
   normal: { value: '1.5' },
   relaxed: { value: '1.625' },
   loose: { value: '2' },
-}
+} satisfies Tokens['lineHeights']
 
-export const fonts: Tokens['fonts'] = {
+export const fonts = {
   sans: {
     value: [
       'ui-sans-serif',
@@ -81,9 +81,9 @@ export const fonts: Tokens['fonts'] = {
       'monospace',
     ],
   },
-}
+} satisfies Tokens['fonts']
 
-export const textStyles: TextStyles = {
+export const textStyles = {
   xs: {
     value: {
       fontSize: '0.75rem',
@@ -162,4 +162,4 @@ export const textStyles: TextStyles = {
       lineHeight: '1',
     },
   },
-}
+} satisfies TextStyles
