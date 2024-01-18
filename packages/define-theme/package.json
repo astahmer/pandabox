@@ -6,7 +6,8 @@
     "simplify": "simplify-trace-types trace-dir/types.json trace-dir/simple.json",
     "build": "pnpm trace-dir && pnpm analyze && pnpm simplify",
     "report": "tsx ./scripts/trace-report.ts",
-    "bench": "tsx ./src/define-theme.bench.ts"
+    "bench": "tsx ./src/define-theme.bench.ts",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@pandacss/types": "^0.27.1",
