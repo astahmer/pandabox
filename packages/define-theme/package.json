@@ -1,5 +1,5 @@
 {
-  "name": "@pandakit/define-theme",
+  "name": "@pandabox/define-theme",
   "version": "0.0.1",
   "description": "End-to-end type-safe theming for PandaCSS",
   "exports": {
@@ -39,7 +39,7 @@
   "homepage": "https://astahmer.dev",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/astahmer/pandakit.git",
+    "url": "git+https://github.com/astahmer/pandabox.git",
     "directory": "packages/define-theme"
   },
   "author": "Alexandre Stahmer",

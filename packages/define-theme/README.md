@@ -1,4 +1,4 @@
-# @pandakit/define-theme
+# @pandabox/define-theme
 
 End to end type-safe theme definition (without any codegen step), so that the `panda.config.ts` can also benefit from
 type-safety and token/conditions/utilities autocomplete.
@@ -6,7 +6,7 @@ type-safety and token/conditions/utilities autocomplete.
 ## Usage
 
 ```ts
-import { defineTheme } from '@pandakit/define-theme'
+import { defineTheme } from '@pandabox/define-theme'
 
 const t = defineTheme()
 
