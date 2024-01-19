@@ -1,6 +1,6 @@
 {
   "name": "@pandabox/define-recipe",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "End-to-end type-safe theming for PandaCSS",
   "exports": {
     ".": {
