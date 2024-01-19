@@ -119,3 +119,40 @@ config.defineRecipe({
   },
 })
 ```
+
+## @pandabox/define-recipe
+
+The `defineRecipe` method will now return a `RecipeBuilder` object instead of a `RecipeConfig` object. The
+`RecipeBuilder` object has the following methods:
+
+- `extend`: add additional variants to or override variants of a recipe.
+
+```ts
+const button = defineRecipe({
+  className: 'btn',
+  variants: {
+    variant: { primary: { color: 'red' } },
+  },
+}).extend({
+  variant: {
+    primary: { px: 2 },
+    secondary: { color: 'blue' },
+  },
+})
+```
+
+resulting in:
+
+```json
+{
+  "className": "btn",
+  "variants": {
+    "variant": {
+      "primary": { "color": "red", "px": 2 },
+      "secondary": { "color": "blue" }
+    }
+  }
+}
+```
+
+More methods are available on the `RecipeBuilder` object, see the [README](./packages/define-recipe/README.md) for more

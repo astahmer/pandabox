@@ -2,15 +2,6 @@
 
 You can now extend config Recipes and config Slots Recipes to easily compose them together.
 
-## Added
-
-New `defineRecipeConfigs` identity function that takes an object of `RecipeConfig` objects (or the new `RecipeBuilder`
-interface !) and returns the same object with less strict typing. This can be useful to help Typescript checking
-performance when using a large number of recipes or when using complex recipes, with a large number of variants and/or a
-large number of styles.
-
-## Changed
-
 ### Config Recipe
 
 The `defineRecipe` method will now return a `RecipeBuilder` object instead of a `RecipeConfig` object. The
@@ -24,7 +15,7 @@ const button = defineRecipe({
   variants: {
     variant: { primary: { color: 'red' } },
   },
-}).config.extend({
+}).extend({
   variant: {
     primary: { px: 2 },
     secondary: { color: 'blue' },
@@ -55,7 +46,7 @@ const button = defineRecipe({
   variants: {
     variant: { primary: { color: 'red' } },
   },
-}).config.merge({
+}).merge({
   className: 'custom-btn',
   variants: {
     secondary: { color: 'blue' },
@@ -94,7 +85,7 @@ const button = defineRecipe({
     variant: { primary: { color: 'red' } },
     size: { small: { px: 2 }, large: { px: 4 } },
   },
-}).config.pick('size')
+}).pick('size')
 ```
 
 resulting in:
@@ -124,7 +115,7 @@ const button = defineRecipe({
     variant: { primary: { color: 'red' } },
     size: { small: { px: 2 }, large: { px: 4 } },
   },
-}).config.omit('size')
+}).omit('size')
 ```
 
 resulting in:
@@ -171,7 +162,7 @@ const card = defineSlotRecipe({
       md: { root: { fontSize: 'md' } },
     },
   },
-}).config.slots.add('label')
+}).slot.add('label')
 ```
 
 resulting in:
@@ -211,7 +202,7 @@ const card = defineSlotRecipe({
       md: { input: { fontSize: 'md' } },
     },
   },
-}).config.slots.pick('input')
+}).slot.pick('input')
 ```
 
 resulting in:
@@ -249,7 +240,7 @@ const card = defineSlotRecipe({
       md: { input: { fontSize: 'md' } },
     },
   },
-}).config.slots.omit('input')
+}).slot.omit('input')
 ```
 
 resulting in:
@@ -304,7 +295,7 @@ const card = defineSlotRecipe({
       md: { input: { fontSize: 'md' } },
     },
   },
-}).config.slots.assignTo('input', button)
+}).slot.assignTo('input', button)
 ```
 
 resulting in:
