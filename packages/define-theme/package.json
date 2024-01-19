@@ -22,7 +22,7 @@
     "simplify": "simplify-trace-types trace-dir/types.json trace-dir/simple.json",
     "report": "tsx ./scripts/trace-report.ts",
     "trace": "pnpm trace-dir && pnpm analyze && pnpm simplify && pnpm report",
-    "bench": "tsx ./src/define-theme.bench.ts",
+    "bench": "tsx ./sandbox/define-theme.bench.ts",
     "build": "tsup",
     "typecheck": "tsc --noEmit"
   },
