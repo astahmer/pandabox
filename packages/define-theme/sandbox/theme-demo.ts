@@ -31,6 +31,13 @@ const theme = t
       lg: { value: '1.25rem' },
     },
   })
+  .tokens({
+    colors: {
+      rose: {
+        300: { value: 'bbb' },
+      },
+    },
+  })
   .semanticTokens({
     colors: {
       primary: { value: 'blue' },
@@ -85,6 +92,7 @@ const recipe = config.defineRecipe({
     _hover: {
       color: 'text',
       sm: {
+        color: 'rose.300',
         _focus: {
           fontSize: '12px',
         },
