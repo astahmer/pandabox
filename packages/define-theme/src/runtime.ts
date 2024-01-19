@@ -1,4 +1,4 @@
-import deepmerge from 'deepmerge'
+import deepmerge from 'lodash.merge'
 
 export class ThemeBuilderImpl {
   _conditions: any

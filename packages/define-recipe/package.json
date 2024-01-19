@@ -1,6 +1,6 @@
 {
-  "name": "@pandabox/define-theme",
-  "version": "0.0.1",
+  "name": "@pandabox/define-recipe",
+  "version": "0.0.0",
   "description": "End-to-end type-safe theming for PandaCSS",
   "exports": {
     ".": {
@@ -22,9 +22,10 @@
     "simplify": "simplify-trace-types trace-dir/types.json trace-dir/simple.json",
     "report": "tsx ./scripts/trace-report.ts",
     "trace": "pnpm trace-dir && pnpm analyze && pnpm simplify && pnpm report",
-    "bench": "tsx ./sandbox/define-theme.bench.ts",
+    "bench": "echo TODO && tsx ./sandbox/define-theme.bench.ts",
     "build": "tsup",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
   },
   "dependencies": {
     "@pandacss/types": "^0.27.2",
@@ -35,13 +36,14 @@
     "@types/lodash.merge": "^4.6.9",
     "@typescript/analyze-trace": "^0.10.1",
     "publint": "^0.2.7",
-    "tsup": "^8.0.1"
+    "tsup": "^8.0.1",
+    "vitest": "^1.2.1"
   },
   "homepage": "https://astahmer.dev",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/astahmer/pandabox.git",
-    "directory": "packages/define-theme"
+    "directory": "packages/define-recipe"
   },
   "author": "Alexandre Stahmer",
   "publishConfig": {
@@ -58,7 +60,8 @@
     "panda",
     "kit",
     "define",
-    "theme",
+    "recipe",
+    "extension",
     "config",
     "typesafety",
     "typescript"
