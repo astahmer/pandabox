@@ -1,0 +1,62 @@
+{
+  "name": "@pandabox/utils",
+  "version": "0.0.2",
+  "description": "A bunch of utilities",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "trace-dir": "pnpm tsc -p tsconfig.bench.json --extendedDiagnostics --generateTrace trace-dir",
+    "analyze": "analyze-trace trace-dir --forceMillis=50 --skipMillis=50",
+    "simplify": "simplify-trace-types trace-dir/types.json trace-dir/simple.json",
+    "report": "tsx ./scripts/trace-report.ts",
+    "trace": "pnpm trace-dir && pnpm analyze && pnpm simplify && pnpm report",
+    "bench": "tsx ./sandbox/define-theme.bench.ts",
+    "build": "tsup",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@pandacss/shared": "^0.27.3",
+    "@pandacss/types": "^0.27.3"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.1",
+    "vitest": "^1.2.1"
+  },
+  "homepage": "https://astahmer.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astahmer/pandabox.git",
+    "directory": "packages/utils"
+  },
+  "author": "Alexandre Stahmer",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "files": [
+    "src",
+    "dist"
+  ],
+  "keywords": [
+    "pandacss",
+    "pandabox",
+    "panda",
+    "kit",
+    "utils",
+    "typesafety",
+    "typescript"
+  ]
+}

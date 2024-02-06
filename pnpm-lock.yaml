@@ -86,6 +86,22 @@ importers:
         specifier: ^8.0.1
         version: 8.0.1(postcss@8.4.33)(typescript@5.3.3)
 
+  packages/utils:
+    dependencies:
+      '@pandacss/shared':
+        specifier: ^0.27.3
+        version: 0.27.3
+      '@pandacss/types':
+        specifier: ^0.27.3
+        version: 0.27.3
+    devDependencies:
+      tsup:
+        specifier: ^8.0.1
+        version: 8.0.1(postcss@8.4.33)(typescript@5.3.3)
+      vitest:
+        specifier: ^1.2.1
+        version: 1.2.1(@types/node@20.11.4)
+
 packages:
 
   /@andrewbranch/untar.js@1.0.3:
@@ -1080,6 +1096,10 @@ packages:
     resolution: {integrity: sha512-Y8pGV0QvGUinvhCya22RkdN7HDsjn0yKinTGu99KTUA3xNLD98Mboql4+0N+4dExDZ6881ILg9U8ksjs1PiLKQ==}
     dev: true
 
+  /@pandacss/shared@0.27.3:
+    resolution: {integrity: sha512-l+sxb7QdzSBCZ0xI9WMouhXbBB31LL6zrgQ4dCBDIVGzAf24TXDqGbmtWa9+mS1KTm5K2mbWYAnkCkz6ik8UaA==}
+    dev: false
+
   /@pandacss/token-dictionary@0.27.2:
     resolution: {integrity: sha512-i3gI+l4gll6/MojoHtGvZmkn6eA/hcpW+oRshk/1JEQTw+zUuEHf/3YJY5IdCZvwndwlDe+d6gnPas69gJbRxA==}
     dependencies:
@@ -1090,6 +1110,10 @@ packages:
 
   /@pandacss/types@0.27.2:
     resolution: {integrity: sha512-9BFfAcRI+VuM03sYAhlz9JZlCXSa/IIbe/Z/VlYs346TFMee8wbp/8t5tCPoJRcCnnhWJgGoNQamLvfizZfGzg==}
+
+  /@pandacss/types@0.27.3:
+    resolution: {integrity: sha512-bjDRMGtO5FQuh4q4ko9OOXQFT/KzNgo+oaVUhXB/Sz0kNKocWT6GMwb0x5y1U4G7QJlHQr/hSGmxu1j5TCXx7A==}
+    dev: false
 
   /@pkgjs/parseargs@0.11.0:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
