@@ -4,6 +4,5 @@
     "noEmit": false,
     "outDir": "dist"
   },
-  "include": ["src"],
-  "exclude": ["scripts/trace-report.ts"]
+  "include": ["src"]
 }

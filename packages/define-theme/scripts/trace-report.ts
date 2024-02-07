@@ -1,5 +1,8 @@
+// @ts-ignore
 import _simple from '../trace-dir/simple.json'
+// @ts-ignore
 import _types from '../trace-dir/types.json'
+// @ts-ignore
 import _trace from '../trace-dir/trace.json'
 import { readFileSync } from 'node:fs'
 import { SourceText } from './source-text'
