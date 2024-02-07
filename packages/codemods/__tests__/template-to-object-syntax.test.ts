@@ -33,43 +33,6 @@ test('simple', () => {
       "@media (min-width: 768px)": {
         "padding": "1rem 2rem"
       }
-    } }, { defaultProps: { className: 'Button' } })"
-  `)
-})
-
-test('component auto className references', () => {
-  const sourceFile = createSourceFile(outdent`
-  import styled from 'styled-components'
-
-  const Link = styled.a\`
-    background: papayawhip;
-    color: #bf4f74;
-    \`
-
-  const Icon = styled.svg\`
-    width: 48px;
-    height: 48px;
-
-    \${Link}:hover & {
-      fill: rebeccapurple;
-    }
-    \`
-    `)
-
-  expect(templateLiteralToObjectSyntax({ sourceFile }).code).toMatchInlineSnapshot(`
-    "import styled from 'styled-components'
-
-    const Link = styled('a', { base: {
-      "background": "papayawhip",
-      "color": "#bf4f74"
-    } }, { defaultProps: { className: 'Link' } })
-
-    const Icon = styled('svg', { base: {
-      "width": "48px",
-      "height": "48px",
-      ".Link:hover &": {
-        "fill": "rebeccapurple"
-      }
-    } }, { defaultProps: { className: 'Icon' } })"
+    } })"
   `)
 })

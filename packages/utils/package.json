@@ -17,12 +17,6 @@
     }
   },
   "scripts": {
-    "trace-dir": "pnpm tsc -p tsconfig.bench.json --extendedDiagnostics --generateTrace trace-dir",
-    "analyze": "analyze-trace trace-dir --forceMillis=50 --skipMillis=50",
-    "simplify": "simplify-trace-types trace-dir/types.json trace-dir/simple.json",
-    "report": "tsx ./scripts/trace-report.ts",
-    "trace": "pnpm trace-dir && pnpm analyze && pnpm simplify && pnpm report",
-    "bench": "tsx ./sandbox/define-theme.bench.ts",
     "build": "tsup",
     "test": "vitest",
     "typecheck": "tsc --noEmit"

@@ -13,3 +13,12 @@ const Icon = styled.svg`
     fill: rebeccapurple;
   }
 `
+
+const TomatoButton = styled(Link)`
+  color: tomato;
+  border-color: tomato;
+`
+
+const Thingy = styled('div')`
+  font-size: 1.5em;
+`

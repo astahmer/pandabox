@@ -3,17 +3,13 @@ import postcss, { CssSyntaxError } from 'postcss'
 import postcssJs from 'postcss-js'
 import { Node, SourceFile, TaggedTemplateExpression, TemplateSpan } from 'ts-morph'
 
-interface TemplateToObjectSyntaxOptions {
+export interface TemplateToObjectSyntaxOptions {
   sourceFile: SourceFile
   matchTag?: (tag: string) => boolean
-  flags?: {
-    withClassName?: boolean
-  }
 }
 
 export const templateLiteralToObjectSyntax = (options: TemplateToObjectSyntaxOptions) => {
   const { sourceFile, matchTag } = options
-  const withClassName = options.flags?.withClassName ?? true
 
   const sourceText = sourceFile.getText()
   const s = new MagicString(sourceText)
@@ -27,18 +23,11 @@ export const templateLiteralToObjectSyntax = (options: TemplateToObjectSyntaxOpt
     const templateText = getTemplateText(node)
 
     try {
-      const variableDecl = node.getParent()
       const obj = postcssJs.objectify(postcss.parse(templateText.slice(1, -1).trim()))
       const json = JSON.stringify(obj, null, 2)
       const [factory, tag] = tagName.split('.')
 
-      let transform: string
-      if (withClassName && Node.isVariableDeclaration(variableDecl)) {
-        const identifier = variableDecl.getNameNode().getText()
-        transform = `${factory}('${tag}', { base: ${json} }, { defaultProps: { className: '${identifier}' } })`
-      } else {
-        transform = `${factory}('${tag}', { base: ${json} })`
-      }
+      const transform = `${factory}('${tag}', { base: ${json} })`
 
       s.update(node.getStart(), node.getEnd(), transform)
     } catch (error) {
@@ -56,7 +45,10 @@ export const templateLiteralToObjectSyntax = (options: TemplateToObjectSyntaxOpt
   }
 }
 
-const getTemplateText = (node: TaggedTemplateExpression) => {
+/**
+ * Get the text content of a TaggedTemplateExpression without the backticks and ${xxx} references
+ */
+export const getTemplateText = (node: TaggedTemplateExpression) => {
   const template = node.getTemplate()
   if (Node.isNoSubstitutionTemplateLiteral(template)) {
     return template.getText().slice(1, -1) // Remove the backticks
@@ -84,7 +76,7 @@ const getTemplateText = (node: TaggedTemplateExpression) => {
  * Transform TemplateSpan Identifier to className reference
  * e.g. `${identifier}` -> `.identifier`
  */
-function transformTemplateSpan(span: TemplateSpan) {
+export const transformTemplateSpan = (span: TemplateSpan) => {
   const expr = span.getExpression()
   if (Node.isIdentifier(expr)) {
     const literal = span.getLiteral().getText()

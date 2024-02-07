@@ -3,16 +3,16 @@
   "version": "0.0.0",
   "description": "A collection of codemods for Panda CSS",
   "exports": {
-    "./template-to-object-syntax": {
-      "source": "./src/template-to-object-syntax.ts",
-      "types": "./dist/template-to-object-syntax.d.ts",
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
       "import": {
-        "types": "./dist/template-to-object-syntax.d.mts",
-        "default": "./dist/template-to-object-syntax.mjs"
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
       },
       "require": {
-        "types": "./dist/template-to-object-syntax.d.ts",
-        "default": "./dist/template-to-object-syntax.js"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
       }
     }
   },
@@ -32,5 +32,31 @@
     "outdent": "^0.8.0",
     "tsup": "^8.0.1",
     "vitest": "^1.2.1"
-  }
+  },
+  "homepage": "https://astahmer.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astahmer/pandabox.git",
+    "directory": "packages/codemods"
+  },
+  "author": "Alexandre Stahmer",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "files": [
+    "src",
+    "dist"
+  ],
+  "keywords": [
+    "pandacss",
+    "pandabox",
+    "panda",
+    "kit",
+    "codemod",
+    "template-literal",
+    "styled2panda",
+    "typesafety",
+    "typescript"
+  ]
 }

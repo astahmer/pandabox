@@ -7,7 +7,7 @@
     "dev": "remix vite:dev",
     "build": "remix vite:build",
     "start": "remix-serve ./build/server/index.js",
-    "typecheck": "tsc",
+    "typecheck": "tsc --noEmit",
     "types:codegen": "tsx scripts/bundle-types.mts"
   },
   "imports": {

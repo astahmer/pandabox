@@ -1,19 +1,19 @@
+import { css } from '#styled-system/css'
+import { HStack, Stack, styled } from '#styled-system/jsx'
 import { useActor } from '@xstate/react'
 import { Panel, PanelGroup } from 'react-resizable-panels'
-import { css } from '#styled-system/css'
-import { Stack, styled } from '#styled-system/jsx'
-import { ResizeHandle } from './resize-handle'
 import { useTheme } from '../vite-themes/provider'
+import { ResizeHandle } from './resize-handle'
 
-import ReactDeclaration from '../../dts/react.d.ts?raw'
-import { playgroundActor } from './machine'
 import {
-  DiffEditor as MonacoDiffEditor,
-  EditorProps,
-  Editor as MonacoEditor,
   DiffEditorProps,
+  EditorProps,
+  DiffEditor as MonacoDiffEditor,
+  Editor as MonacoEditor,
 } from '@monaco-editor/react'
+import ReactDeclaration from '../../dts/react.d.ts?raw'
 import { Switch } from '../components/switch'
+import { playgroundActor } from './machine'
 
 // No idea why the typings wont work without this
 const Editor = (props: EditorProps) => <MonacoEditor {...props} />
@@ -28,15 +28,15 @@ export const Playground = () => {
 
   return (
     <Stack boxSize="full">
-      <styled.div ml="auto" px="4">
+      <HStack ml="auto" px="4">
         <Switch
           css={{ colorPalette: 'blue' }}
           defaultChecked
           onCheckedChange={(details) => send({ type: 'Set withClassName', value: details.checked })}
         >
-          With references
+          With default className
         </Switch>
-      </styled.div>
+      </HStack>
       <PanelGroup direction="vertical">
         <Panel defaultSize={60} className={css({ display: 'flex', flexDirection: 'column' })} minSize={20}>
           <PanelGroup direction="horizontal">

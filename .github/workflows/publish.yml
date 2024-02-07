@@ -29,10 +29,13 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Typecheck
-        run: pnpm define-theme typecheck
+        run: pnpm -r typecheck
+
+      - name: Tests
+        run: pnpm -r test -- --run
 
       - name: Build
-        run: pnpm define-theme build
+        run: pnpm -r build
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets

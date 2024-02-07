@@ -3,7 +3,7 @@ import type { editor } from 'monaco-editor'
 import { Project, SourceFile } from 'ts-morph'
 import { EventObject, assign, setup } from 'xstate'
 import { urlSaver } from './url-saver'
-import { templateLiteralToObjectSyntax } from '@pandabox/codemods/template-to-object-syntax'
+import { styled2panda } from '@pandabox/codemods'
 import initialInput from './initial-input?raw'
 
 const project = new Project({
@@ -58,12 +58,10 @@ export const playgroundActor = setup({
       if (!input) return context
 
       const matchTag = context.options.matchTag
-      const transformed = templateLiteralToObjectSyntax({
+      const transformed = styled2panda({
         sourceFile: createSourceFile(input),
         matchTag: matchTag ? (tag) => tag.includes(matchTag) : undefined,
-        flags: {
-          withClassName: context.options.withClassName,
-        },
+        withClassName: context.options.withClassName,
       })
 
       return {
