@@ -28,14 +28,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
+      - name: Build
+        run: pnpm -r build
+
       - name: Typecheck
         run: pnpm -r typecheck
 
       - name: Tests
         run: pnpm -r test -- --run
-
-      - name: Build
-        run: pnpm -r build
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
