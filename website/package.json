@@ -7,7 +7,8 @@
     "prepare": "panda",
     "dev": "remix vite:dev",
     "build": "pnpm panda && remix vite:build",
-    "start": "remix-serve ./build/server/index.js",
+    "start": "npx http-server build/client/",
+    "start-server": "remix-serve ./build/server/index.js",
     "typecheck": "tsc --noEmit",
     "types:codegen": "tsx scripts/bundle-types.mts"
   },

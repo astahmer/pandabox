@@ -1,7 +1,7 @@
 import '@fontsource/inter'
 
 import { Flex, HStack, Stack } from '#styled-system/jsx'
-import { PropsWithChildren, ReactNode } from 'react'
+import { PropsWithChildren, ReactNode, useEffect } from 'react'
 
 import { ColorModeSwitch } from './color-mode-switch'
 import { GithubIcon } from './github-icon'
@@ -25,7 +25,7 @@ const link = css({
 const Header = (
   <div className={hstack({ gap: 1 })}>
     <Link className={link} to="/">
-      🐼 pandabox
+      🐼 <span className={css({ hideBelow: 'md' })}>pandabox</span>
     </Link>
     <span>-</span>
     <Link className={link} to="/styled2panda">
@@ -34,15 +34,27 @@ const Header = (
   </div>
 )
 
+const isDev = import.meta.env.DEV
+
 export const Layout = ({ children, header }: LayoutProps) => {
+  useEffect(() => {
+    if (!isDev) return
+    const script = document.createElement('script')
+    script.async = true
+    script.src = 'https://umami-nu-bice.vercel.app/script.js'
+    script.dataset.websiteId = 'bc74b9b7-777d-4f2d-8c55-a6e27259207c'
+    document.body.appendChild(script)
+  }, [])
+
   return (
     <ThemeProvider>
       <Flex
         w="100%"
+        maxW="100vw"
         h="100vh"
         maxH="100vh"
         color="text.main"
-        bg={{ base: 'whiteAlpha.100', _dark: 'whiteAlpha.200' }}
+        bg={{ base: 'white/6', _dark: 'white/8' }}
         fontFamily="Inter"
       >
         <Stack w="100%" h="100%">
@@ -79,7 +91,7 @@ export const Layout = ({ children, header }: LayoutProps) => {
                 >
                   <div className={hstack()}>
                     <SiTailwindcss />
-                    <span>tw2panda</span>
+                    <span className={css({ hideBelow: 'md' })}>tw2panda</span>
                   </div>
                 </IconButton>
               </a>
