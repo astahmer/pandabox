@@ -1,5 +1,8 @@
 {
   "extends": "./tsconfig.build.json",
   "include": ["packages/**/*.ts"],
-  "exclude": ["node_modules", "styled-system", "dist"]
+  "exclude": ["node_modules", "styled-system", "dist"],
+  "compilerOptions": {
+    "customConditions": ["source"]
+  }
 }

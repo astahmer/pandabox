@@ -1,0 +1,10 @@
+node_modules
+
+/.cache
+/build
+/public/build
+.env
+
+## Panda
+styled-system
+styled-system-studio

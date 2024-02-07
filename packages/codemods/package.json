@@ -1,0 +1,36 @@
+{
+  "name": "@pandabox/codemods",
+  "version": "0.0.0",
+  "description": "A collection of codemods for Panda CSS",
+  "exports": {
+    "./template-to-object-syntax": {
+      "source": "./src/template-to-object-syntax.ts",
+      "types": "./dist/template-to-object-syntax.d.ts",
+      "import": {
+        "types": "./dist/template-to-object-syntax.d.mts",
+        "default": "./dist/template-to-object-syntax.mjs"
+      },
+      "require": {
+        "types": "./dist/template-to-object-syntax.d.ts",
+        "default": "./dist/template-to-object-syntax.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "magic-string": "0.30.6",
+    "postcss": "^8.4.34",
+    "postcss-js": "^4.0.1",
+    "ts-morph": "19.0.0"
+  },
+  "devDependencies": {
+    "@types/postcss-js": "^4.0.4",
+    "outdent": "^0.8.0",
+    "tsup": "^8.0.1",
+    "vitest": "^1.2.1"
+  }
+}

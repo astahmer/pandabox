@@ -1,6 +1,6 @@
-# Add support for Config Recipe (and Slot) extensions
+# @pandabox/define-recipe
 
-You can now extend config Recipes and config Slots Recipes to easily compose them together.
+Extend, pick, omit and merge config Recipes/Slots Recipes to easily compose them together.
 
 ### Config Recipe
 
