@@ -12,7 +12,7 @@ export type ToTokenRecord<TTokens extends Record<string, any>> = {
 
 export const assignInlineVars = <TRecord extends TokenRecord>(
   userVars?: Partial<TRecord>,
-  options?: CssVarsOptions,
+  options?: CssVarsOptions & { separator?: string },
 ) => {
   const vars = {} as TokenRecord
 
@@ -25,7 +25,7 @@ export const assignInlineVars = <TRecord extends TokenRecord>(
           vars[cssVarRef] = value as any
         }
       },
-      { separator: '-' },
+      { separator: options?.separator ?? '-' },
     )
   }
 

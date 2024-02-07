@@ -42,6 +42,11 @@ export default function Index() {
               <LuExternalLink /> <span className={linkTitle}>tw2panda</span> : Easily migrate code from tailwind to
               Panda CSS
             </a>
+            <a className={link} href="https://github.com/astahmer/pandabox/tree/main/packages/utils">
+              <LuExternalLink />
+              <span className={linkTitle}>assignInlineVars</span> Override tokens/semanticTokens CSS vars at runtime
+              with a type-safe function
+            </a>
             <a className={link} href="https://github.com/astahmer/pandabox/tree/main/packages/define-theme">
               <LuExternalLink />
               <span className={linkTitle}>defineTheme</span> End to end type-safe theme definition
