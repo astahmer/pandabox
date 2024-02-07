@@ -2,6 +2,8 @@ import { defineConfig } from '@pandacss/dev'
 import { preset as basePreset } from '@pandacss/preset-base'
 
 export default defineConfig({
+  presets: ['@pandacss/preset-panda', '@park-ui/panda-preset'],
+
   // Whether to use css reset
   preflight: true,
 
@@ -36,7 +38,7 @@ export default defineConfig({
       semanticTokens: {
         colors: {
           'text.main': {
-            value: { base: '{colors.blackish}', _dark: '{colors.yellow.300}' },
+            value: { base: '{colors.blackish}', _dark: '{colors.whiteish}' },
           },
           'bg.main': {
             value: { base: '{colors.whiteish}', _dark: '{colors.blackish}' },

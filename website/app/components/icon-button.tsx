@@ -13,25 +13,30 @@ export function IconButton(props: IconButtonProps) {
       {...rest}
       className={cx(
         className,
-        css({
-          position: 'relative',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          cursor: 'pointer',
-          w: '40px',
-          h: '40px',
-          borderRadius: 'md',
-          bg: { base: 'gray.100', _dark: 'gray.700' },
-          _hover: {
-            bg: 'yellow.400',
-            color: 'white',
-            _dark: {
-              bg: 'yellow.600',
+        css(
+          {
+            transition: 'colors',
+            transitionDuration: '100ms',
+            colorPalette: 'gray',
+            position: 'relative',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            cursor: 'pointer',
+            w: '40px',
+            h: '40px',
+            borderRadius: 'md',
+            bg: { base: 'gray.100', _dark: 'gray.700' },
+            _hover: {
+              bg: 'colorPalette.400',
+              color: 'white',
+              _dark: {
+                bg: 'colorPalette.600',
+              },
             },
           },
-        }),
-        css(cssProp ?? {}),
+          cssProp,
+        ),
       )}
     >
       {children}

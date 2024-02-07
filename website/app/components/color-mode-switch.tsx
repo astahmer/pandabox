@@ -25,7 +25,7 @@ export const ColorModeSwitch = () => {
   const iconText = isDark ? 'Dark' : 'Light'
 
   return (
-    <IconButton title={iconText} onClick={toggleTheme}>
+    <IconButton css={{ colorPalette: 'yellow' }} title={iconText} onClick={toggleTheme}>
       <IconToUse className={css({ pointerEvents: 'none' })} />
     </IconButton>
   )

@@ -10,21 +10,28 @@ import { TwitterIcon } from './twitter-icon'
 import { ThemeProvider } from '../vite-themes/provider'
 import { Link } from '@remix-run/react'
 import { css } from '#styled-system/css'
+import { SiTailwindcss } from 'react-icons/si'
+import { hstack } from '#styled-system/patterns'
 
 interface LayoutProps extends PropsWithChildren {
   header?: ReactNode
 }
 
+const link = css({
+  _dark: { color: 'yellow.300' },
+  _hover: { color: 'blue.400' },
+})
+
 const Header = (
-  <HStack>
-    <Link className={css({ _hover: { color: 'blue.400' } })} to="/">
-      @pandabox
+  <div className={hstack({ gap: 1 })}>
+    <Link className={link} to="/">
+      🐼 pandabox
     </Link>
     <span>-</span>
-    <Link className={css({ _hover: { color: 'blue.400' } })} to="/template-literal-to-object-syntax">
-      Template literal to Object syntax
+    <Link className={link} to="/styled2panda">
+      styled2panda
     </Link>
-  </HStack>
+  </div>
 )
 
 export const Layout = ({ children, header }: LayoutProps) => {
@@ -48,8 +55,32 @@ export const Layout = ({ children, header }: LayoutProps) => {
                 </IconButton>
               </a>
               <a target="blank" href="https://twitter.com/astahmer_dev">
-                <IconButton title="Twitter" css={{ color: { base: 'colorPalette.500', _dark: 'colorPalette.200' } }}>
+                <IconButton
+                  title="Twitter"
+                  css={{
+                    colorPalette: 'blue',
+                    color: { base: 'colorPalette.500', _dark: 'colorPalette.200' },
+                  }}
+                >
                   <TwitterIcon />
+                </IconButton>
+              </a>
+              <a target="blank" href="https://tw2panda-astahmer.vercel.app/">
+                <IconButton
+                  title="tw2panda"
+                  css={{
+                    px: '2',
+                    w: 'auto',
+                    colorPalette: 'sky',
+                    color: { base: 'sky.500', _dark: 'sky.200' },
+                    borderWidth: '1px',
+                    borderColor: { base: 'sky.500/25', _hover: 'transparent' },
+                  }}
+                >
+                  <div className={hstack()}>
+                    <SiTailwindcss />
+                    <span>tw2panda</span>
+                  </div>
                 </IconButton>
               </a>
               <ColorModeSwitch />

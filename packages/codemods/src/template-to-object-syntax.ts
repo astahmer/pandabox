@@ -37,7 +37,7 @@ export const templateLiteralToObjectSyntax = (options: TemplateToObjectSyntaxOpt
         const identifier = variableDecl.getNameNode().getText()
         transform = `${factory}('${tag}', { base: ${json} }, { defaultProps: { className: '${identifier}' } })`
       } else {
-        transform = `${factory}('${tag}', ${json})`
+        transform = `${factory}('${tag}', { base: ${json} })`
       }
 
       s.update(node.getStart(), node.getEnd(), transform)

@@ -20,6 +20,10 @@ export const playgroundActor = setup({
       sourceFile: SourceFile | null
       input: string
       output: string
+      options: {
+        withClassName: boolean
+        matchTag: string | null
+      }
     },
     events: {} as
       | {
@@ -29,7 +33,9 @@ export const playgroundActor = setup({
           kind: 'input' | 'output'
         }
       | { type: 'Save' }
-      | { type: 'Update input'; value: string },
+      | { type: 'Set withClassName'; value: boolean }
+      | { type: 'Set matchTag'; value: string }
+      | { type: 'Set input'; value: string },
   },
   actions: {
     assignEditorRef: assign(({ context, event }) => {
@@ -41,26 +47,41 @@ export const playgroundActor = setup({
 
       return { ...context, outputEditor: event.editor, monaco: event.monaco }
     }),
-    updateInput: assign(({ context, event }) => {
-      if (event.type !== 'Update input') return context
-      assertEvent(event, 'Update input')
+    setInput: assign(({ context, event }) => {
+      if (event.type !== 'Set input') return context
+      assertEvent(event, 'Set input')
 
       return { ...context, input: event.value }
     }),
-    updateOutput: assign(({ context }) => {
+    setOutput: assign(({ context }) => {
       const input = context.input ?? ''
       if (!input) return context
 
-      const transformed = templateLiteralToObjectSyntax({ sourceFile: createSourceFile(input) })
+      const matchTag = context.options.matchTag
+      const transformed = templateLiteralToObjectSyntax({
+        sourceFile: createSourceFile(input),
+        matchTag: matchTag ? (tag) => tag.includes(matchTag) : undefined,
+        flags: {
+          withClassName: context.options.withClassName,
+        },
+      })
 
       return {
         ...context,
         output: transformed.code,
       }
     }),
-    updateUrl({ context }) {
+    setUrl({ context }) {
       urlSaver.setValue('input', context.input ?? '')
     },
+    setClassName: assign(({ context, event }) => {
+      assertEvent(event, 'Set withClassName')
+      return { ...context, options: { ...context.options, withClassName: event.value } }
+    }),
+    setMatchTag: assign(({ context, event }) => {
+      assertEvent(event, 'Set matchTag')
+      return { ...context, options: { ...context.options, matchTag: event.value } }
+    }),
   },
   guards: {
     willBeReady: ({ context }) => {
@@ -75,6 +96,10 @@ export const playgroundActor = setup({
     sourceFile: null,
     input: initialInput,
     output: '',
+    options: {
+      withClassName: true,
+      matchTag: null,
+    },
   },
   initial: 'loading',
   states: {
@@ -88,12 +113,14 @@ export const playgroundActor = setup({
     },
     ready: {
       initial: 'Playing',
-      entry: ['updateOutput'],
+      entry: ['setOutput'],
       states: {
         Playing: {
           on: {
-            Save: { actions: ['updateUrl'] },
-            'Update input': { actions: ['updateInput', 'updateUrl', 'updateOutput'] },
+            Save: { actions: ['setUrl'] },
+            'Set input': { actions: ['setInput', 'setUrl', 'setOutput'] },
+            'Set withClassName': { actions: ['setClassName', 'setOutput'] },
+            'Set matchTag': { actions: ['setMatchTag', 'setOutput'] },
           },
         },
       },
