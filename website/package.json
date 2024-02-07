@@ -6,7 +6,7 @@
   "scripts": {
     "prepare": "panda",
     "dev": "remix vite:dev",
-    "build": "remix vite:build",
+    "build": "pnpm panda && remix vite:build",
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc --noEmit",
     "types:codegen": "tsx scripts/bundle-types.mts"
