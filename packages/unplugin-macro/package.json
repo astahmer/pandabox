@@ -1,25 +1,9 @@
 {
   "name": "@pandabox/unplugin-macro",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "packageManager": "pnpm@8.6.12",
-  "description": "",
-  "license": "MIT",
-  "homepage": "https://github.com/antfu/unplugin-starter#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/antfu/unplugin-starter.git"
-  },
-  "bugs": {
-    "url": "https://github.com/antfu/unplugin-starter/issues"
-  },
-  "keywords": [
-    "unplugin",
-    "vite",
-    "webpack",
-    "rollup",
-    "transform"
-  ],
+  "description": "Macro unplugin for Panda CSS",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -79,9 +63,6 @@
       ]
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch src",
@@ -92,6 +73,39 @@
     "release": "bumpp && npm publish",
     "start": "esno src/index.ts",
     "test": "vitest"
+  },
+  "dependencies": {
+    "@pandacss/config": "^0.30.1",
+    "@pandacss/core": "^0.30.1",
+    "@pandacss/extractor": "^0.30.1",
+    "@pandacss/node": "^0.30.1",
+    "@pandacss/parser": "^0.30.1",
+    "@pandacss/shared": "^0.30.1",
+    "@pandacss/types": "^0.30.1",
+    "magic-string": "^0.30.6",
+    "ts-morph": "19.0.0",
+    "unplugin": "^1.5.1"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.2.2",
+    "@nuxt/kit": "^3.8.2",
+    "@nuxt/schema": "^3.8.2",
+    "@pandacss/preset-base": "^0.30.1",
+    "@pandacss/preset-panda": "^0.30.1",
+    "@types/node": "^20.10.3",
+    "bumpp": "^9.2.0",
+    "chalk": "^5.3.0",
+    "eslint": "^8.55.0",
+    "esno": "^4.0.0",
+    "fast-glob": "^3.3.2",
+    "nodemon": "^3.0.2",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.6.1",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.2",
+    "vite": "^5.0.4",
+    "vitest": "^0.34.6",
+    "webpack": "^5.89.0"
   },
   "peerDependencies": {
     "@nuxt/kit": "^3",
@@ -121,26 +135,29 @@
       "optional": true
     }
   },
-  "dependencies": {
-    "unplugin": "^1.5.1"
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/astahmer/pandabox#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astahmer/pandabox.git"
   },
-  "devDependencies": {
-    "@antfu/eslint-config": "^2.2.2",
-    "@nuxt/kit": "^3.8.2",
-    "@nuxt/schema": "^3.8.2",
-    "@types/node": "^20.10.3",
-    "bumpp": "^9.2.0",
-    "chalk": "^5.3.0",
-    "eslint": "^8.55.0",
-    "esno": "^4.0.0",
-    "fast-glob": "^3.3.2",
-    "nodemon": "^3.0.2",
-    "rimraf": "^5.0.5",
-    "rollup": "^4.6.1",
-    "tsup": "^8.0.1",
-    "typescript": "^5.3.2",
-    "vite": "^5.0.4",
-    "vitest": "^0.34.6",
-    "webpack": "^5.89.0"
-  }
+  "bugs": {
+    "url": "https://github.com/astahmer/pandabox/issues"
+  },
+  "keywords": [
+    "pandacss",
+    "pandabox",
+    "panda",
+    "kit",
+    "typesafety",
+    "typescript",
+    "unplugin",
+    "vite",
+    "webpack",
+    "rollup",
+    "transform"
+  ]
 }
