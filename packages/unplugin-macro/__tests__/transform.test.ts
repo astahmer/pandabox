@@ -16,6 +16,8 @@ import OnlyCssRaw from './samples/only-css-raw?raw'
 // @ts-expect-error
 import CssWithRaw from './samples/css-with-raw?raw'
 // @ts-expect-error
+import OnlyStyled from './samples/only-styled?raw'
+// @ts-expect-error
 import FullExample from './samples/full?raw'
 
 const id = 'app.tsx'
@@ -196,7 +198,6 @@ describe('atomic', () => {
       "
     `)
   })
-
   test('transform full', async () => {
     const ctx = await createMacroContext({
       root: '/',
@@ -235,6 +236,187 @@ describe('atomic', () => {
           </div>
         )
       }
+      "
+    `)
+  })
+
+  test('transform JSX factory', async () => {
+    const ctx = await createMacroContext({
+      root: '/',
+      conf: createConfigResult({}),
+    })
+    const { panda } = ctx
+    const code = OnlyStyled
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+      import { styled } from '../styled-system/jsx'
+      import { something } from 'some-module'
+
+      export const App = () => {
+        return (
+          <div className=\\"d_flex flex_column font_semibold text_green.300 text_center textStyle_4xl\\" onClick={() => console.log('hello')} unresolvable={something}>
+            <span>Hello from Panda</span>
+          </div>
+        )
+      }
+      "
+    `)
+  })
+
+  test('transform JSX pattern - Box', async () => {
+    const ctx = await createMacroContext({
+      root: '/',
+      conf: createConfigResult({}),
+    })
+    const { panda } = ctx
+    const code = `import 'virtual:panda.css'
+import { Box } from '../styled-system/jsx'
+import { something } from 'some-module'
+
+export const App = () => {
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      fontWeight="semibold"
+      color="green.300"
+      textAlign="center"
+      textStyle="4xl"
+      onClick={() => console.log('hello')}
+      unresolvable={something}
+    >
+      <span>Hello from Panda</span>
+    </Box>
+  )
+}
+
+`
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+      import { Box } from '../styled-system/jsx'
+      import { something } from 'some-module'
+
+      export const App = () => {
+        return (
+          <div className=\\"d_flex flex_column font_semibold text_green.300 text_center textStyle_4xl\\" onClick={() => console.log('hello')} unresolvable={something}>
+            <span>Hello from Panda</span>
+          </div>
+        )
+      }
+
+      "
+    `)
+  })
+
+  test('transform JSX pattern - Stack', async () => {
+    const ctx = await createMacroContext({
+      root: '/',
+      conf: createConfigResult({
+        patterns: {
+          extend: {
+            stack: {
+              jsxElement: 'section',
+            },
+          },
+        },
+      }),
+    })
+    const { panda } = ctx
+    const code = `import 'virtual:panda.css'
+import { Stack } from '../styled-system/jsx'
+import { something } from 'some-module'
+
+export const App = () => {
+  return (
+    <Stack
+      fontWeight="semibold"
+      color="green.300"
+      textAlign="center"
+      textStyle="4xl"
+      onClick={() => console.log('hello')}
+      unresolvable={something}
+    >
+      <span>Hello from Panda</span>
+    </Stack>
+  )
+}
+
+`
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+      import { Stack } from '../styled-system/jsx'
+      import { something } from 'some-module'
+
+      export const App = () => {
+        return (
+          <section className=\\"d_flex flex_column gap_10px font_semibold text_green.300 text_center textStyle_4xl\\" onClick={() => console.log('hello')} unresolvable={something}>
+            <span>Hello from Panda</span>
+          </section>
+        )
+      }
+
+      "
+    `)
+  })
+
+  test('ignore unknown JSX component', async () => {
+    const ctx = await createMacroContext({
+      root: '/',
+      conf: createConfigResult({}),
+    })
+    const { panda } = ctx
+    const code = `import 'virtual:panda.css'
+import { something } from 'some-module'
+
+export const App = () => {
+  return (
+    <Something
+      size="lg"
+      onClick={() => console.log('hello')}
+      unresolvable={something}
+    >
+      <span>Hello from Panda</span>
+    </Something>
+  )
+}
+
+`
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+      import { something } from 'some-module'
+
+      export const App = () => {
+        return (
+          <Something
+            size=\\"lg\\"
+            onClick={() => console.log('hello')}
+            unresolvable={something}
+          >
+            <span>Hello from Panda</span>
+          </Something>
+        )
+      }
+
       "
     `)
   })
@@ -422,29 +604,185 @@ describe('grouped', () => {
       "
     `)
   })
+
+  test('transform JSX factory', async () => {
+    const ctx = await createMacroContext({
+      root: '/',
+      conf: createConfigResult({}),
+    })
+    const { panda } = ctx
+    const code = OnlyStyled
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+      import { styled } from '../styled-system/jsx'
+      import { something } from 'some-module'
+
+      export const App = () => {
+        return (
+          <div className=\\"gTAnXW\\" onClick={() => console.log('hello')} unresolvable={something}>
+            <span>Hello from Panda</span>
+          </div>
+        )
+      }
+      "
+    `)
+  })
+
+  test('transform JSX pattern - Box', async () => {
+    const ctx = await createMacroContext({
+      root: '/',
+      conf: createConfigResult({}),
+    })
+    const { panda } = ctx
+    const code = `import 'virtual:panda.css'
+import { Box } from '../styled-system/jsx'
+import { something } from 'some-module'
+
+export const App = () => {
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      fontWeight="semibold"
+      color="green.300"
+      textAlign="center"
+      textStyle="4xl"
+      onClick={() => console.log('hello')}
+      unresolvable={something}
+    >
+      <span>Hello from Panda</span>
+    </Box>
+  )
+}
+
+`
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+      import { Box } from '../styled-system/jsx'
+      import { something } from 'some-module'
+
+      export const App = () => {
+        return (
+          <div className=\\"gTAnXW\\" onClick={() => console.log('hello')} unresolvable={something}>
+            <span>Hello from Panda</span>
+          </div>
+        )
+      }
+
+      "
+    `)
+  })
+
+  test('transform JSX pattern - Stack', async () => {
+    const ctx = await createMacroContext({
+      root: '/',
+      conf: createConfigResult({
+        patterns: {
+          extend: {
+            stack: {
+              jsxElement: 'section',
+            },
+          },
+        },
+      }),
+    })
+    const { panda } = ctx
+    const code = `import 'virtual:panda.css'
+import { Stack } from '../styled-system/jsx'
+import { something } from 'some-module'
+
+export const App = () => {
+  return (
+    <Stack
+      fontWeight="semibold"
+      color="green.300"
+      textAlign="center"
+      textStyle="4xl"
+      onClick={() => console.log('hello')}
+      unresolvable={something}
+    >
+      <span>Hello from Panda</span>
+    </Stack>
+  )
+}
+
+`
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+      import { Stack } from '../styled-system/jsx'
+      import { something } from 'some-module'
+
+      export const App = () => {
+        return (
+          <section className=\\"jdxYbG\\" onClick={() => console.log('hello')} unresolvable={something}>
+            <span>Hello from Panda</span>
+          </section>
+        )
+      }
+
+      "
+    `)
+  })
+
+  test('ignore unknown JSX component', async () => {
+    const ctx = await createMacroContext({
+      root: '/',
+      conf: createConfigResult({}),
+    })
+    const { panda } = ctx
+    const code = `import 'virtual:panda.css'
+import { something } from 'some-module'
+
+export const App = () => {
+  return (
+    <Something
+      size="lg"
+      onClick={() => console.log('hello')}
+      unresolvable={something}
+    >
+      <span>Hello from Panda</span>
+    </Something>
+  )
+}
+
+`
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+      import { something } from 'some-module'
+
+      export const App = () => {
+        return (
+          <Something
+            size=\\"lg\\"
+            onClick={() => console.log('hello')}
+            unresolvable={something}
+          >
+            <span>Hello from Panda</span>
+          </Something>
+        )
+      }
+
+      "
+    `)
+  })
 })
-
-// const common: Partial<LoadConfigResult> = {
-//     dependencies: [],
-//     path: '',
-//     hooks: {},
-//   }
-//   const conf = {
-//     ...common,
-//     config: {
-//         theme: {
-//             recipes: {
-//                 buttonRecipe
-//             }
-//         },
-//       ...config,
-//       cwd: '/',
-//       include: [],
-//       outdir: 'styled-system',
-//     },
-//   } as LoadConfigResult
-
-// const serialized = stringifyJson(conf.config)
-// const deserialize = () => parseJson(serialized)
-
-// return { ...conf, serialized, deserialize } as LoadConfigResult
