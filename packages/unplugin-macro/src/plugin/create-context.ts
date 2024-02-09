@@ -1,4 +1,3 @@
-import { loadConfig } from '@pandacss/config'
 import { RuleProcessor } from '@pandacss/core'
 import { PandaContext } from '@pandacss/node'
 import { createCss, createMergeCss } from '@pandacss/shared'
@@ -35,17 +34,3 @@ export const createMacroContext = async (options: MacroContextOptions) => {
 }
 
 export type MacroContext = Awaited<ReturnType<typeof createMacroContext>>
-
-// const conf = await loadConfig({ cwd: options.root })
-// const panda = await loadConfigAndCreateContext()
-// const panda = new PandaContext({
-//   ...conf,
-//   config: {
-//     ...conf.config,
-//     hooks: {
-//       'context:created': (args) => {
-//         console.log(0, args)
-//       },
-//     },
-//   },
-// })
