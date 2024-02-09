@@ -1,16 +1,24 @@
-import type { UnpluginFactory } from 'unplugin'
-import { createUnplugin } from 'unplugin'
-import { createFilter } from '@rollup/pluginutils'
-import { tranformPanda, TransformOptions } from './plugin/transform'
-import { ViteDevServer, HmrContext } from 'vite'
-import { createMacroContext, MacroContext } from './plugin/create-context'
 import { loadConfig } from '@pandacss/config'
 import { LoadConfigResult } from '@pandacss/types'
-import { removeUnusedCssVars } from './plugin/remove-unused-css-vars'
-import { removeUnusedKeyframes } from './plugin/remove-unused-keyframes'
+import { createFilter } from '@rollup/pluginutils'
+import type { UnpluginFactory } from 'unplugin'
+import { createUnplugin } from 'unplugin'
+import { HmrContext } from 'vite'
+import { createMacroContext, MacroContext } from './plugin/create-context'
+import { tranformPanda, TransformOptions } from './plugin/transform'
+import { removeUnusedCssVars, removeUnusedKeyframes } from '@pandabox/postcss-plugins'
+import postcss from 'postcss'
 
 const virtualModuleId = 'virtual:panda.css'
 const resolvedVirtualModuleId = '\0' + virtualModuleId
+
+interface PluginOptions extends Partial<TransformOptions> {
+  cwd?: string
+  configPath?: string
+  include?: string | RegExp | (string | RegExp)[]
+  exclude?: string | RegExp | (string | RegExp)[]
+  optimizeCss?: boolean
+}
 
 export const unpluginFactory: UnpluginFactory<PluginOptions | undefined> = (rawOptions) => {
   const options = resolveOptions(rawOptions ?? {})
@@ -62,8 +70,10 @@ export const unpluginFactory: UnpluginFactory<PluginOptions | undefined> = (rawO
       }
 
       const css = sheet.toCss({ optimize: true })
-      const optimized = removeUnusedCssVars(removeUnusedKeyframes(css))
-      return optimized
+      if (!options.optimizeCss) return css
+
+      const optimized = postcss([removeUnusedCssVars(panda.config.cssVarRoot), removeUnusedKeyframes]).process(css)
+      return optimized.toString()
     },
 
     transformInclude(id) {
@@ -97,13 +107,6 @@ export const unplugin = /* #__PURE__ */ createUnplugin(unpluginFactory)
 
 export default unplugin
 
-interface PluginOptions extends Partial<TransformOptions> {
-  cwd?: string
-  configPath?: string
-  include?: string | RegExp | (string | RegExp)[]
-  exclude?: string | RegExp | (string | RegExp)[]
-}
-
 const resolveOptions = (options: PluginOptions) => {
   return {
     cwd: options.cwd || process.cwd(),
@@ -111,5 +114,6 @@ const resolveOptions = (options: PluginOptions) => {
     include: options.include || [/\.[cm]?[jt]sx?$/],
     exclude: options.exclude || [/node_modules/],
     output: options?.output || 'atomic',
+    optimizeCss: options.optimizeCss ?? true,
   }
 }

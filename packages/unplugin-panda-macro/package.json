@@ -75,6 +75,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@pandabox/postcss-plugins": "workspace:^",
     "@pandacss/config": "^0.30.1",
     "@pandacss/core": "^0.30.1",
     "@pandacss/extractor": "^0.30.1",
@@ -84,6 +85,7 @@
     "@pandacss/types": "^0.30.1",
     "@rollup/pluginutils": "^5.1.0",
     "magic-string": "^0.30.6",
+    "postcss": "^8.4.34",
     "ts-morph": "19.0.0",
     "unplugin": "^1.5.1"
   },
