@@ -2,10 +2,101 @@
 
 This will be the home for utilities around Panda CSS.
 
+# @pandabox/unplugin-panda-macro
+
+Directly inline your `styled-system` functions and components results as class names (`atomic` or `grouped`)
+
+```bash
+pnpm i @pandabox/unplugin-panda-macro
+```
+
+From:
+
+```tsx
+import { css } from '../styled-system/css'
+
+export const App = () => {
+  return (
+    <>
+      <div
+        className={css({
+          display: 'flex',
+          flexDirection: 'column',
+          fontWeight: 'semibold',
+          color: 'green.300',
+          textAlign: 'center',
+          textStyle: '4xl',
+        })}
+      >
+        <span>Hello from Panda</span>
+      </div>
+      <styled.div
+        display="flex"
+        flexDirection="column"
+        fontWeight="semibold"
+        color="green.300"
+        textAlign="center"
+        textStyle="4xl"
+        onClick={() => console.log('hello')}
+        unresolvable={something}
+      >
+        <span>Hello from Panda</span>
+      </styled.div>
+    </>
+  )
+}
+```
+
+To (`atomic`):
+
+```tsx
+import { css } from '../styled-system/css'
+
+export const App = () => {
+  return (
+    <>
+      <div className={'d_flex flex_column font_semibold text_green.300 text_center textStyle_4xl'}>
+        <span>Hello from Panda</span>
+      </div>
+      <div
+        className="d_flex flex_column font_semibold text_green.300 text_center textStyle_4xl"
+        onClick={() => console.log('hello')}
+        unresolvable={something}
+      >
+        <span>Hello from Panda</span>
+      </div>
+    </>
+  )
+}
+```
+
+# @pandabox/utils
+
+```bash
+pnpm i @pandabox/utils
+```
+
+- `assignInlineVars`
+- `cssVar`
+- `wrapValue`
+
+# @pandabox/postcss-plugins
+
+```bash
+pnpm i @pandabox/postcss-plugins
+```
+
+- `removeUnusedCssVars`
+- `removeUnusedKeyframes`
+
 ## @pandabox/define-theme
 
 End to end type-safe theme definition (without any codegen step), so that the `panda.config.ts` can also benefit from
 type-safety and token/conditions/utilities autocomplete.
+
+```bash
+pnpm i @pandabox/define-theme
+```
 
 ## Usage
 
@@ -121,6 +212,10 @@ config.defineRecipe({
 ```
 
 ## @pandabox/define-recipe
+
+```bash
+pnpm i @pandabox/define-recipe
+```
 
 The `defineRecipe` method will now return a `RecipeBuilder` object instead of a `RecipeConfig` object. The
 `RecipeBuilder` object has the following methods:
