@@ -139,17 +139,20 @@
     }
   },
   "files": [
+    "src",
     "dist"
   ],
-  "license": "MIT",
-  "homepage": "https://github.com/astahmer/pandabox#readme",
+  "homepage": "https://astahmer.dev",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/astahmer/pandabox.git"
+    "url": "git+https://github.com/astahmer/pandabox.git",
+    "directory": "packages/unplugin-panda-macro"
   },
-  "bugs": {
-    "url": "https://github.com/astahmer/pandabox/issues"
+  "author": "Alexandre Stahmer",
+  "publishConfig": {
+    "access": "public"
   },
+  "sideEffects": false,
   "keywords": [
     "pandacss",
     "pandabox",
