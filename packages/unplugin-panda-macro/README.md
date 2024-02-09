@@ -1,28 +1,108 @@
-# unplugin-starter
+# @pandabox/unplugin-panda-macro
 
-[![NPM version](https://img.shields.io/npm/v/unplugin-starter?color=a1b858&label=)](https://www.npmjs.com/package/unplugin-starter)
+Directly inline your `styled-system` functions and components results as class names (`atomic` or `grouped`)
 
-Starter template for [unplugin](https://github.com/unjs/unplugin).
+## Features
 
-## Template Usage
+- [x] Zero runtime
+- [x] Works with any panda.config
+- [x] You don't need to use the Panda CLI or postcss plugin
+- [x] Works with React/Solid
+- [x] Automatically remove unused CSS variables/keyframes
 
-To use this template, clone it down using:
+## Supports
 
-```bash
-npx degit unplugin/unplugin-starter my-unplugin
+- [x] css `css({ ... })` / `css.raw({ ... })`
+- [x] cva `const xxx = cva({ ... })`
+- [x] recipes `button({ ... })`
+- [x] JSX styled factory `styled.div({ ... })` / `styled('div', { ... })`
+- [x] any JSX pattern like `<Box />`, `<Stack />` etc
+
+You can even choose to inline as `atomic` or `grouped` class names.
+
+From:
+
+```tsx
+import { css } from '../styled-system/css'
+
+export const App = () => {
+  return (
+    <>
+      <div
+        className={css({
+          display: 'flex',
+          flexDirection: 'column',
+          fontWeight: 'semibold',
+          color: 'green.300',
+          textAlign: 'center',
+          textStyle: '4xl',
+        })}
+      >
+        <span>Hello from Panda</span>
+      </div>
+      <styled.div
+        display="flex"
+        flexDirection="column"
+        fontWeight="semibold"
+        color="green.300"
+        textAlign="center"
+        textStyle="4xl"
+        onClick={() => console.log('hello')}
+        unresolvable={something}
+      >
+        <span>Hello from Panda</span>
+      </styled.div>
+    </>
+  )
+}
 ```
 
-And do a global replacement of `unplugin-starter` with your plugin name.
+To (`atomic`):
 
-Then you can start developing your unplugin 🔥
+```tsx
+import { css } from '../styled-system/css'
 
-To test your plugin, run: `pnpm run dev`
-To release a new version, run: `pnpm run release`
+export const App = () => {
+  return (
+    <>
+      <div className={'d_flex flex_column font_semibold text_green.300 text_center textStyle_4xl'}>
+        <span>Hello from Panda</span>
+      </div>
+      <div
+        className="d_flex flex_column font_semibold text_green.300 text_center textStyle_4xl"
+        onClick={() => console.log('hello')}
+        unresolvable={something}
+      >
+        <span>Hello from Panda</span>
+      </div>
+    </>
+  )
+}
+```
+
+To (`grouped`):
+
+```tsx
+import { css } from '../styled-system/css'
+
+export const App = () => {
+  return (
+    <>
+      <div className={'gTAnXW'}>
+        <span>Hello from Panda</span>
+      </div>
+      <div className="gTAnXW" onClick={() => console.log('hello')} unresolvable={something}>
+        <span>Hello from Panda</span>
+      </div>
+    </>
+  )
+}
+```
 
 ## Install
 
 ```bash
-npm i unplugin-starter
+npm i @pandabox/unplugin-panda-macro
 ```
 
 <details>
@@ -30,11 +110,13 @@ npm i unplugin-starter
 
 ```ts
 // vite.config.ts
-import Starter from 'unplugin-starter/vite'
+import panda from '@pandabox/unplugin-panda-macro/vite'
 
 export default defineConfig({
   plugins: [
-    Starter({ /* options */ }),
+    Panda({
+      /* options */
+    }),
   ],
 })
 ```
@@ -48,17 +130,18 @@ Example: [`playground/`](./playground/)
 
 ```ts
 // rollup.config.js
-import Starter from 'unplugin-starter/rollup'
+import panda from '@pandabox/unplugin-panda-macro/rollup'
 
 export default {
   plugins: [
-    Starter({ /* options */ }),
+    Panda({
+      /* options */
+    }),
   ],
 }
 ```
 
 <br></details>
-
 
 <details>
 <summary>Webpack</summary><br>
@@ -68,8 +151,10 @@ export default {
 module.exports = {
   /* ... */
   plugins: [
-    require('unplugin-starter/webpack')({ /* options */ })
-  ]
+    require('@pandabox/unplugin-panda-macro/webpack')({
+      /* options */
+    }),
+  ],
 }
 ```
 
@@ -82,7 +167,12 @@ module.exports = {
 // nuxt.config.js
 export default defineNuxtConfig({
   modules: [
-    ['unplugin-starter/nuxt', { /* options */ }],
+    [
+      '@pandabox/unplugin-panda-macro/nuxt',
+      {
+        /* options */
+      },
+    ],
   ],
 })
 ```
@@ -99,7 +189,9 @@ export default defineNuxtConfig({
 module.exports = {
   configureWebpack: {
     plugins: [
-      require('unplugin-starter/webpack')({ /* options */ }),
+      require('@pandabox/unplugin-panda-macro/webpack')({
+        /* options */
+      }),
     ],
   },
 }
@@ -113,11 +205,17 @@ module.exports = {
 ```ts
 // esbuild.config.js
 import { build } from 'esbuild'
-import Starter from 'unplugin-starter/esbuild'
+import panda from '@pandabox/unplugin-panda-macro/esbuild'
 
 build({
-  plugins: [Starter()],
+  plugins: [Panda()],
 })
 ```
 
 <br></details>
+
+# Made with
+
+[![NPM version](https://img.shields.io/npm/v/unplugin-panda?color=a1b858&label=)](https://www.npmjs.com/package/unplugin-panda)
+
+Panda template for [unplugin](https://github.com/unjs/unplugin).

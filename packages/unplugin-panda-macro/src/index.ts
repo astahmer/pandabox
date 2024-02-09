@@ -1,18 +1,18 @@
 import { loadConfig } from '@pandacss/config'
-import { LoadConfigResult } from '@pandacss/types'
+import { type LoadConfigResult } from '@pandacss/types'
 import { createFilter } from '@rollup/pluginutils'
 import type { UnpluginFactory } from 'unplugin'
 import { createUnplugin } from 'unplugin'
-import { HmrContext } from 'vite'
-import { createMacroContext, MacroContext } from './plugin/create-context'
-import { tranformPanda, TransformOptions } from './plugin/transform'
+import { type HmrContext } from 'vite'
+import { createMacroContext, type MacroContext } from './plugin/create-context'
+import { tranformPanda, type TransformOptions } from './plugin/transform'
 import { removeUnusedCssVars, removeUnusedKeyframes } from '@pandabox/postcss-plugins'
 import postcss from 'postcss'
 
 const virtualModuleId = 'virtual:panda.css'
 const resolvedVirtualModuleId = '\0' + virtualModuleId
 
-interface PluginOptions extends Partial<TransformOptions> {
+export interface PluginOptions extends Partial<TransformOptions> {
   cwd?: string
   configPath?: string
   include?: string | RegExp | (string | RegExp)[]

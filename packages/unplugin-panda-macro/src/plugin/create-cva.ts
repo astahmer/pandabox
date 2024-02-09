@@ -1,6 +1,6 @@
 import { compact } from '@pandacss/shared'
 import { type RecipeConfig } from '@pandacss/types'
-import { MacroContext } from './create-context'
+import { type MacroContext } from './create-context'
 
 type Cva = Pick<RecipeConfig, 'base' | 'variants' | 'compoundVariants'>
 

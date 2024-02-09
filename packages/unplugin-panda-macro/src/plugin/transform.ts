@@ -1,11 +1,11 @@
 import { stringify } from '@pandacss/core'
 import { box, extractCallExpressionArguments, unbox } from '@pandacss/extractor'
 import { toHash } from '@pandacss/shared'
-import { ParserResultInterface, SystemStyleObject, type RecipeConfig } from '@pandacss/types'
+import { type ParserResultInterface, type SystemStyleObject, type RecipeConfig } from '@pandacss/types'
 import MagicString from 'magic-string'
 import { CallExpression, Node, SourceFile } from 'ts-morph'
 
-import { MacroContext } from './create-context'
+import { type MacroContext } from './create-context'
 import { createCva } from './create-cva'
 import { getVariableName } from './get-cva-var-name'
 import { combineResult } from './unbox-combine-result'
