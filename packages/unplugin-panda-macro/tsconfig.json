@@ -3,11 +3,12 @@
     "target": "es2017",
     "lib": ["esnext", "DOM"],
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "strict": true,
     "strictNullChecks": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "customConditions": ["source"]
   },
   "include": ["src"],
   "exclude": ["dist", "__tests__/samples"]

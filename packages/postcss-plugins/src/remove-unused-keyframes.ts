@@ -1,8 +1,6 @@
-import postcss from 'postcss'
+import type { TransformCallback } from 'postcss'
 
-export const removeUnusedKeyframes = (css: string) => {
-  const root = postcss.parse(css)
-
+export const removeUnusedKeyframes: TransformCallback = (root) => {
   // Store all keyframes and their usage status
   const keyframes = new Map<string, boolean>()
 
@@ -27,6 +25,4 @@ export const removeUnusedKeyframes = (css: string) => {
       rule.remove()
     }
   })
-
-  return root.toString()
 }
