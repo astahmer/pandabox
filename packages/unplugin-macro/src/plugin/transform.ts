@@ -10,17 +10,18 @@ import { createCva } from './create-cva'
 import { getVariableName } from './get-cva-var-name'
 import { combineResult } from './unbox-combine-result'
 
-interface TransformOptions {
+export interface TransformOptions {
+  output: 'atomic' | 'grouped'
+}
+
+export interface TransformArgs extends TransformOptions {
   code: string
   id: string
-  //
-  output: 'atomic' | 'grouped'
-  //
   sourceFile: SourceFile
   parserResult: ParserResultInterface | undefined
 }
 
-export const tranformPanda = (ctx: MacroContext, options: TransformOptions) => {
+export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
   const { code, id, output = 'atomic', sourceFile, parserResult } = options
   if (!parserResult) return null
 
