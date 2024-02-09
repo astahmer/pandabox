@@ -160,6 +160,29 @@ describe('atomic', () => {
       import { button } from '../styled-system/recipes'
 
       export const App = () => {
+        return <div className={\\"d_flex cursor_pointer font_bold bg_red.200 text_slate.800 p_8 fs_40px rounded_full\\"}>Button</div>
+      }
+      "
+    `)
+  })
+
+  test('skip transforming recipe with option', async () => {
+    const ctx = await createMacroContext({
+      root: '/',
+      conf: createConfigResult({}),
+    })
+    const { panda } = ctx
+    const code = OnlyRecipe
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult, keepRecipeClassNames: true })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+      import { button } from '../styled-system/recipes'
+
+      export const App = () => {
         return <div className={\\"button button--visual_funky button--size_lg button--shape_circle\\"}>Button</div>
       }
       "
@@ -231,7 +254,7 @@ describe('atomic', () => {
               <span>🐼</span>
               <span>Hello from Panda</span>
             </div>
-            <div className={\\"button button--visual_funky button--size_lg button--shape_circle\\"}>Button</div>
+            <div className={\\"d_flex cursor_pointer font_bold bg_red.200 text_slate.800 p_8 fs_40px rounded_full\\"}>Button</div>
             <div className=\\"d_flex bg_red.200 text_white p_4 fs_12px\\">Atomic Button</div>
           </div>
         )
@@ -524,7 +547,7 @@ describe('grouped', () => {
       import { button } from '../styled-system/recipes'
 
       export const App = () => {
-        return <div className={\\"button button--visual_funky button--size_lg button--shape_circle\\"}>Button</div>
+        return <div className={\\"bcqMaE\\"}>Button</div>
       }
       "
     `)
@@ -596,7 +619,7 @@ describe('grouped', () => {
               <span>🐼</span>
               <span>Hello from Panda</span>
             </div>
-            <div className={\\"button button--visual_funky button--size_lg button--shape_circle\\"}>Button</div>
+            <div className={\\"bcqMaE\\"}>Button</div>
             <div className=\\"kUuLsR\\">Atomic Button</div>
           </div>
         )

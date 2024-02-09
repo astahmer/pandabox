@@ -12,6 +12,7 @@ import { combineResult } from './unbox-combine-result'
 
 export interface TransformOptions {
   output: 'atomic' | 'grouped'
+  keepRecipeClassNames?: boolean
 }
 
 export interface TransformArgs extends TransformOptions {
@@ -22,7 +23,7 @@ export interface TransformArgs extends TransformOptions {
 }
 
 export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
-  const { code, id, output = 'atomic', sourceFile, parserResult } = options
+  const { code, id, output = 'atomic', keepRecipeClassNames, sourceFile, parserResult } = options
   if (!parserResult) return null
 
   const { panda, css, mergeCss, sheet, styles } = ctx
@@ -170,7 +171,6 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
     }
 
     // Collect all extracted styles object/class names
-    // @ts-expect-error typing issue in panda parser
     if (result.type === 'css') {
       result.data.forEach((d) => processAtomic(d))
     } else if (result.type === 'pattern') {
@@ -183,8 +183,11 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
       if (!config) return
 
       const transform = panda.recipes.getTransform(fnName, panda.recipes.isSlotRecipe(fnName))
+
       // Add the `recipe` className to the classList (needed for the `base` styles)
-      classList.add(transform('__ignore__', '__ignore__').className)
+      const base = transform('__ignore__', '__ignore__')
+      classList.add(base.className)
+      config.base && processAtomic(config.base)
 
       // Add each `recipe.variants` resulting className to the classList
       result.data.forEach((variants) => {
@@ -193,6 +196,9 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
         Object.entries(computedVariants).forEach(([key, value]) => {
           const transformed = transform(key, value)
           classList.add(transformed.className)
+
+          const variantStyles = config.variants?.[key]?.[value]
+          variantStyles && processAtomic(variantStyles)
         })
       })
 
@@ -205,7 +211,7 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
     const merged = mergeCss(...Array.from(styleObjects))
     const getClassName = () => {
       // Inline the usual recipe classNames (base+variants)
-      if (result.type === 'recipe') {
+      if (keepRecipeClassNames && result.type === 'recipe') {
         return Array.from(classList).join(' ')
       }
 
