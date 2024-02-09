@@ -17,7 +17,6 @@
   },
   "scripts": {
     "build": "tsup",
-    "test": "vitest",
     "typecheck": "tsc --noEmit"
   },
   "homepage": "https://astahmer.dev",
