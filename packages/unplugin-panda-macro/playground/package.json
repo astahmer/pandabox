@@ -1,4 +1,5 @@
 {
+  "name": "macro-playground",
   "private": true,
   "scripts": {
     "dev": "nodemon -w '../src/**/*.ts' -e .ts -x vite"
