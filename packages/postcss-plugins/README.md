@@ -1,5 +1,4 @@
-# @pandabox/utils
+# @pandabox/postcss-plugins
 
-- `assignInlineVars`
-- `cssVar`
-- `wrapValue`
+- `removeUnusedCssVars`
+- `removeUnusedKeyframes`

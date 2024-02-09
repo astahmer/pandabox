@@ -1,14 +1,8 @@
 {
+  "extends": "../../tsconfig.build.json",
   "compilerOptions": {
-    "target": "es2017",
-    "lib": ["esnext", "DOM"],
-    "module": "esnext",
-    "moduleResolution": "Bundler",
-    "resolveJsonModule": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "esModuleInterop": true,
-    "customConditions": ["source"]
+    "noEmit": false,
+    "outDir": "dist"
   },
   "include": ["src"],
   "exclude": ["dist", "__tests__/samples"]

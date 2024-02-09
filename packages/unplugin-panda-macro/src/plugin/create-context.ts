@@ -1,7 +1,7 @@
 import { RuleProcessor } from '@pandacss/core'
 import { PandaContext } from '@pandacss/node'
 import { createCss, createMergeCss } from '@pandacss/shared'
-import { LoadConfigResult } from '@pandacss/types'
+import { type LoadConfigResult } from '@pandacss/types'
 import { isAbsolute, resolve } from 'path'
 import { createFilter } from 'vite'
 
@@ -25,7 +25,8 @@ export const createMacroContext = async (options: MacroContextOptions) => {
   const sheet = panda.createSheet()
 
   const css = createCss(panda.baseSheetContext)
-  const { mergeCss } = createMergeCss(panda.baseSheetContext)
+  const mergeFns = createMergeCss(panda.baseSheetContext)
+  const mergeCss: (...styles: StyleObject[]) => StyleObject = mergeFns.mergeCss
 
   const styles = new Map<string, string>()
   const files = new Set<string>()
@@ -34,3 +35,7 @@ export const createMacroContext = async (options: MacroContextOptions) => {
 }
 
 export type MacroContext = Awaited<ReturnType<typeof createMacroContext>>
+
+export interface StyleObject {
+  [key: string]: any
+}
