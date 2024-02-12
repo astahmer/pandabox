@@ -38,7 +38,7 @@ const isDev = import.meta.env.DEV
 
 export const Layout = ({ children, header }: LayoutProps) => {
   useEffect(() => {
-    if (!isDev) return
+    if (isDev) return
     const script = document.createElement('script')
     script.async = true
     script.src = 'https://umami-nu-bice.vercel.app/script.js'

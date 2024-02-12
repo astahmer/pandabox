@@ -1,8 +1,17 @@
-import type { LinksFunction } from '@remix-run/node'
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react'
-import pandaCss from '../styled-system/styles.css?url'
+import type { LinksFunction } from '@remix-run/node'
+import { cssBundleHref } from '@remix-run/css-bundle'
+// import pandaCss from 'virtual:panda.css?url'
+// import pandaCss from '../styled-system/styles.css?url'
 
-export const links: LinksFunction = () => [{ rel: 'stylesheet', href: pandaCss }]
+// export const links: LinksFunction = () => [{ rel: 'stylesheet', href: pandaCss }]
+export const links: LinksFunction = () => {
+  return [
+    // { rel: 'stylesheet', href: pandaCss },
+    ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
+    // ...
+  ]
+}
 
 export default function App() {
   return (

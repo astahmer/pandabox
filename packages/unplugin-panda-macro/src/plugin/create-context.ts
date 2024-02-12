@@ -1,9 +1,10 @@
-import { RuleProcessor } from '@pandacss/core'
+import { removeUnusedCssVars, removeUnusedKeyframes } from '@pandabox/postcss-plugins'
 import { PandaContext } from '@pandacss/node'
 import { createCss, createMergeCss } from '@pandacss/shared'
 import { type LoadConfigResult } from '@pandacss/types'
 import { isAbsolute, resolve } from 'path'
-import { createFilter } from 'vite'
+import postcss from 'postcss'
+import type { PluginOptions } from './core'
 
 const ensureAbsolute = (path: string, root: string) => (path ? (isAbsolute(path) ? path : resolve(root, path)) : root)
 
@@ -12,16 +13,11 @@ export interface MacroContextOptions {
   conf: LoadConfigResult
 }
 
-export const createMacroContext = async (options: MacroContextOptions) => {
+export const createMacroContext = (options: MacroContextOptions) => {
   const { conf } = options
   const panda = new PandaContext(conf)
 
   const root = ensureAbsolute('', options.root)
-  const isIncluded = createFilter(panda.config.include ?? /\.[jt]sx?$/, panda.config.exclude ?? [/node_modules/], {
-    resolve: root,
-  })
-
-  const api = new RuleProcessor(panda)
   const sheet = panda.createSheet()
 
   const css = createCss(panda.baseSheetContext)
@@ -31,7 +27,28 @@ export const createMacroContext = async (options: MacroContextOptions) => {
   const styles = new Map<string, string>()
   const files = new Set<string>()
 
-  return { panda, root, isIncluded, api, sheet, css, mergeCss, styles, files }
+  const toCss = (opts: PluginOptions) => {
+    panda.appendLayerParams(sheet)
+    panda.appendCssOfType('tokens', sheet)
+    panda.appendCssOfType('global', sheet)
+
+    if (opts.output === 'atomic') {
+      panda.appendParserCss(sheet)
+    } else {
+      styles.forEach((serialized) => {
+        sheet.layers.utilities.append(serialized)
+      })
+      // console.log(styles)
+    }
+
+    const css = sheet.toCss({ optimize: true })
+    if (!opts.optimizeCss) return css
+
+    const optimized = postcss([removeUnusedCssVars(panda.config.cssVarRoot), removeUnusedKeyframes]).process(css)
+    return optimized.toString()
+  }
+
+  return { panda, root, sheet, css, mergeCss, styles, files, toCss }
 }
 
 export type MacroContext = Awaited<ReturnType<typeof createMacroContext>>

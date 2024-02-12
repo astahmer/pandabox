@@ -3,7 +3,7 @@ import type { MetaFunction } from '@remix-run/node'
 import { Layout } from '../components/layout'
 import { css, cx } from '#styled-system/css'
 import { LuExternalLink, LuLink } from 'react-icons/lu'
-import { hstack } from '#styled-system/patterns'
+import { container, hstack } from '#styled-system/patterns'
 import { Link } from '@remix-run/react'
 
 export const meta: MetaFunction = () => {
@@ -34,13 +34,18 @@ export default function Index() {
             a toolbox for 🐼 Panda CSS
           </styled.h1>
           <Stack gap="1" mt="4" textStyle={{ base: 'sm', md: 'lg' }}>
+            <a className={link} href="https://github.com/astahmer/pandabox/tree/main/packages/unplugin-panda-macro">
+              <LuExternalLink />
+              <span className={linkTitle}>@pandabox/unplugin-panda-macro</span> Make your `styled-system` disappear at
+              build-time by inlining the results as class names.
+            </a>
             <Link className={link} to="/styled2panda">
               <LuLink /> <span className={linkTitle}>styled2panda</span> Easily migrate code from `styled-components` to
               Panda CSS
             </Link>
             <a className={link} href="https://tw2panda-astahmer.vercel.app/" target="_blank">
-              <LuExternalLink /> <span className={linkTitle}>tw2panda</span> : Easily migrate code from tailwind to
-              Panda CSS
+              <LuExternalLink /> <span className={linkTitle}>tw2panda</span> Easily migrate code from tailwind to Panda
+              CSS
             </a>
             <a className={link} href="https://github.com/astahmer/pandabox/tree/main/packages/utils">
               <LuExternalLink />
@@ -58,6 +63,9 @@ export default function Index() {
             >
               <LuExternalLink /> <span className={linkTitle}>defineRecipe</span> Extend, pick, omit and merge config
               Recipes/Slots Recipes to easily compose them together.
+            </a>
+            <a className={link} href="https://www.astahmer.dev" target="_blank">
+              <LuExternalLink /> <span className={linkTitle}>Alex website</span>
             </a>
           </Stack>
         </Stack>
