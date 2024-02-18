@@ -1,19 +1,22 @@
 import { loadConfig } from '@pandacss/config'
 import { type LoadConfigResult, type RequiredBy } from '@pandacss/types'
 import { createFilter } from '@rollup/pluginutils'
-import type { UnpluginFactory } from 'unplugin'
-import { createUnplugin } from 'unplugin'
-import { type HmrContext, type ViteDevServer } from 'vite'
 import fs from 'node:fs'
-import path from 'node:path'
+import type { UnpluginFactory } from 'unplugin'
+import { type HmrContext } from 'vite'
 
 import { createMacroContext, type MacroContext } from '../plugin/create-context'
 import { tranformPanda, type TransformOptions } from '../plugin/transform'
 
 const fileId = 'panda.css'
-const virtualModuleId = 'virtual:' + fileId
-const resolvedVirtualModuleId = '\0' + virtualModuleId
-const virtualPath = '/_virtual/' + fileId
+const _virtualModuleId = 'virtual:' + fileId
+const _virtualInternalUrlId = 'virtual:internal:' + fileId
+const ids = {
+  virtualModuleId: 'virtual:' + fileId,
+  resolvedVirtualModuleId: '\0' + _virtualModuleId,
+  virtualInternalUrlId: _virtualInternalUrlId,
+  resolvedVirtualInternalUrlId: '\0' + _virtualInternalUrlId,
+}
 
 export interface PluginOptions extends Partial<TransformOptions> {
   /** @see https://panda-css.com/docs/references/config#cwd */
@@ -44,7 +47,6 @@ export const unpluginFactory: UnpluginFactory<PluginOptions | undefined> = (rawO
   let _ctx: MacroContext
   let initPromise: Promise<MacroContext> | undefined
   let cssContent: string | undefined
-  let isUsingVirtualUrl = false
   let fileWithUrl: string | undefined
 
   const getCtx = async () => {
@@ -70,34 +72,55 @@ export const unpluginFactory: UnpluginFactory<PluginOptions | undefined> = (rawO
     enforce: 'pre',
     async resolveId(source) {
       const [id, query] = source.split('?')
-      if (id !== virtualModuleId) return null
+      const withQuery = query ? `?${query}` : ''
+
+      // This happens when the user imports the virtual entrypoint as url
+      // after we already redirected the public entrypoint to the internal virtual module
+      // `import pandaCss from 'virtual:panda.css?url'` -> `export default '/virtual:internal:panda.css'`
+      // we now must make this url as virtual using the `'\0'` special character
+      // so that we can load the content later on
+      if (id === '/' + ids.virtualInternalUrlId) {
+        return ids.resolvedVirtualInternalUrlId + withQuery
+      }
+
+      if (id !== ids.virtualModuleId) return null
 
       if (mode === 'build') {
         // Convert the virtual module ID to a relative file path
         // `import pandaCss from 'virtual:panda.css?url'`
         // -> `import pandaCss from '/path/to/project/panda.css?url'`
         const ctx = await getCtx()
-        return { id: ctx.paths.outfile + (query ? `?${query}` : ''), external: false }
+        return { id: ctx.paths.outfile + withQuery, external: false }
       }
 
-      return resolvedVirtualModuleId + (query ? `?${query}` : '')
+      return ids.resolvedVirtualModuleId + withQuery
     },
     async load(source) {
       const [id] = source.split('?')
-      if (id !== resolvedVirtualModuleId) return null
+
+      // If the virtual entrypoint is requested as a URL, we need to return the content
+      if (ids.resolvedVirtualInternalUrlId === id) {
+        console.time('toCss')
+        const ctx = await getCtx()
+        const css = ctx.toCss(options)
+        console.timeEnd('toCss')
+
+        return css
+      }
+
+      if (id !== ids.resolvedVirtualModuleId) return null
 
       const ctx = await getCtx()
       const css = ctx.toCss(options)
       cssContent = css
 
-      console.log({ source })
       if (source.endsWith('?url')) {
         fileWithUrl = source
-        isUsingVirtualUrl = true
-        // Convert the virtual module ID to a relative file path, handled by the Vite dev server
+        // Convert the virtual entrypoint module to another (internal) virtual module
         // `import pandaCss from 'virtual:panda.css?url'`
         //  -> pandaCss = `export default '/path/to/project/panda.css'`
-        return `export default ${JSON.stringify(virtualPath + '?time=' + Date.now() + '&t=' + Date.now())}`
+        // for some reason we need to use `new Date` instead of `Date.now()` ?? at least now HMR is fine
+        return `export default ${JSON.stringify('/' + ids.virtualInternalUrlId + '?t=' + new Date())}`
       }
 
       return css
@@ -143,114 +166,20 @@ export const unpluginFactory: UnpluginFactory<PluginOptions | undefined> = (rawO
         const ctx = await getCtx()
         if (!ctx.files.has(hmr.file)) return
 
-        const mod = hmr.server.moduleGraph.getModuleById(resolvedVirtualModuleId)
+        const mod = hmr.server.moduleGraph.getModuleById(ids.resolvedVirtualModuleId)
+        // importing virtual entrypoint `import 'virtual:panda.css'`
         if (mod) {
           hmr.server.moduleGraph.invalidateModule(mod, new Set(), hmr.timestamp, true)
-        } else if (isUsingVirtualUrl) {
-          return hmr.modules
-          const timestamp = new Date().getTime()
-          hmr.server.ws.send({
-            type: 'update',
-            updates: [
-              {
-                type: 'css-update',
-                timestamp,
-                path: virtualPath,
-                acceptedPath: virtualPath,
-              },
-            ],
-          })
-          hmr.server.ws.send({
-            type: 'update',
-            updates: [
-              {
-                type: 'js-update',
-                timestamp,
-                path: virtualModuleId,
-                acceptedPath: virtualModuleId,
-              },
-            ],
-          })
-          hmr.server.ws.send({
-            type: 'update',
-            updates: [
-              {
-                type: 'js-update',
-                timestamp,
-                path: resolvedVirtualModuleId,
-                acceptedPath: resolvedVirtualModuleId,
-              },
-            ],
-          })
-          hmr.server.ws.send({
-            type: 'update',
-            updates: [
-              {
-                type: 'js-update',
-                timestamp,
-                path: resolvedVirtualModuleId + '?url',
-                acceptedPath: resolvedVirtualModuleId + '?url',
-              },
-            ],
-          })
-          // return
+        } else if (fileWithUrl) {
+          // importing virtual entrypoint as url `import pandaCss from 'virtual:panda.css?url'`
 
-          // hmr.server.ws.send({
-          //   type: 'full-reload',
-          //   path: virtualPath,
-          // })
-          // console.log(hmr.server.moduleGraph.idToModuleMap)
-          console.log({
-            virtualModuleId,
-            resolvedVirtualModuleId,
-            virtualPath,
-            fileWithUrl,
-          })
-          if (fileWithUrl) {
-            const withUrlMod = hmr.server.moduleGraph.getModuleById(fileWithUrl)
-            console.log(1, withUrlMod)
-            if (withUrlMod) {
-              await hmr.server.reloadModule(withUrlMod)
-              // hmr.server.moduleGraph.invalidateModule(withUrlMod, new Set(), hmr.timestamp, true)
+          const modUrl = hmr.server.moduleGraph.getModuleById(ids.resolvedVirtualModuleId + '?url')
+          console.log({ modUrl })
 
-              // return [withUrlMod]
-              return
-            }
+          if (modUrl) {
+            hmr.server.moduleGraph.invalidateModule(modUrl, new Set(), hmr.timestamp, true)
           }
-          console.log(hmr.server.moduleGraph.getModulesByFile(virtualPath))
-          // console.log(hmr.server.moduleGraph.urlToModuleMap)
-          // console.log(hmr.server.moduleGraph.safeModulesPath)
-          // console.log(hmr.server.moduleGraph.getModuleById('@id/__' + resolvedVirtualModuleId))
-          const urlMod = await hmr.server.moduleGraph.getModuleByUrl(resolvedVirtualModuleId + '?url')
-          console.log(urlMod?.id)
-          if (urlMod) {
-            hmr.server.moduleGraph.invalidateModule(urlMod, new Set(), hmr.timestamp, true)
-            // const css = ctx.toCss(options)
-            // cssContent = css
-
-            return [urlMod, ...urlMod.importedModules, ...urlMod.importers]
-          }
-          // // const virtualMod = hmr.server.moduleGraph.getModuleById(virtualModuleId)
-          // console.log(virtualMod)
-          // const urlMod = hmr.server.moduleGraph.getModuleById(virtualPath)
-          // hmr.server.moduleGraph.invalidateModule(urlMod, new Set(), hmr.timestamp, true)
         }
-      },
-      configureServer(server: ViteDevServer) {
-        // Use middleware to serve the virtual CSS content when using ?url
-        server.middlewares.use(async (req, res, next) => {
-          const url = req.url?.split('?')[0]
-          if (url === virtualPath) {
-            const ctx = await getCtx()
-            const css = ctx.toCss(options)
-            console.log('from dev server')
-            res.setHeader('Content-Type', 'text/css')
-            res.setHeader('Cache-Control', 'no-cache')
-            res.end(css)
-          } else {
-            next()
-          }
-        })
       },
     },
   }
