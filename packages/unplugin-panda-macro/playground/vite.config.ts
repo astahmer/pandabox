@@ -1,7 +1,8 @@
 import { defineConfig } from 'vite'
 import Inspect from 'vite-plugin-inspect'
-import panda from '../src/vite'
+import react from '@vitejs/plugin-react-swc'
+import panda from '../dist/vite'
 
 export default defineConfig({
-  plugins: [Inspect(), panda({ output: 'grouped' })],
+  plugins: [Inspect(), panda({ output: 'atomic' }), react()],
 })

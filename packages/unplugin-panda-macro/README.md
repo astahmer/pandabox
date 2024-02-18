@@ -1,6 +1,6 @@
 # @pandabox/unplugin-panda-macro
 
-Directly inline your `styled-system` functions and components results as class names (`atomic` or `grouped`)
+Make your `styled-system` disappear at build-time by inlining the results as class names.
 
 ## Features
 
@@ -105,6 +105,54 @@ export const App = () => {
 npm i @pandabox/unplugin-panda-macro
 ```
 
+Plugin Options:
+
+````ts
+type PluginOptions = {
+  /** @see https://panda-css.com/docs/references/config#cwd */
+  cwd?: string
+  /** @see https://panda-css.com/docs/references/cli#--config--c-1 */
+  configPath?: string | undefined
+  /**
+   * @see https://www.npmjs.com/package/@rollup/pluginutils#include-and-exclude
+   * @default `[/\.[cm]?[jt]sx?$/]`
+   */
+  include?: string | RegExp | (string | RegExp)[]
+  /**
+   * @see https://www.npmjs.com/package/@rollup/pluginutils#include-and-exclude
+   * @default [/node_modules/]
+   */
+  exclude?: string | RegExp | (string | RegExp)[]
+  /**
+   * @example
+   * ```ts
+   * // `atomic`
+   * const className = css({ display: "flex", flexDirection: "column", color: "red.300" })`
+   * // -> `const className = 'd_flex flex_column text_red.300'`
+   *
+   * // `grouped`
+   * const className = css({ display: "flex", flexDirection: "column", color: "red.300" })`
+   * // -> `const className = 'hkogUJ'`
+   * ```
+   *
+   * @default `'atomic'`
+   */
+  output?: 'atomic' | 'grouped'
+  /**
+   * Will remove unused CSS variables and keyframes from the generated CSS
+   */
+  optimizeCss?: boolean
+  /**
+   * Do not transform Panda recipes to `atomic` or `grouped` and instead keep their defaults BEM-like classes
+   */
+  keepRecipeClassNames?: boolean
+}
+````
+
+Then you can add this line `import 'virtual:panda.css'` somewhere in your app
+
+> You don't need to use Panda CSS `postcss` plugin and you don't need to import the `styled-system/styles.css` either
+
 <details>
 <summary>Vite</summary><br>
 
@@ -114,7 +162,7 @@ import panda from '@pandabox/unplugin-panda-macro/vite'
 
 export default defineConfig({
   plugins: [
-    Panda({
+    panda({
       /* options */
     }),
   ],
@@ -134,7 +182,7 @@ import panda from '@pandabox/unplugin-panda-macro/rollup'
 
 export default {
   plugins: [
-    Panda({
+    panda({
       /* options */
     }),
   ],
@@ -208,7 +256,7 @@ import { build } from 'esbuild'
 import panda from '@pandabox/unplugin-panda-macro/esbuild'
 
 build({
-  plugins: [Panda()],
+  plugins: [panda()],
 })
 ```
 

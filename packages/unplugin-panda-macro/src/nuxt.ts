@@ -1,12 +1,10 @@
 import { addVitePlugin, addWebpackPlugin, defineNuxtModule } from '@nuxt/kit'
 import vite from './vite'
 import webpack from './webpack'
-import type { Options } from './types'
 import '@nuxt/schema'
+import type { PluginOptions } from './plugin/core'
 
-export interface ModuleOptions extends Options {
-
-}
+export interface ModuleOptions extends PluginOptions {}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
