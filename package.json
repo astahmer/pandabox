@@ -5,7 +5,8 @@
   "scripts": {
     "define-theme": "pnpm --filter @pandabox/define-theme",
     "knip": "knip",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "typecheck": "pnpm --filter @pandabox/* run typecheck"
   },
   "devDependencies": {
     "@arktype/attest": "^0.5.0",
