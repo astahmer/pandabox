@@ -11,7 +11,24 @@ import { getVariableName } from './get-cva-var-name'
 import { combineResult } from './unbox-combine-result'
 
 export interface TransformOptions {
-  output: 'atomic' | 'grouped'
+  /**
+   * @example
+   * ```ts
+   * // `atomic`
+   * const className = css({ display: "flex", flexDirection: "column", color: "red.300" })`
+   * // -> `const className = 'd_flex flex_column text_red.300'`
+   *
+   * // `grouped`
+   * const className = css({ display: "flex", flexDirection: "column", color: "red.300" })`
+   * // -> `const className = 'hkogUJ'`
+   * ```
+   *
+   * @default `'atomic'`
+   */
+  output?: 'atomic' | 'grouped'
+  /**
+   * Do not transform Panda recipes to `atomic` or `grouped` and instead keep their defaults BEM-like classes
+   */
   keepRecipeClassNames?: boolean
 }
 
