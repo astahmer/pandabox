@@ -2,10 +2,11 @@ import { css, cva } from './styled-system/css'
 import { center } from './styled-system/patterns'
 import { button } from './styled-system/recipes'
 import { Stack, styled } from './styled-system/jsx'
-import 'virtual:panda.css'
+// import 'virtual:panda.css'
+import pandaCss from 'virtual:panda.css?url'
 
 const overrides = css.raw({
-  bg: 'green.100',
+  bg: 'blue.100',
 })
 
 const atomicRecipe = cva({
@@ -27,6 +28,7 @@ const atomicRecipe = cva({
 export const App = () => {
   return (
     <div className={center({ h: 'full' })}>
+      <link rel="stylesheet" href={pandaCss} />
       <div
         className={css(
           {

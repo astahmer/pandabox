@@ -4,6 +4,9 @@ import { createCss, createMergeCss } from '@pandacss/shared'
 import { type LoadConfigResult } from '@pandacss/types'
 import { isAbsolute, resolve } from 'path'
 import postcss from 'postcss'
+import fs from 'node:fs'
+import path from 'node:path'
+
 import type { PluginOptions } from './core'
 
 const ensureAbsolute = (path: string, root: string) => (path ? (isAbsolute(path) ? path : resolve(root, path)) : root)
@@ -29,8 +32,7 @@ export const createMacroContext = (options: MacroContextOptions) => {
 
   const toCss = (opts: PluginOptions) => {
     panda.appendLayerParams(sheet)
-    panda.appendCssOfType('tokens', sheet)
-    panda.appendCssOfType('global', sheet)
+    panda.appendBaselineCss(sheet)
 
     if (opts.output === 'atomic') {
       panda.appendParserCss(sheet)
@@ -38,7 +40,6 @@ export const createMacroContext = (options: MacroContextOptions) => {
       styles.forEach((serialized) => {
         sheet.layers.utilities.append(serialized)
       })
-      // console.log(styles)
     }
 
     const css = sheet.toCss({ optimize: true })
@@ -48,7 +49,24 @@ export const createMacroContext = (options: MacroContextOptions) => {
     return optimized.toString()
   }
 
-  return { panda, root, sheet, css, mergeCss, styles, files, toCss }
+  const outfile = path.join(...panda.paths.getFilePath('panda.css'))
+  const outdir = path.dirname(outfile)
+
+  return {
+    panda,
+    root,
+    sheet,
+    css,
+    mergeCss,
+    styles,
+    files,
+    toCss,
+    paths: {
+      outfile,
+      outdir,
+      root,
+    },
+  }
 }
 
 export type MacroContext = Awaited<ReturnType<typeof createMacroContext>>

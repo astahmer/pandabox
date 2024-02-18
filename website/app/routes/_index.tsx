@@ -27,7 +27,7 @@ export default function Index() {
     <Layout>
       <Center h="100%">
         <Stack p="8" textAlign="center">
-          <styled.h1 textStyle={{ base: '4xl', md: '7xl' }} fontWeight="bold" color="yellow.400">
+          <styled.h1 textStyle={{ base: '4xl', md: '7xl' }} fontWeight="bold" color="blue.400">
             @pandabox
           </styled.h1>
           <styled.h1 textStyle={{ base: '3xl', md: '4xl' }} color={{ base: 'gray.500', _dark: 'gray.300' }}>
