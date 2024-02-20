@@ -21,7 +21,7 @@ export const assignInlineVars = <TRecord extends TokenRecord>(
       tokens,
       ({ value, path }) => {
         if (typeof value === 'string' || typeof value === 'number') {
-          const cssVarRef = cssVar.create(category + '-' + path, options).ref
+          const cssVarRef = cssVar.create(category + '-' + path, options).var
           vars[cssVarRef] = value as any
         }
       },

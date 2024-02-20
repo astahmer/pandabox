@@ -17,11 +17,11 @@ test('assign-inline-vars', () => {
     }),
   ).toMatchInlineSnapshot(`
     {
-      "var(--colors-primary)": "red",
-      "var(--colors-secondary)": "blue",
-      "var(--colors-some\\.very\\.nested\\.path)": "green",
-      "var(--sizes-md)": 20,
-      "var(--sizes-sm)": 10,
+      "--colors-primary": "red",
+      "--colors-secondary": "blue",
+      "--colors-some\\.very\\.nested\\.path": "green",
+      "--sizes-md": 20,
+      "--sizes-sm": 10,
     }
   `)
 })
