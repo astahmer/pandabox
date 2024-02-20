@@ -25,8 +25,8 @@ const id = 'app.tsx'
 describe('atomic', () => {
   const output = 'atomic'
 
-  test('transform css', async () => {
-    const ctx = await createMacroContext({
+  test('transform css', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -54,8 +54,8 @@ describe('atomic', () => {
     `)
   })
 
-  test('unwrap css raw', async () => {
-    const ctx = await createMacroContext({
+  test('unwrap css raw', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -90,8 +90,41 @@ describe('atomic', () => {
     `)
   })
 
-  test('transform cva', async () => {
-    const ctx = await createMacroContext({
+  test.only('ignore unresolved runtime conditions', () => {
+    const ctx = createMacroContext({
+      root: '/',
+      conf: createConfigResult({}),
+    })
+    const { panda } = ctx
+    const code = `import 'virtual:panda.css'
+    import { css } from '../styled-system/css'
+    import { someValue } from 'some-module'
+
+    css({ display: 'flex' });
+    css(true ? { fontSize: '1px' } : { fontSize: '2px' });
+    css(someValue ? { flexDirection: 'column' } : { flexDirection: 'row' });
+    css(someValue ?? { fontWeight: 'semibold' });
+    `
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+          import { css } from '../styled-system/css'
+          import { someValue } from 'some-module'
+
+          "d_flex";
+          "fs_1px";
+          css(someValue ? { flexDirection: 'column' } : { flexDirection: 'row' });
+          css(someValue ?? { fontWeight: 'semibold' });
+          "
+    `)
+  })
+
+  test('transform cva', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -115,8 +148,8 @@ describe('atomic', () => {
     `)
   })
 
-  test('transform pattern', async () => {
-    const ctx = await createMacroContext({
+  test('transform pattern', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -143,8 +176,8 @@ describe('atomic', () => {
     `)
   })
 
-  test('transform recipe', async () => {
-    const ctx = await createMacroContext({
+  test('transform recipe', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -166,8 +199,8 @@ describe('atomic', () => {
     `)
   })
 
-  test('skip transforming recipe with option', async () => {
-    const ctx = await createMacroContext({
+  test('skip transforming recipe with option', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -189,8 +222,8 @@ describe('atomic', () => {
     `)
   })
 
-  test('transform csswithraw', async () => {
-    const ctx = await createMacroContext({
+  test('transform csswithraw', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -221,8 +254,8 @@ describe('atomic', () => {
       "
     `)
   })
-  test('transform full', async () => {
-    const ctx = await createMacroContext({
+  test('transform full', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -263,8 +296,8 @@ describe('atomic', () => {
     `)
   })
 
-  test('transform JSX factory', async () => {
-    const ctx = await createMacroContext({
+  test('transform JSX factory', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -291,8 +324,8 @@ describe('atomic', () => {
     `)
   })
 
-  test('transform JSX pattern - Box', async () => {
-    const ctx = await createMacroContext({
+  test('transform JSX pattern - Box', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -341,8 +374,8 @@ export const App = () => {
     `)
   })
 
-  test('transform JSX pattern - Stack', async () => {
-    const ctx = await createMacroContext({
+  test('transform JSX pattern - Stack', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({
         patterns: {
@@ -397,8 +430,8 @@ export const App = () => {
     `)
   })
 
-  test('ignore unknown JSX component', async () => {
-    const ctx = await createMacroContext({
+  test('ignore unknown JSX component', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -448,8 +481,8 @@ export const App = () => {
 describe('grouped', () => {
   const output = 'grouped'
 
-  test('transform css', async () => {
-    const ctx = await createMacroContext({
+  test('transform css', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -477,8 +510,8 @@ describe('grouped', () => {
     `)
   })
 
-  test('transform cva', async () => {
-    const ctx = await createMacroContext({
+  test('transform cva', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -502,8 +535,8 @@ describe('grouped', () => {
     `)
   })
 
-  test('transform pattern', async () => {
-    const ctx = await createMacroContext({
+  test('transform pattern', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -530,8 +563,8 @@ describe('grouped', () => {
     `)
   })
 
-  test('transform recipe', async () => {
-    const ctx = await createMacroContext({
+  test('transform recipe', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -553,8 +586,8 @@ describe('grouped', () => {
     `)
   })
 
-  test('transform csswithraw', async () => {
-    const ctx = await createMacroContext({
+  test('transform csswithraw', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -586,8 +619,8 @@ describe('grouped', () => {
     `)
   })
 
-  test('transform full', async () => {
-    const ctx = await createMacroContext({
+  test('transform full', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -628,8 +661,8 @@ describe('grouped', () => {
     `)
   })
 
-  test('transform JSX factory', async () => {
-    const ctx = await createMacroContext({
+  test('transform JSX factory', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -656,8 +689,8 @@ describe('grouped', () => {
     `)
   })
 
-  test('transform JSX pattern - Box', async () => {
-    const ctx = await createMacroContext({
+  test('transform JSX pattern - Box', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
@@ -706,8 +739,8 @@ export const App = () => {
     `)
   })
 
-  test('transform JSX pattern - Stack', async () => {
-    const ctx = await createMacroContext({
+  test('transform JSX pattern - Stack', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({
         patterns: {
@@ -762,8 +795,8 @@ export const App = () => {
     `)
   })
 
-  test('ignore unknown JSX component', async () => {
-    const ctx = await createMacroContext({
+  test('ignore unknown JSX component', () => {
+    const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
