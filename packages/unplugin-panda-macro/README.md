@@ -16,7 +16,12 @@ Make your `styled-system` disappear at build-time by inlining the results as cla
 - [x] cva `const xxx = cva({ ... })`
 - [x] recipes `button({ ... })`
 - [x] JSX styled factory `styled.div({ ... })` / `styled('div', { ... })`
-- [x] any JSX pattern like `<Box />`, `<Stack />` etc
+- [x] any function or JSX pattern like `box()` / `<Box />`, `stack()` / `<Stack />` etc
+
+> ⚠️ Avoid [anything dynamic](https://panda-css.com/docs/guides/dynamic-styling) as usual, if not more, with Panda CSS
+> due to static analysis limitations.
+
+> ❌ [Runtime conditions](https://panda-css.com/docs/guides/dynamic-styling#runtime-conditions) will NOT be transformed
 
 You can even choose to inline as `atomic` or `grouped` class names.
 
@@ -146,6 +151,18 @@ type PluginOptions = {
    * Do not transform Panda recipes to `atomic` or `grouped` and instead keep their defaults BEM-like classes
    */
   keepRecipeClassNames?: boolean
+  /**
+   * Only transform macro imports
+   * @example
+   * ```ts
+   * import { css } from '../styled-system/css' with { type: "macro" }
+   *
+   * const className = css({ display: "flex", flexDirection: "column", color: "red.300" })
+   * // -> `const className = 'd_flex flex_column text_red.300'`
+   * ```
+   *
+   */
+  onlyMacroImports?: boolean
 }
 ````
 

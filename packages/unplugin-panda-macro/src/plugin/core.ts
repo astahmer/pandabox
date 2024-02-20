@@ -100,5 +100,6 @@ const resolveOptions = (options: PluginOptions): RequiredBy<PluginOptions, 'cwd'
     output: options?.output || 'atomic',
     optimizeCss: options.optimizeCss ?? true,
     keepRecipeClassNames: options.keepRecipeClassNames ?? false,
+    onlyMacroImports: options.onlyMacroImports ?? false,
   }
 }

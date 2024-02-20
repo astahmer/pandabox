@@ -54,6 +54,88 @@ describe('atomic', () => {
     `)
   })
 
+  test('transform css only when using `with` import attribute', () => {
+    const ctx = createMacroContext({
+      root: '/',
+      conf: createConfigResult({}),
+    })
+    const { panda } = ctx
+    const code = `import 'virtual:panda.css'
+    import { box } from '../styled-system/patterns' with { type: "macro" }
+    import { box as box2 } from '../styled-system/patterns' with { type: "macro" }
+    import { box as box3 } from '../styled-system/patterns'
+    import { box as box4 } from '../styled-system/patterns' with { type: "invalid-macro" }
+    import { box as box5 } from '../styled-system/patterns' with { invalid: "macro" }
+
+    box({ display: 'flex' });
+    box2({ flexDirection: 'column' });
+    box3({ fontWeight: 'semibold' });
+    box4({ color: 'green.300' });
+    box5({ textAlign: 'center' });
+    box6({ textStyle: '4xl' });`
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult, onlyMacroImports: true })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+          import { box } from '../styled-system/patterns' with { type: "macro" }
+          import { box as box2 } from '../styled-system/patterns' with { type: "macro" }
+          import { box as box3 } from '../styled-system/patterns'
+          import { box as box4 } from '../styled-system/patterns' with { type: "invalid-macro" }
+          import { box as box5 } from '../styled-system/patterns' with { invalid: "macro" }
+
+          "d_flex";
+          "flex_column";
+          box3({ fontWeight: 'semibold' });
+          box4({ color: 'green.300' });
+          box5({ textAlign: 'center' });
+          box6({ textStyle: '4xl' });"
+    `)
+  })
+
+  test('transform css only when using with', () => {
+    const ctx = createMacroContext({
+      root: '/',
+      conf: createConfigResult({}),
+    })
+    const { panda } = ctx
+    const code = `import 'virtual:panda.css'
+    import { css } from '../styled-system/css' with { type: "macro" }
+    import { css as css2 } from '../styled-system/css' with { type: "macro" }
+    import { css as css3 } from '../styled-system/css'
+    import { css as css4 } from '../styled-system/css' with { type: "invalid-macro" }
+    import { css as css5 } from '../styled-system/css' with { invalid: "macro" }
+
+    css({ display: 'flex' });
+    css2({ flexDirection: 'column' });
+    css3({ fontWeight: 'semibold' });
+    css4({ color: 'green.300' });
+    css5({ textAlign: 'center' });
+    css6({ textStyle: '4xl' });`
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult, onlyMacroImports: true })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+          import { css } from '../styled-system/css' with { type: "macro" }
+          import { css as css2 } from '../styled-system/css' with { type: "macro" }
+          import { css as css3 } from '../styled-system/css'
+          import { css as css4 } from '../styled-system/css' with { type: "invalid-macro" }
+          import { css as css5 } from '../styled-system/css' with { invalid: "macro" }
+
+          "d_flex";
+          css2({ flexDirection: 'column' });
+          css3({ fontWeight: 'semibold' });
+          css4({ color: 'green.300' });
+          css5({ textAlign: 'center' });
+          css6({ textStyle: '4xl' });"
+    `)
+  })
+
   test('unwrap css raw', () => {
     const ctx = createMacroContext({
       root: '/',

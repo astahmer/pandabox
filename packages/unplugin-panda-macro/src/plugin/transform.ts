@@ -3,7 +3,7 @@ import { box, extractCallExpressionArguments, unbox } from '@pandacss/extractor'
 import { toHash } from '@pandacss/shared'
 import { type ParserResultInterface, type SystemStyleObject, type RecipeConfig } from '@pandacss/types'
 import MagicString from 'magic-string'
-import { CallExpression, Node, SourceFile } from 'ts-morph'
+import { CallExpression, ImportDeclaration, Node, SourceFile } from 'ts-morph'
 
 import { type MacroContext } from './create-context'
 import { createCva } from './create-cva'
@@ -30,6 +30,18 @@ export interface TransformOptions {
    * Do not transform Panda recipes to `atomic` or `grouped` and instead keep their defaults BEM-like classes
    */
   keepRecipeClassNames?: boolean
+  /**
+   * Only transform macro imports
+   * @example
+   * ```ts
+   * import { css } from '../styled-system/css' with { type: "macro" }
+   *
+   * const className = css({ display: "flex", flexDirection: "column", color: "red.300" })
+   * // -> `const className = 'd_flex flex_column text_red.300'`
+   * ```
+   *
+   */
+  onlyMacroImports?: boolean
 }
 
 export interface TransformArgs extends TransformOptions {
@@ -40,13 +52,15 @@ export interface TransformArgs extends TransformOptions {
 }
 
 export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
-  const { code, id, output = 'atomic', keepRecipeClassNames, sourceFile, parserResult } = options
+  const { code, id, output = 'atomic', keepRecipeClassNames, onlyMacroImports, sourceFile, parserResult } = options
   if (!parserResult) return null
 
   const { panda, css, mergeCss, sheet, styles } = ctx
   const factoryName = panda.jsx.factoryName || 'styled'
 
   const s = new MagicString(code)
+
+  const importMap = onlyMacroImports ? mapIdentifierToImport(sourceFile) : new Map<string, ImportDeclaration>()
 
   /**
    * Hash atomic styles and inline the resulting className
@@ -71,6 +85,24 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
 
     const node = result.box.getNode()
     const fnName = result.name
+
+    // Early return if we only want to transform macro imports
+    // and the current result is not coming from one
+    if (onlyMacroImports) {
+      if (!fnName) return
+
+      let identifier: string | undefined
+      if ((result.type?.includes('jsx') && Node.isJsxOpeningElement(node)) || Node.isJsxSelfClosingElement(node)) {
+        identifier = node.getTagNameNode().getText()
+      } else if (Node.isCallExpression(node)) {
+        identifier = node.getExpression().getText()
+      } else {
+        return
+      }
+
+      const importNode = importMap.get(identifier)
+      if (!importNode) return
+    }
 
     if (result.type?.includes('jsx')) {
       const isJsx = Node.isJsxOpeningElement(node) || Node.isJsxSelfClosingElement(node)
@@ -306,4 +338,52 @@ const extractCvaUsages = (sourceFile: SourceFile, cvaNames: Set<string>) => {
   })
 
   return cvaUsages
+}
+
+const getModuleSpecifierValue = (node: ImportDeclaration) => {
+  try {
+    return node.getModuleSpecifierValue()
+  } catch {
+    return
+  }
+}
+
+const hasMacroAttribute = (node: ImportDeclaration) => {
+  const attrs = node.getAttributes()
+  if (!attrs) return
+
+  const elements = attrs.getElements()
+  if (!elements.length) return
+
+  return elements.some((n) => {
+    const name = n.getName()
+    if (name === 'type') {
+      const value = n.getValue()
+      if (!Node.isStringLiteral(value)) return
+
+      const type = value.getLiteralText()
+      if (type === 'macro') {
+        return true
+      }
+    }
+  })
+}
+
+const mapIdentifierToImport = (sourceFile: SourceFile) => {
+  const map = new Map<string, ImportDeclaration>()
+  const imports = sourceFile.getImportDeclarations()
+
+  imports.forEach((node) => {
+    const mod = getModuleSpecifierValue(node)
+    if (!mod) return
+    if (!hasMacroAttribute(node)) return
+
+    node.getNamedImports().forEach((specifier) => {
+      const name = specifier.getNameNode().getText()
+      const alias = specifier.getAliasNode()?.getText() || name
+      map.set(alias, node)
+    })
+  })
+
+  return map
 }
