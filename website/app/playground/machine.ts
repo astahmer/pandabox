@@ -59,7 +59,7 @@ export const playgroundActor = setup({
 
       const matchTag = context.options.matchTag
       const transformed = styled2panda({
-        sourceFile: createSourceFile(input) as any,
+        sourceFile: createSourceFile(input),
         matchTag: matchTag ? (tag) => tag.includes(matchTag) : undefined,
         withClassName: context.options.withClassName,
       })

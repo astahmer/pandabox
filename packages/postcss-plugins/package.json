@@ -44,9 +44,9 @@
     "typescript"
   ],
   "dependencies": {
-    "postcss": "^8.4.34"
+    "postcss": "^8.4.35"
   },
   "devDependencies": {
-    "tsup": "^8.0.1"
+    "tsup": "^8.0.2"
   }
 }

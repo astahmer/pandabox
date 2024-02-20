@@ -22,16 +22,16 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "magic-string": "0.30.6",
-    "postcss": "^8.4.34",
+    "magic-string": "0.30.7",
+    "postcss": "^8.4.35",
     "postcss-js": "^4.0.1",
-    "ts-morph": "19.0.0"
+    "ts-morph": "21.0.1"
   },
   "devDependencies": {
     "@types/postcss-js": "^4.0.4",
     "outdent": "^0.8.0",
-    "tsup": "^8.0.1",
-    "vitest": "^1.2.1"
+    "tsup": "^8.0.2",
+    "vitest": "^1.3.0"
   },
   "homepage": "https://astahmer.dev",
   "repository": {
