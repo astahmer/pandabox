@@ -44,7 +44,7 @@ describe('atomic', () => {
       export const App = () => {
         return (
           <div
-            className={\\"d_flex flex_column font_semibold text_green.300 text_center textStyle_4xl\\"}
+            className={"d_flex flex_column font_semibold text_green.300 text_center textStyle_4xl"}
           >
             <span>Hello from Panda</span>
           </div>
@@ -90,7 +90,7 @@ describe('atomic', () => {
     `)
   })
 
-  test.only('ignore unresolved runtime conditions', () => {
+  test('ignore unresolved runtime conditions', () => {
     const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
@@ -139,10 +139,10 @@ describe('atomic', () => {
       "import 'virtual:panda.css'
       import { cva } from '../styled-system/css'
 
-      const atomicRecipe = () => \\"\\"
+      const atomicRecipe = () => ""
 
       export const App = () => {
-        return <div className=\\"d_flex bg_red.200 text_white p_4 fs_12px\\">Atomic Button</div>
+        return <div className="d_flex bg_red.200 text_white p_4 fs_12px">Atomic Button</div>
       }
       "
     `)
@@ -167,7 +167,7 @@ describe('atomic', () => {
 
       export const App = () => {
         return (
-          <div className={\\"d_flex items_center justify_center h_full\\"}>
+          <div className={"d_flex items_center justify_center h_full"}>
             <span>Hello from Panda</span>
           </div>
         )
@@ -193,7 +193,7 @@ describe('atomic', () => {
       import { button } from '../styled-system/recipes'
 
       export const App = () => {
-        return <div className={\\"d_flex cursor_pointer font_bold bg_red.200 text_slate.800 p_8 fs_40px rounded_full\\"}>Button</div>
+        return <div className={"d_flex cursor_pointer font_bold bg_red.200 text_slate.800 p_8 fs_40px rounded_full"}>Button</div>
       }
       "
     `)
@@ -216,7 +216,7 @@ describe('atomic', () => {
       import { button } from '../styled-system/recipes'
 
       export const App = () => {
-        return <div className={\\"button button--visual_funky button--size_lg button--shape_circle\\"}>Button</div>
+        return <div className={"button button--visual_funky button--size_lg button--shape_circle"}>Button</div>
       }
       "
     `)
@@ -245,7 +245,7 @@ describe('atomic', () => {
       export const App = () => {
         return (
           <div
-            className={\\"d_flex flex_column font_semibold text_red.500 text_center textStyle_4xl bg_green.100\\"}
+            className={"d_flex flex_column font_semibold text_red.500 text_center textStyle_4xl bg_green.100"}
           >
             <span>Hello from Panda</span>
           </div>
@@ -276,19 +276,19 @@ describe('atomic', () => {
         bg: 'green.100',
       })
 
-      const atomicRecipe = () => \\"\\"
+      const atomicRecipe = () => ""
 
       export const App = () => {
         return (
-          <div className={\\"d_flex items_center justify_center h_full\\"}>
+          <div className={"d_flex items_center justify_center h_full"}>
             <div
-              className={\\"d_flex flex_column font_semibold text_red.500 text_center textStyle_4xl bg_green.100\\"}
+              className={"d_flex flex_column font_semibold text_red.500 text_center textStyle_4xl bg_green.100"}
             >
               <span>🐼</span>
               <span>Hello from Panda</span>
             </div>
-            <div className={\\"d_flex cursor_pointer font_bold bg_red.200 text_slate.800 p_8 fs_40px rounded_full\\"}>Button</div>
-            <div className=\\"d_flex bg_red.200 text_white p_4 fs_12px\\">Atomic Button</div>
+            <div className={"d_flex cursor_pointer font_bold bg_red.200 text_slate.800 p_8 fs_40px rounded_full"}>Button</div>
+            <div className="d_flex bg_red.200 text_white p_4 fs_12px">Atomic Button</div>
           </div>
         )
       }
@@ -315,7 +315,7 @@ describe('atomic', () => {
 
       export const App = () => {
         return (
-          <div className=\\"d_flex flex_column font_semibold text_green.300 text_center textStyle_4xl\\" onClick={() => console.log('hello')} unresolvable={something}>
+          <div className="d_flex flex_column font_semibold text_green.300 text_center textStyle_4xl" onClick={() => console.log('hello')} unresolvable={something}>
             <span>Hello from Panda</span>
           </div>
         )
@@ -364,7 +364,7 @@ export const App = () => {
 
       export const App = () => {
         return (
-          <div className=\\"d_flex flex_column font_semibold text_green.300 text_center textStyle_4xl\\" onClick={() => console.log('hello')} unresolvable={something}>
+          <div className="d_flex flex_column font_semibold text_green.300 text_center textStyle_4xl" onClick={() => console.log('hello')} unresolvable={something}>
             <span>Hello from Panda</span>
           </div>
         )
@@ -420,7 +420,7 @@ export const App = () => {
 
       export const App = () => {
         return (
-          <section className=\\"d_flex flex_column gap_10px font_semibold text_green.300 text_center textStyle_4xl\\" onClick={() => console.log('hello')} unresolvable={something}>
+          <section className="d_flex flex_column gap_10px font_semibold text_green.300 text_center textStyle_4xl" onClick={() => console.log('hello')} unresolvable={something}>
             <span>Hello from Panda</span>
           </section>
         )
@@ -464,7 +464,7 @@ export const App = () => {
       export const App = () => {
         return (
           <Something
-            size=\\"lg\\"
+            size="lg"
             onClick={() => console.log('hello')}
             unresolvable={something}
           >
@@ -500,7 +500,7 @@ describe('grouped', () => {
       export const App = () => {
         return (
           <div
-            className={\\"gTAnXW\\"}
+            className={"gTAnXW"}
           >
             <span>Hello from Panda</span>
           </div>
@@ -526,10 +526,10 @@ describe('grouped', () => {
       "import 'virtual:panda.css'
       import { cva } from '../styled-system/css'
 
-      const atomicRecipe = () => \\"\\"
+      const atomicRecipe = () => ""
 
       export const App = () => {
-        return <div className=\\"kUuLsR\\">Atomic Button</div>
+        return <div className="kUuLsR">Atomic Button</div>
       }
       "
     `)
@@ -554,7 +554,7 @@ describe('grouped', () => {
 
       export const App = () => {
         return (
-          <div className={\\"iPSdxj\\"}>
+          <div className={"iPSdxj"}>
             <span>Hello from Panda</span>
           </div>
         )
@@ -580,7 +580,7 @@ describe('grouped', () => {
       import { button } from '../styled-system/recipes'
 
       export const App = () => {
-        return <div className={\\"bcqMaE\\"}>Button</div>
+        return <div className={"bcqMaE"}>Button</div>
       }
       "
     `)
@@ -609,7 +609,7 @@ describe('grouped', () => {
       export const App = () => {
         return (
           <div
-            className={\\"cEGjSe\\"}
+            className={"cEGjSe"}
           >
             <span>Hello from Panda</span>
           </div>
@@ -641,19 +641,19 @@ describe('grouped', () => {
         bg: 'green.100',
       })
 
-      const atomicRecipe = () => \\"\\"
+      const atomicRecipe = () => ""
 
       export const App = () => {
         return (
-          <div className={\\"iPSdxj\\"}>
+          <div className={"iPSdxj"}>
             <div
-              className={\\"cEGjSe\\"}
+              className={"cEGjSe"}
             >
               <span>🐼</span>
               <span>Hello from Panda</span>
             </div>
-            <div className={\\"bcqMaE\\"}>Button</div>
-            <div className=\\"kUuLsR\\">Atomic Button</div>
+            <div className={"bcqMaE"}>Button</div>
+            <div className="kUuLsR">Atomic Button</div>
           </div>
         )
       }
@@ -680,7 +680,7 @@ describe('grouped', () => {
 
       export const App = () => {
         return (
-          <div className=\\"gTAnXW\\" onClick={() => console.log('hello')} unresolvable={something}>
+          <div className="gTAnXW" onClick={() => console.log('hello')} unresolvable={something}>
             <span>Hello from Panda</span>
           </div>
         )
@@ -729,7 +729,7 @@ export const App = () => {
 
       export const App = () => {
         return (
-          <div className=\\"gTAnXW\\" onClick={() => console.log('hello')} unresolvable={something}>
+          <div className="gTAnXW" onClick={() => console.log('hello')} unresolvable={something}>
             <span>Hello from Panda</span>
           </div>
         )
@@ -785,7 +785,7 @@ export const App = () => {
 
       export const App = () => {
         return (
-          <section className=\\"jdxYbG\\" onClick={() => console.log('hello')} unresolvable={something}>
+          <section className="jdxYbG" onClick={() => console.log('hello')} unresolvable={something}>
             <span>Hello from Panda</span>
           </section>
         )
@@ -829,7 +829,7 @@ export const App = () => {
       export const App = () => {
         return (
           <Something
-            size=\\"lg\\"
+            size="lg"
             onClick={() => console.log('hello')}
             unresolvable={something}
           >
