@@ -4,7 +4,7 @@
   "exports": {
     ".": "./src/index.ts"
   },
-  "dependencies": {
+  "devDependencies": {
     "@pandacss/config": "^0.32.0",
     "@pandacss/node": "^0.32.0",
     "@pandacss/preset-base": "^0.32.0",
