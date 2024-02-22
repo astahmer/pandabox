@@ -7,7 +7,9 @@
     "knip": "knip",
     "release": "changeset publish",
     "typecheck": "pnpm --filter @pandabox/* run typecheck",
-    "test": "vitest"
+    "test": "vitest",
+    "test:run": "vitest --run",
+    "check": "pnpm typecheck && pnpm test:run"
   },
   "devDependencies": {
     "@arktype/attest": "^0.6.2",

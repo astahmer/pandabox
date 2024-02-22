@@ -4,7 +4,6 @@ import { createCss, createMergeCss } from '@pandacss/shared'
 import { type LoadConfigResult } from '@pandacss/types'
 import { isAbsolute, resolve } from 'path'
 import postcss from 'postcss'
-import fs from 'node:fs'
 import path from 'node:path'
 
 import type { PluginOptions } from './core'

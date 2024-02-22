@@ -1,23 +1,16 @@
 import { expect, test, describe } from 'vitest'
 import { createMacroContext } from '../src/plugin/create-context'
 import { tranformPanda } from '../src/plugin/transform'
-import { createConfigResult } from './fixtures'
+import { createConfigResult } from '#pandabox/fixtures'
+import './env?url'
 
-// @ts-expect-error
 import OnlyCss from './samples/only-css?raw'
-// @ts-expect-error
 import OnlyCva from './samples/only-cva?raw'
-// @ts-expect-error
 import OnlyPattern from './samples/only-pattern?raw'
-// @ts-expect-error
 import OnlyRecipe from './samples/only-recipe?raw'
-// @ts-expect-error
 import OnlyCssRaw from './samples/only-css-raw?raw'
-// @ts-expect-error
 import CssWithRaw from './samples/css-with-raw?raw'
-// @ts-expect-error
 import OnlyStyled from './samples/only-styled?raw'
-// @ts-expect-error
 import FullExample from './samples/full?raw'
 
 const id = 'app.tsx'

@@ -1,0 +1,15 @@
+{
+  "name": "@pandabox/fixtures",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@pandacss/config": "^0.32.0",
+    "@pandacss/node": "^0.32.0",
+    "@pandacss/preset-base": "^0.32.0",
+    "@pandacss/preset-panda": "^0.32.0",
+    "@pandacss/shared": "^0.32.0",
+    "@pandacss/types": "^0.32.0"
+  }
+}
