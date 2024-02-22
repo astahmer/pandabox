@@ -29,7 +29,7 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build
-        run: pnpm -r build
+        run: pnpm build
 
       - name: Typecheck
         run: pnpm typecheck
