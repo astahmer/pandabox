@@ -15,7 +15,6 @@
     "strict": true,
     "verbatimModuleSyntax": true,
     "moduleResolution": "Bundler",
-    "module": "ESNext",
-    "customConditions": ["source"]
+    "module": "ESNext"
   }
 }
