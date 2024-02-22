@@ -1,8 +1,5 @@
 {
   "extends": "../tsconfig.build.json",
-  "compilerOptions": {
-    "customConditions": ["source"]
-  },
   "include": ["src"],
   "exclude": ["node_modules", "styled-system", "dist"]
 }
