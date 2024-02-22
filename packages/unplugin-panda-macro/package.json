@@ -86,6 +86,9 @@
     "ts-morph": "21.0.1",
     "unplugin": "^1.7.1"
   },
+  "imports": {
+    "#pandabox/fixtures": "../../fixtures/src/index.ts"
+  },
   "devDependencies": {
     "@nuxt/kit": "^3.10.2",
     "@nuxt/schema": "^3.10.2",

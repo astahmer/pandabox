@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "#pandabox/fixtures": ["./fixtures/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "styled-system", "dist"]
+}

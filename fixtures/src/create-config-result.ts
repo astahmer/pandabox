@@ -1,8 +1,10 @@
 import { mergeConfigs } from '@pandacss/config'
+import { PandaContext } from '@pandacss/node'
 import presetBase from '@pandacss/preset-base'
 import presetPanda from '@pandacss/preset-panda'
 import { parseJson, stringifyJson } from '@pandacss/shared'
-import { Config, LoadConfigResult, PresetCore, UserConfig } from '@pandacss/types'
+import type { Config, LoadConfigResult, PresetCore, UserConfig } from '@pandacss/types'
+import { utils } from './utils'
 
 const buttonRecipe = {
   className: 'button',
@@ -64,10 +66,42 @@ const fixtureDefaults = {
   deserialize: () => parseJson(stringifyJson(config)),
 } as LoadConfigResult
 
-export const createConfigResult = (userConfig: Config) => {
+export const createConfigResult = (userConfig?: Config) => {
   const resolvedConfig = (
     userConfig ? mergeConfigs([userConfig, fixtureDefaults.config]) : fixtureDefaults.config
   ) as UserConfig
 
   return { ...fixtureDefaults, config: resolvedConfig }
+}
+
+export const createContext = (userConfig?: Config) => {
+  let resolvedConfig = (
+    userConfig ? mergeConfigs([userConfig, fixtureDefaults.config]) : fixtureDefaults.config
+  ) as UserConfig
+
+  const hooks = userConfig?.hooks ?? {}
+
+  // This allows editing the config before the context is created
+  // since this function is only used in tests, we only look at the user hooks
+  // not the presets hooks, so that we can keep this fn sync
+  if (hooks['config:resolved']) {
+    const result = hooks['config:resolved']({
+      config: resolvedConfig,
+      path: fixtureDefaults.path,
+      dependencies: fixtureDefaults.dependencies,
+      utils: utils,
+    })
+    if (result) {
+      resolvedConfig = result as UserConfig
+    }
+  }
+
+  return new PandaContext({
+    ...fixtureDefaults,
+    hooks,
+    config: resolvedConfig,
+    tsconfig: {
+      useInMemoryFileSystem: true,
+    },
+  })
 }
