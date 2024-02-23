@@ -87,7 +87,7 @@
     "unplugin": "^1.7.1"
   },
   "imports": {
-    "#pandabox/fixtures": "../../fixtures/src/index.ts"
+    "#pandabox/fixtures": "../fixtures/src/index.ts"
   },
   "devDependencies": {
     "@nuxt/kit": "^3.10.2",
