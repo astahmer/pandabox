@@ -5,4 +5,9 @@ export default defineConfig({
   test: {
     hideSkippedTests: true,
   },
+  resolve: {
+    alias: {
+      '#pandabox/fixtures': './fixtures/src/index.ts',
+    },
+  },
 })
