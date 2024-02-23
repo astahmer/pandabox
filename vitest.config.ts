@@ -1,5 +1,7 @@
 import { defineConfig } from 'vitest/config'
 
+const resolve = (val: string) => new URL(val, import.meta.url).pathname
+
 export default defineConfig({
   root: process.cwd(),
   test: {
@@ -7,7 +9,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '#pandabox/fixtures': './fixtures/src/index.ts',
+      '#pandabox/fixtures': resolve('./fixtures/src/index.ts'),
     },
   },
 })
