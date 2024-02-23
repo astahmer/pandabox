@@ -20,7 +20,7 @@
     "typecheck": "tsc --noEmit"
   },
   "imports": {
-    "#pandabox/fixtures": "../../fixtures/src/index.ts"
+    "#pandabox/fixtures": "../fixtures/src/index.ts"
   },
   "devDependencies": {
     "@pandacss/dev": "^0.32.0",

@@ -4,7 +4,6 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "prepare": "panda",
     "dev": "remix vite:dev",
     "build": "pnpm panda && remix vite:build",
     "start": "npx http-server build/client/",
