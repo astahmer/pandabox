@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "#pandabox/fixtures": ["./fixtures/src/index.ts"]
+      "#pandabox/fixtures": ["./packages/fixtures/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "styled-system", "dist"]
