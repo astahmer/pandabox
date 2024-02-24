@@ -5,8 +5,23 @@ export interface NegativeTransformOptions {
   tokenType?: boolean
 }
 
-const spacingTokenRegex = /export type SpacingToken = (.+)\n/
-const tokenRegex = /export type Token = (.+)\n/
+/**
+ * Removes negative spacing tokens from the `styled-system` generated folder.
+ * - `spacingTokenType`: Removes negative spacing tokens from `tokens.d.ts`
+ * - `tokenType`: Removes negative tokens from `tokens.d.ts`
+ *
+ * @default options: { spacingTokenType: true, tokenType: true }`
+ */
+export const pluginRemoveNegativeSpacing = (options?: NegativeTransformOptions): PandaPlugin => {
+  return {
+    name: 'remove-negative-spacing',
+    hooks: {
+      'codegen:prepare': (args) => {
+        return transformNegativeSpacing(args, options ?? {})
+      },
+    },
+  }
+}
 
 export const transformNegativeSpacing = (args: CodegenPrepareHookArgs, options: NegativeTransformOptions) => {
   const artifact = args.artifacts.find((a) => a.id === 'design-tokens')
@@ -15,12 +30,12 @@ export const transformNegativeSpacing = (args: CodegenPrepareHookArgs, options: 
   const artifactContent = artifact.files.find((f) => f.file.includes('tokens.d'))
   if (!artifactContent) return args.artifacts
 
-  const fileContent = artifactContent.code
+  let fileContent = artifactContent.code
   if (!fileContent) return args.artifacts
 
   const { spacingTokenType = true, tokenType = true } = options
   if (spacingTokenType) {
-    artifactContent.code = updateSpacingTokenType(fileContent)
+    fileContent = artifactContent.code = updateSpacingTokenType(fileContent)
   }
 
   if (tokenType) {
@@ -30,16 +45,8 @@ export const transformNegativeSpacing = (args: CodegenPrepareHookArgs, options: 
   return args.artifacts
 }
 
-export const createNegativeTransforms = (options: NegativeTransformOptions): PandaPlugin => {
-  return {
-    name: 'remove-negative-spacing',
-    hooks: {
-      'codegen:prepare': (args) => {
-        return transformNegativeSpacing(args, options)
-      },
-    },
-  }
-}
+const spacingTokenRegex = /export type SpacingToken = (.+)\n/
+const tokenRegex = /export type Token = (.+)\n/
 
 const updateSpacingTokenType = (file: string) => {
   const match = file.match(spacingTokenRegex)

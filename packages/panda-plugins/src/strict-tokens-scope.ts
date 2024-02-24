@@ -1,11 +1,43 @@
-import type { CodegenPrepareHookArgs, PandaPlugin, TokenCategory } from '@pandacss/types'
+import type {
+  CodegenPrepareHookArgs,
+  CssProperties,
+  LoggerInterface,
+  PandaPlugin,
+  TokenCategory,
+} from '@pandacss/types'
 
-export interface RestrictOptions {
+export interface StrictTokensScopeOptions {
   categories?: TokenCategory[]
-  props?: string[]
+  props?: Array<keyof CssProperties | (string & {})>
 }
 
-export const transformPropTypes = (args: CodegenPrepareHookArgs, options: RestrictOptions) => {
+/**
+ * Restricts the additional type-safety from `strictTokens` to some props only.
+ * - `categories`: Every properties bound to those token categories will be restricted with `strictTokens`
+ * - `props`: Explicit list of props that will be restricted with `strictTokens`
+ *
+ * @see https://panda-css.com/docs/concepts/writing-styles#type-safety
+ */
+export const pluginStrictTokensScope = (options: StrictTokensScopeOptions): PandaPlugin => {
+  let logger: LoggerInterface
+  return {
+    name: 'strict-tokens-scope',
+    hooks: {
+      'context:created': (context) => {
+        logger = context.logger
+      },
+      'codegen:prepare': (args) => {
+        return transformPropTypes(args, options, logger)
+      },
+    },
+  }
+}
+
+export const transformPropTypes = (
+  args: CodegenPrepareHookArgs,
+  options: StrictTokensScopeOptions,
+  logger?: LoggerInterface,
+) => {
   const { categories = [], props = [] } = options
   if (!categories.length && !props.length) return args.artifacts
 
@@ -20,6 +52,10 @@ export const transformPropTypes = (args: CodegenPrepareHookArgs, options: Restri
 
   const strictTokenProps = longhands.concat(shorthands).concat(props)
   if (!strictTokenProps.length) return args.artifacts
+
+  if (logger) {
+    logger.debug('plugin:restrict-strict-tokens', `🐼  Strict token props: ${strictTokenProps.join(', ')}`)
+  }
 
   const transformed =
     content.code
@@ -53,16 +89,7 @@ export const transformPropTypes = (args: CodegenPrepareHookArgs, options: Restri
   return args.artifacts
 }
 
-export const createStrictTokensScope = (options: RestrictOptions): PandaPlugin => ({
-  name: 'restrict-strict-tokens',
-  hooks: {
-    'codegen:prepare': (args) => {
-      return transformPropTypes(args, options)
-    },
-  },
-})
-
-const propertyRegex = /(\w+):\s+Tokens\["(\w+)"\];/g
+const propertyRegex = /(\w+):.+Tokens\["(\w+)"\]\s?;/g
 const findPropertiesByType = (file: string, tokenCategories: string[]) => {
   // Match property lines within the interface string
   const properties = []
@@ -97,7 +124,3 @@ const mapShorthandsToProperties = (file: string) => {
 const findShorthandsForProperties = (properties: string[], shorthandMap: Record<string, string>) => {
   return properties.map((property) => shorthandMap[property] || property)
 }
-
-// 'codegen:prepare': (args) => {
-//     return restrictStrictTokens(args, ['colors', 'fontSizes'])
-//   },

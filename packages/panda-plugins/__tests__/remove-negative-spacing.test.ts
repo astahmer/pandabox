@@ -1,12 +1,7 @@
 import { createContext } from '#pandabox/fixtures'
 import type { Config } from '@pandacss/types'
 import { describe, expect, test } from 'vitest'
-import { transformPropTypes, type RestrictOptions } from '../src'
-import {
-  createNegativeTransforms,
-  transformNegativeSpacing,
-  type NegativeTransformOptions,
-} from '../src/remove-negative-spacing'
+import { transformNegativeSpacing, type NegativeTransformOptions } from '../src/remove-negative-spacing'
 
 const tokensDef = (userConfig: Config, options: NegativeTransformOptions) => {
   const ctx = createContext(userConfig)
