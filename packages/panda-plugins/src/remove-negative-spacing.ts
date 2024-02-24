@@ -6,7 +6,7 @@ export interface NegativeTransformOptions {
 }
 
 /**
- * Removes negative spacing tokens from the `styled-system` generated folder.
+ * Removes negative spacing tokens
  * - `spacingTokenType`: Removes negative spacing tokens from `tokens.d.ts`
  * - `tokenType`: Removes negative tokens from `tokens.d.ts`
  *

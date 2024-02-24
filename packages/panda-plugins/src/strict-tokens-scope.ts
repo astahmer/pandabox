@@ -12,7 +12,7 @@ export interface StrictTokensScopeOptions {
 }
 
 /**
- * Restricts the additional type-safety from `strictTokens` to some props only.
+ * Enforce `strictTokens` only for a set of `TokenCategory` or style props
  * - `categories`: Every properties bound to those token categories will be restricted with `strictTokens`
  * - `props`: Explicit list of props that will be restricted with `strictTokens`
  *
