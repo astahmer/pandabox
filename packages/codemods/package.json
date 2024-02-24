@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "tsup",
+    "dev": "tsup --watch src",
     "test": "vitest",
     "typecheck": "tsc --noEmit"
   },

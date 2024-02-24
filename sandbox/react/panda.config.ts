@@ -1,5 +1,5 @@
 import { defineConfig } from '@pandacss/dev'
-import { createStrictTokensScope } from '@pandabox/panda-plugins'
+import { pluginStrictTokensScope, pluginRemoveNegativeSpacing, pluginRemoveFeatures } from '@pandabox/panda-plugins'
 
 export default defineConfig({
   // Whether to use css reset
@@ -20,7 +20,11 @@ export default defineConfig({
   outdir: 'styled-system',
 
   //
-  plugins: [createStrictTokensScope({ categories: ['colors'] })],
+  plugins: [
+    pluginStrictTokensScope({ categories: ['colors', 'spacing'] }),
+    pluginRemoveFeatures({ features: ['no-jsx', 'no-cva'] }),
+    pluginRemoveNegativeSpacing({ spacingTokenType: true, tokenType: true }),
+  ],
   jsxFramework: 'react',
   strictTokens: true,
 })
