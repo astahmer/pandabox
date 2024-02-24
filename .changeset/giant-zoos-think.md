@@ -1,12 +1,6 @@
----
-'@pandabox/panda-plugins': patch
----
-
-Initial release
-
 # @pandabox/panda-plugins
 
-- `strict-tokens-scoped` - Enforce `strictTokens` only for a set of `TokenCategory` or style props
+- `strict-tokens-scope` - Enforce `strictTokens` only for a set of `TokenCategory` or style props
 
 ## Installation
 
@@ -18,13 +12,18 @@ pnpm add -D @pandabox/panda-plugins
 
 ```tsx
 import { defineConfig } from '@pandacss/dev'
-import { createStrictTokensScope } from '@pandabox/panda-plugins'
+import { pluginStrictTokensScope, pluginRemoveNegativeSpacing, pluginRemoveFeatures } from '@pandabox/panda-plugins'
 
 export default defineConfig({
   // ...
   strictTokens: true,
   // can also be used together with
   // strictPropertyValues: true,
-  plugins: [createStrictTokensScope({ categories: ['colors'] })],
+  //
+  plugins: [
+    pluginStrictTokensScope({ categories: ['colors', 'spacing'] }),
+    pluginRemoveFeatures({ features: ['no-jsx', 'no-cva'] }),
+    pluginRemoveNegativeSpacing({ spacingTokenType: true, tokenType: true }),
+  ],
 })
 ```
