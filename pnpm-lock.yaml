@@ -169,6 +169,31 @@ importers:
         specifier: ^8.0.2
         version: 8.0.2(postcss@8.4.35)(typescript@5.3.3)
 
+  packages/prettier-plugin-panda:
+    dependencies:
+      '@pandacss/config':
+        specifier: ^0.32.0
+        version: 0.32.0
+      '@pandacss/core':
+        specifier: ^0.32.0
+        version: 0.32.0
+      '@pandacss/node':
+        specifier: ^0.32.0
+        version: 0.32.0(typescript@5.3.3)
+      '@pandacss/preset-base':
+        specifier: ^0.32.0
+        version: 0.32.0
+    devDependencies:
+      '@pandacss/types':
+        specifier: ^0.32.0
+        version: 0.32.0
+      prettier:
+        specifier: 3.2.5
+        version: 3.2.5
+      vitest:
+        specifier: 1.3.0
+        version: 1.3.0(@types/node@20.11.19)
+
   packages/unplugin-panda-macro:
     dependencies:
       '@pandabox/postcss-plugins':
