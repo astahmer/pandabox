@@ -1,3 +1,5 @@
+export * from './minimal-setup'
 export * from './remove-features'
 export * from './remove-negative-spacing'
+export * from './strict-tokens-runtime'
 export * from './strict-tokens-scope'
