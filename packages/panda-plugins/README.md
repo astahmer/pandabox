@@ -1,6 +1,8 @@
 # @pandabox/panda-plugins
 
 - `strict-tokens-scope` - Enforce `strictTokens` only for a set of `TokenCategory` or style props
+- `strict-tokens-runtime` - Enforce `strictTokens` at runtime, optionally scope this behaviour to a set of
+  `TokenCategory` or style props
 - `remove-negative-spacing` - Removes negative spacing tokens
 - `remove-features` - Removes features from the `styled-system`
 - `minimal-setup` - Removes the built-in presets and allow removing features from the `styled-system`
