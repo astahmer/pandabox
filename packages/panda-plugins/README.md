@@ -1,5 +1,7 @@
 # @pandabox/panda-plugins
 
+- `missing-css-warnings` - Logs a warning message when a CSS rule was used at runtime but couldn't be statically
+  extracted
 - `strict-tokens-scope` - Enforce `strictTokens` only for a set of `TokenCategory` or style props
 - `strict-tokens-runtime` - Enforce `strictTokens` at runtime, optionally scope this behaviour to a set of
   `TokenCategory` or style props
