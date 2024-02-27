@@ -716,7 +716,7 @@ describe('missing-css-warnings', () => {
               }
               if (missingRules.has(className)) return
               missingRules.add(className)
-              console.log(\`No matching CSS rule found for "\${className}"\`)
+              console.error(\`No matching CSS rule found for "\${className}"\`)
             }"
     `)
   })
