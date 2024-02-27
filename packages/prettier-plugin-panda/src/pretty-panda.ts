@@ -4,8 +4,10 @@ import { simpleTraverse } from '@typescript-eslint/typescript-estree'
 import type { ParserOptions } from 'prettier'
 import { getPropPriority, groupPriorities, type PriorityGroup, type PriorityGroupName } from './get-priority-index'
 import type { PluginOptions } from './options'
-import { compareAtRuleOrMixed, type ImportResult } from '@pandacss/core'
-import { utilitiesGroups } from '@pandacss/preset-base'
+import { compareAtRuleOrMixed, type ImportResult } from '/Users/astahmer/dev/open-source/panda/packages/core/src'
+// import { compareAtRuleOrMixed, type ImportResult } from '@pandacss/core'
+// import { utilitiesGroups } from '@pandacss/preset-base'
+import { utilitiesGroups } from '/Users/astahmer/dev/open-source/panda/packages/preset-base/src'
 import { defaultPriorityGroups } from './default-priority-groups'
 import type { UtilityConfig } from '@pandacss/types'
 import { resolveTsPathPattern } from '@pandacss/config/ts-path'
@@ -73,11 +75,11 @@ export class PrettyPanda {
     add(base.Effects, utilitiesGroups.transitions)
     add(base.Typography, utilitiesGroups.typography)
 
-    return base
+    return { base, props }
   }
 
   generatePriorityGroups = (context: PandaContext) => {
-    const base = this.getDefaultPriorityGroups()
+    const { base, props } = this.getDefaultPriorityGroups()
     const priorityGroups = [] as PriorityGroup[]
 
     Object.entries(base).forEach(([_name, keys]) => {
@@ -102,6 +104,14 @@ export class PrettyPanda {
       })
 
       group.keys = uniq(keys)
+    })
+
+    const utilityKeys = Object.keys(this.context.utility.config)
+    const otherStyleProps = priorityGroups.find((g) => g.name === 'Other Style Props')!
+    utilityKeys.forEach((key) => {
+      if (props.has(key)) return
+      props.add(key)
+      otherStyleProps?.keys.push(key)
     })
 
     const conditionGroup = priorityGroups.find((g) => g.name === 'Conditions')!

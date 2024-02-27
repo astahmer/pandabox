@@ -7,7 +7,7 @@ export const defaultPriorityGroups = {
   System: ['as', 'layerStyle', 'textStyle'],
   Margin: ['margin', 'marginStart', 'marginEnd', 'marginTop', 'marginRight', 'marginBottom', 'marginLeft'],
   Padding: ['padding', 'paddingStart', 'paddingEnd', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'],
-  Color: ['color', 'textColor', 'fill', 'stroke'],
+  Color: ['colorPalette', 'color', 'textColor', 'fill', 'stroke'],
   Typography: [
     'fontFamily',
     'fontSize',
@@ -21,7 +21,7 @@ export const defaultPriorityGroups = {
   ],
   Width: ['width', 'minWidth', 'maxWidth'],
   Height: ['height', 'minHeight', 'maxHeight'],
-  Layout: ['display', 'verticalAlign', 'overflow', 'overflowX', 'overflowY'],
+  Layout: ['display', 'verticalAlign', 'overflow', 'overflowX', 'overflowY', 'blockSize', 'inlineSize'],
   Flexbox: [
     'alignItems',
     'align',
@@ -67,6 +67,11 @@ export const defaultPriorityGroups = {
     'templateColumns',
     'gridTemplateAreas',
     'templateAreas',
+    'gridColumnStart',
+    'gridColumnEnd',
+    'gridRowStart',
+    'gridRowEnd',
+    'gridArea',
   ],
   Background: [
     'background',

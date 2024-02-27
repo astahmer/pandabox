@@ -4,40 +4,32 @@
 import type { PluginOptions } from './options'
 
 export const groupNames = [
-  // 'System',
   'System',
-
-  // 'Positioning',
+  'Container',
+  'Display',
+  'Visibility',
   'Position',
-
-  // Box model
+  'Transforms',
   'Flexbox',
   'Grid Layout',
   'Layout',
+  'Border',
+  'Border Radius',
   'Width',
   'Height',
   'Margin',
   'Padding',
-
-  // Typography
   'Color',
   'Typography',
-
-  // Visual
   'Background',
-  'Border',
-  'Border Radius',
   'Shadow',
+  'Table',
+  'Scrollbar',
+  'Transitions',
   'Effects',
-
-  // Misc
   'Other Style Props',
-
-  // Selectors / at-rules
   'Conditions',
   'Arbitrary conditions',
-
-  // Special `css`
   'Css',
 ] as const
 

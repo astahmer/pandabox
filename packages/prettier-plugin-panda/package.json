@@ -22,7 +22,9 @@
   "scripts": {
     "build": "tsup --tsconfig tsconfig.build.json --dts",
     "build-fast": "tsup --no-dts",
-    "dev": "pnpm build-fast --watch"
+    "dev": "pnpm build-fast --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
   },
   "devDependencies": {
     "@pandacss/types": "^0.32.0",
