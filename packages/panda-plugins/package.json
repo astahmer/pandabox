@@ -18,7 +18,9 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch src",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "bun ./test-cli.ts test",
+    "codegen": "bun ./test-cli.ts codegen"
   },
   "imports": {
     "#pandabox/fixtures": "../fixtures/src/index.ts"

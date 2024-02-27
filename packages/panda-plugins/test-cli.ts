@@ -4,7 +4,7 @@ import cac from 'cac'
 import { spawn } from 'child_process'
 
 const cli = cac('sct')
-const scenarioList = ['missing-css-warnings']
+const scenarioList = ['missing-css-warnings', 'remove-negative-spacing', 'strict-tokens-scope', 'strict-tokens-runtime']
 
 type Scenario = (typeof scenarioList)[number]
 
