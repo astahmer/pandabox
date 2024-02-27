@@ -3,15 +3,15 @@ import '@fontsource/inter'
 import { Flex, HStack, Stack } from '#styled-system/jsx'
 import { PropsWithChildren, ReactNode, useEffect } from 'react'
 
+import { css } from '#styled-system/css'
+import { hstack } from '#styled-system/patterns'
+import { Link } from '@remix-run/react'
+import { SiTailwindcss } from 'react-icons/si'
+import { ThemeProvider } from '../vite-themes/provider'
 import { ColorModeSwitch } from './color-mode-switch'
 import { GithubIcon } from './github-icon'
 import { IconButton } from './icon-button'
 import { TwitterIcon } from './twitter-icon'
-import { ThemeProvider } from '../vite-themes/provider'
-import { Link } from '@remix-run/react'
-import { css } from '#styled-system/css'
-import { SiTailwindcss } from 'react-icons/si'
-import { hstack } from '#styled-system/patterns'
 
 interface LayoutProps extends PropsWithChildren {
   header?: ReactNode
@@ -21,18 +21,6 @@ const link = css({
   _dark: { color: 'yellow.300' },
   _hover: { color: 'blue.400' },
 })
-
-const Header = (
-  <div className={hstack({ gap: 1 })}>
-    <Link className={link} to="/">
-      🐼 <span className={css({ hideBelow: 'md' })}>pandabox</span>
-    </Link>
-    <span>-</span>
-    <Link className={link} to="/styled2panda">
-      styled2panda
-    </Link>
-  </div>
-)
 
 const isDev = import.meta.env.DEV
 
@@ -59,8 +47,18 @@ export const Layout = ({ children, header }: LayoutProps) => {
       >
         <Stack w="100%" h="100%">
           <Flex pt="2" p="3" _light={{ bg: 'gray.100' }}>
-            {header || Header}
+            {header}
             <HStack alignItems="center" ml="auto">
+              <a target="blank" href="https://www.astahmer.dev/">
+                <IconButton title="Alex's website">
+                  <img
+                    src="/favicon.png"
+                    alt="Alex's logo which is a mix of 2 emojis: Panda and Nerd face"
+                    width="28"
+                    height="28"
+                  />
+                </IconButton>
+              </a>
               <a target="blank" href="https://github.com/astahmer/pandabox">
                 <IconButton title="Github">
                   <GithubIcon />
@@ -95,6 +93,24 @@ export const Layout = ({ children, header }: LayoutProps) => {
                   </div>
                 </IconButton>
               </a>
+              <Link to="/styled2panda">
+                <IconButton
+                  title="tw2panda"
+                  css={{
+                    px: '2',
+                    w: 'auto',
+                    colorPalette: 'purple',
+                    backgroundColor: 'colorPalette.200/70',
+                    borderWidth: '1px',
+                    borderColor: { base: 'purple.300/25', _hover: 'transparent' },
+                  }}
+                >
+                  <div className={hstack()}>
+                    💅
+                    <span className={css({ hideBelow: 'md' })}>styled2panda</span>
+                  </div>
+                </IconButton>
+              </Link>
               <ColorModeSwitch />
             </HStack>
           </Flex>

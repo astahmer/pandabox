@@ -36,6 +36,11 @@ export default function Index() {
           <Stack gap="1" mt="4" textStyle={{ base: 'sm', md: 'lg' }}>
             <a className={link} href="https://github.com/astahmer/pandabox/tree/main/packages/unplugin-panda-macro">
               <LuExternalLink />
+              <span className={linkTitle}>@pandabox/panda-plugins</span> `missing-css-warnings` / `strict-tokens-scope`
+              / `strict-tokens-runtime` / `remove-negative-spacing`
+            </a>
+            <a className={link} href="https://github.com/astahmer/pandabox/tree/main/packages/unplugin-panda-macro">
+              <LuExternalLink />
               <span className={linkTitle}>@pandabox/unplugin-panda-macro</span> Make your `styled-system` disappear at
               build-time by inlining the results as class names.
             </a>
