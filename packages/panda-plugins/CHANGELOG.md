@@ -1,5 +1,13 @@
 # @pandabox/panda-plugins
 
+## 0.0.4
+
+### Patch Changes
+
+- 10e72e0: Add `pluginMissingCssWarnings` - Logs a warning message when a CSS rule was used at runtime but couldn't be statically
+  extracted
+- 04032ec: Fix `strict-tokens-runtime` when using `shorthands: false` or `outExtension: js`
+
 ## 0.0.3
 
 ### Patch Changes
