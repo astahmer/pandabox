@@ -140,9 +140,6 @@ importers:
       '@pandacss/dev':
         specifier: ^0.33.0
         version: 0.33.0(typescript@5.3.3)
-      '@pandacss/node':
-        specifier: ^0.33.0
-        version: 0.33.0(typescript@5.3.3)
       '@pandacss/types':
         specifier: ^0.33.0
         version: 0.33.0

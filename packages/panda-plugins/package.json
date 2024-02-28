@@ -27,7 +27,6 @@
   },
   "devDependencies": {
     "@pandacss/dev": "^0.33.0",
-    "@pandacss/node": "^0.33.0",
     "@pandacss/types": "^0.33.0",
     "cac": "^6.7.14",
     "happy-dom": "^13.6.2",

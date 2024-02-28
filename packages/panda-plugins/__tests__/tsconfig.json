@@ -1,4 +1,7 @@
 {
   "extends": "../../../tsconfig.test.json",
-  "include": [".", "../src"]
+  "compilerOptions": {
+    "jsx": "react-jsx"
+  },
+  "include": ["*", "../src", "./scenarios"]
 }
