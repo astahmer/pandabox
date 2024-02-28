@@ -1,18 +1,15 @@
+import { resolveTsPathPattern } from '@pandacss/config/ts-path'
+import { type ImportResult } from '@pandacss/core'
 import type { PandaContext } from '@pandacss/node'
+import { getPropertyPriority } from '@pandacss/shared'
 import { TSESTree } from '@typescript-eslint/types'
 import { simpleTraverse } from '@typescript-eslint/typescript-estree'
 import type { ParserOptions } from 'prettier'
 import { getPropPriority, groupPriorities, type PriorityGroup, type PriorityGroupName } from './get-priority-index'
 import type { PluginOptions } from './options'
-import { compareAtRuleOrMixed, type ImportResult } from '/Users/astahmer/dev/open-source/panda/packages/core/src'
-// import { compareAtRuleOrMixed, type ImportResult } from '@pandacss/core'
-// import { utilitiesGroups } from '@pandacss/preset-base'
-import { utilitiesGroups } from '/Users/astahmer/dev/open-source/panda/packages/preset-base/src'
-import { defaultPriorityGroups } from './default-priority-groups'
-import type { UtilityConfig } from '@pandacss/types'
-import { resolveTsPathPattern } from '@pandacss/config/ts-path'
 
 const NodeType = TSESTree.AST_NODE_TYPES
+const defaultFirstProps = ['as', 'layerStyle', 'textStyle']
 
 export class PrettyPanda {
   priorityGroups: PriorityGroup[] = []
@@ -25,66 +22,48 @@ export class PrettyPanda {
   ) {
     this.priorityGroups = this.generatePriorityGroups(context)
     this.options = {
-      firstProps: prettierOptions?.firstProps ?? [],
+      firstProps: prettierOptions?.firstProps ?? defaultFirstProps,
       lastProps: prettierOptions?.lastProps ?? [],
       isCompPropsBeforeStyleProps: true, // options?.displayCompPropsBeforeStyleProps ? ~ : defaultIsCompPropsBeforeStyleProps
       componentSpecificProps: undefined, // not supported yet
     }
   }
 
-  getDefaultPriorityGroups = () => {
-    const base = structuredClone(defaultPriorityGroups) as typeof defaultPriorityGroups
+  generatePriorityGroups = (context: PandaContext) => {
+    const groups = new Map<PriorityGroupName, Set<string>>([
+      ['Other', new Set()],
+      ['Conditions', new Set()],
+      ['Arbitrary conditions', new Set()],
+      ['Css', new Set('css')],
+    ])
+    const otherStyleProps = groups.get('Other')!
 
-    const props = new Set()
-    Object.entries(base).forEach(([_key, list]) => {
-      list.forEach((item) => props.add(item))
+    Object.entries(context.utility.config).map(([key, value]) => {
+      if (!value?.group) {
+        otherStyleProps.add(key)
+        return
+      }
+
+      if (!groups.has(value.group)) {
+        groups.set(value.group, new Set())
+      }
+
+      const set = groups.get(value.group)!
+      set.add(key)
     })
 
-    const add = (inList: string[], config: UtilityConfig, filter?: (key: string) => boolean) => {
-      const _keys = Object.keys(config)
-      const keys = filter ? _keys.filter(filter) : _keys
-      keys.forEach((key) => {
-        if (props.has(key)) return
-        inList.push(key)
-        props.add(key)
-      })
-    }
-
-    add(base.Margin, utilitiesGroups.spacing, (key) => key.startsWith('margin'))
-    add(base.Padding, utilitiesGroups.spacing, (key) => key.startsWith('padding'))
-    add(base.Background, utilitiesGroups.background)
-    add(base.Border, utilitiesGroups.border, (key) => !key.includes('Radius'))
-    add(base['Border Radius'], utilitiesGroups.border, (key) => key.includes('Radius'))
-    add(base['Other Style Props'], utilitiesGroups.container)
-    add(base.Layout, utilitiesGroups.display)
-    add(base['Other Style Props'], utilitiesGroups.divide)
-    add(base.Effects, utilitiesGroups.effects)
-    add(base['Other Style Props'], utilitiesGroups.helpers)
-    add(base['Other Style Props'], utilitiesGroups.interactivity)
-    add(base.Position, utilitiesGroups.layout, (key) => key.includes('inset'))
-    add(base.Layout, utilitiesGroups.layout)
-    add(base['Other Style Props'], utilitiesGroups.list)
-    add(base['Other Style Props'], utilitiesGroups.list)
-    add(base.Border, utilitiesGroups.outline)
-    add(base.Effects, utilitiesGroups.polyfill)
-    add(base.Width, utilitiesGroups.sizing, (key) => key.includes('Width') || key.includes('Inline'))
-    add(base.Height, utilitiesGroups.sizing, (key) => key.includes('Height') || key.includes('Block'))
-    add(base.Effects, utilitiesGroups.svg)
-    add(base.Effects, utilitiesGroups.tables)
-    add(base.Effects, utilitiesGroups.transforms)
-    add(base.Effects, utilitiesGroups.transitions)
-    add(base.Typography, utilitiesGroups.typography)
-
-    return { base, props }
-  }
-
-  generatePriorityGroups = (context: PandaContext) => {
-    const { base, props } = this.getDefaultPriorityGroups()
     const priorityGroups = [] as PriorityGroup[]
-
-    Object.entries(base).forEach(([_name, keys]) => {
+    groups.forEach((keys, _name) => {
       const name = _name as PriorityGroupName
-      const priorityGroup: PriorityGroup = { name, keys, priority: groupPriorities[name] }
+      const priorityGroup: PriorityGroup = {
+        name,
+        keys: Array.from(keys).sort((a, b) => {
+          const aPriority = getPropertyPriority(a)
+          const bPriority = getPropertyPriority(b)
+          return aPriority - bPriority
+        }),
+        priority: groupPriorities[name],
+      }
       priorityGroups.push(priorityGroup)
     })
 
@@ -106,28 +85,10 @@ export class PrettyPanda {
       group.keys = uniq(keys)
     })
 
-    const utilityKeys = Object.keys(this.context.utility.config)
-    const otherStyleProps = priorityGroups.find((g) => g.name === 'Other Style Props')!
-    utilityKeys.forEach((key) => {
-      if (props.has(key)) return
-      props.add(key)
-      otherStyleProps?.keys.push(key)
-    })
-
     const conditionGroup = priorityGroups.find((g) => g.name === 'Conditions')!
 
     // Sort conditions in the same order as in the generated CSS
-    const sortedConditionKeys = Object.keys(context.conditions.values).sort((a, b) => {
-      const aCondition = this.context.conditions.values[a]
-      const bCondition = this.context.conditions.values[b]
-
-      const score = compareAtRuleOrMixed(
-        { entry: {} as any, conditions: [aCondition] },
-        { entry: {} as any, conditions: [bCondition] },
-      )
-      return score
-    })
-
+    const sortedConditionKeys = context.conditions.getSortedKeys()
     sortedConditionKeys.forEach((condName) => {
       conditionGroup.keys.push(condName)
     })

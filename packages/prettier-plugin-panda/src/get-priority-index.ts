@@ -1,6 +1,7 @@
 // Adapted from
 // https://github.com/yukukotani/eslint-plugin-chakra-ui/blob/dba8a50774e7b133ff9a9d3ae099202ac4d620c4/src/rules/props-order.ts
 
+import type { CssSemanticGroup } from '@pandacss/types'
 import type { PluginOptions } from './options'
 
 export const groupNames = [
@@ -9,8 +10,8 @@ export const groupNames = [
   'Display',
   'Visibility',
   'Position',
-  'Transforms',
-  'Flexbox',
+  'Transform',
+  'Flex Layout',
   'Grid Layout',
   'Layout',
   'Border',
@@ -24,16 +25,18 @@ export const groupNames = [
   'Background',
   'Shadow',
   'Table',
-  'Scrollbar',
-  'Transitions',
-  'Effects',
-  'Other Style Props',
+  'List',
+  'Scroll',
+  'Interactivity',
+  'Transition',
+  'Effect',
+  'Other',
   'Conditions',
   'Arbitrary conditions',
   'Css',
 ] as const
 
-export type PriorityGroupName = (typeof groupNames)[number]
+export type PriorityGroupName = CssSemanticGroup | (typeof groupNames)[number]
 
 export const groupPriorities = groupNames.reduce(
   (acc, key, index) => {

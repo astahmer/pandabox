@@ -28,11 +28,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@pandacss/types": "^0.32.0",
+    "@pandacss/types": "^0.33.0",
     "lodash.merge": "^4.6.2"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.13.10",
+    "@arethetypeswrong/cli": "^0.15.0",
     "@types/lodash.merge": "^4.6.9",
     "@typescript/analyze-trace": "^0.10.1",
     "publint": "^0.2.7",

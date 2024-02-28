@@ -31,7 +31,7 @@ describe('JSX style props', () => {
 
       const App = ({ onClick }: { onClick: () => void }) => {
         return (
-          <Box width="120" mt="4" mx="2" p="4" bgColor="red">
+          <Box width="120" mx="2" mt="4" p="4" bgColor="red">
             Hello
           </Box>
         );
@@ -58,7 +58,7 @@ describe('JSX style props', () => {
 
       const App = ({ onClick }: { onClick: () => void }) => {
         return (
-          <Box css={{ width: "120", mt: "4", mx: "2", p: "4", bgColor: "red" }}>
+          <Box css={{ width: "120", mx: "2", mt: "4", p: "4", bgColor: "red" }}>
             Hello
           </Box>
         );
@@ -85,7 +85,7 @@ describe('JSX style props', () => {
 
       const App = (props) => {
         return (
-          <Box bgColor="red" {...props} width="120" mt="4" mx="2" p="4">
+          <Box bgColor="red" {...props} width="120" mx="2" mt="4" p="4">
             Hello
           </Box>
         );
@@ -301,25 +301,25 @@ describe('JSX style props', () => {
     expect(await run(code)).toMatchInlineSnapshot(`
       "import { Box } from "../styled-system/jsx";
       <Box
-        animation="animation"
-        appearance="appearance"
-        transform="transform"
-        transformOrigin="transformOrigin"
-        visibility="visibility"
-        whiteSpace="whiteSpace"
-        userSelect="userSelect"
-        pointerEvents="pointerEvents"
-        wordBreak="wordBreak"
-        overflowWrap="overflowWrap"
-        textOverflow="textOverflow"
         boxSizing="boxSizing"
-        cursor="cursor"
-        resize="resize"
-        transition="transition"
-        objectFit="objectFit"
-        objectPosition="objectPosition"
+        visibility="visibility"
+        appearance="appearance"
         float="float"
+        transformOrigin="transformOrigin"
+        objectPosition="objectPosition"
+        objectFit="objectFit"
         outline="outline"
+        textOverflow="textOverflow"
+        wordBreak="wordBreak"
+        userSelect="userSelect"
+        transition="transition"
+        animation="animation"
+        cursor="cursor"
+        overflowWrap="overflowWrap"
+        pointerEvents="pointerEvents"
+        resize="resize"
+        transform="transform"
+        whiteSpace="whiteSpace"
       >
         Same priority should be sorted in defined order
       </Box>;
@@ -357,10 +357,11 @@ describe('JSX style props', () => {
       "import { Box } from "../styled-system/jsx";
       <Box
         as={as}
+        display={display}
         position={position}
         flex={flex}
         gridGap={gridGap}
-        display={display}
+        borderRadius={borderRadius}
         w={w}
         h={h}
         m={m}
@@ -368,7 +369,6 @@ describe('JSX style props', () => {
         color={color}
         fontFamily={fontFamily}
         bg={bg}
-        borderRadius={borderRadius}
         shadow={shadow}
         animation={animation}
         _hover={_hover}
@@ -555,8 +555,8 @@ describe('Call Expression css(xxx) arguments', () => {
               bgColor: "red",
               ...props,
               width: "120",
-              mt: "4",
               mx: "2",
+              mt: "4",
               p: "4",
             })}
           >
@@ -770,25 +770,25 @@ describe('Call Expression css(xxx) arguments', () => {
       "import { css } from "../styled-system/css";
       <div
         className={css({
-          animation: "animation",
-          appearance: "appearance",
-          transform: "transform",
-          transformOrigin: "transformOrigin",
-          visibility: "visibility",
-          whiteSpace: "whiteSpace",
-          userSelect: "userSelect",
-          pointerEvents: "pointerEvents",
-          wordBreak: "wordBreak",
-          overflowWrap: "overflowWrap",
-          textOverflow: "textOverflow",
           boxSizing: "boxSizing",
-          cursor: "cursor",
-          resize: "resize",
-          transition: "transition",
-          objectFit: "objectFit",
-          objectPosition: "objectPosition",
+          visibility: "visibility",
+          appearance: "appearance",
           float: "float",
+          transformOrigin: "transformOrigin",
+          objectPosition: "objectPosition",
+          objectFit: "objectFit",
           outline: "outline",
+          textOverflow: "textOverflow",
+          wordBreak: "wordBreak",
+          userSelect: "userSelect",
+          transition: "transition",
+          animation: "animation",
+          cursor: "cursor",
+          overflowWrap: "overflowWrap",
+          pointerEvents: "pointerEvents",
+          resize: "resize",
+          transform: "transform",
+          whiteSpace: "whiteSpace",
         })}
       >
         Hello
@@ -810,10 +810,11 @@ describe('Call Expression css(xxx) arguments', () => {
       <div
         className={css({
           as: as,
+          display: display,
           position: position,
           flex: flex,
           gridGap: gridGap,
-          display: display,
+          borderRadius: borderRadius,
           w: w,
           h: h,
           m: m,
@@ -821,7 +822,6 @@ describe('Call Expression css(xxx) arguments', () => {
           color: color,
           fontFamily: fontFamily,
           bg: bg,
-          borderRadius: borderRadius,
           shadow: shadow,
           animation: animation,
           _hover: _hover,
@@ -973,7 +973,7 @@ describe('jsx specifics', () => {
 
       const App = ({ onClick }: { onClick: () => void }) => {
         return (
-          <styled.div width="120" mt="4" mx="2" p="4" bgColor="red">
+          <styled.div width="120" mx="2" mt="4" p="4" bgColor="red">
             Hello
           </styled.div>
         );
@@ -1000,7 +1000,7 @@ describe('jsx specifics', () => {
 
       const App = ({ onClick }: { onClick: () => void }) => {
         return (
-          <panda.div width="120" mt="4" mx="2" p="4" bgColor="red">
+          <panda.div width="120" mx="2" mt="4" p="4" bgColor="red">
             Hello
           </panda.div>
         );
