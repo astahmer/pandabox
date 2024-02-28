@@ -20,11 +20,14 @@
     }
   },
   "scripts": {
-    "build": "tsup --tsconfig tsconfig.build.json --dts",
+    "build": "tsup",
     "build-fast": "tsup --no-dts",
     "dev": "pnpm build-fast --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest"
+  },
+  "imports": {
+    "#pandabox/fixtures": "../fixtures/src/index.ts"
   },
   "devDependencies": {
     "@pandacss/types": "^0.33.0",
