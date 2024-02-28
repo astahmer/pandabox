@@ -34,10 +34,10 @@ export default function Index() {
             a toolbox for 🐼 Panda CSS
           </styled.h1>
           <Stack gap="1" mt="4" textStyle={{ base: 'sm', md: 'lg' }}>
-            <a className={link} href="https://github.com/astahmer/pandabox/tree/main/packages/unplugin-panda-macro">
+            <a className={link} href="https://github.com/astahmer/pandabox">
               <LuExternalLink />
               <span className={linkTitle}>@pandabox/panda-plugins</span> `missing-css-warnings` / `strict-tokens-scope`
-              / `strict-tokens-runtime` / `remove-negative-spacing`
+              / `strict-tokens-runtime` / `restrict-styled-props` - `remove-negative-spacing`
             </a>
             <a className={link} href="https://github.com/astahmer/pandabox/tree/main/packages/unplugin-panda-macro">
               <LuExternalLink />
