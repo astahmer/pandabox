@@ -1,5 +1,12 @@
 # @pandabox/panda-plugins
 
+## 0.0.5
+
+### Patch Changes
+
+- 3510541: new plugin - `restrict-styled-props` - Adds a `props` on the `styled` JSX Factory to restrict the props that can be
+  passed to the component
+
 ## 0.0.4
 
 ### Patch Changes
