@@ -31,6 +31,14 @@ const options: UserConfig = {
       include: ['**/__tests__/scenarios/strict-tokens-runtime.{test,spec}.{j,t}s?(x)'],
     },
   },
+  'restrict-styled-props': {
+    test: {
+      typecheck: {
+        enabled: true,
+      },
+      include: ['**/__tests__/scenarios/restrict-styled-props.{test,spec}.{j,t}s?(x)'],
+    },
+  },
 } as Record<string, UserConfig>
 
 const mode = process.env.MODE ?? 'missing-css-warnings'

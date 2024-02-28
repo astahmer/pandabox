@@ -5,6 +5,8 @@
 - `strict-tokens-scope` - Enforce `strictTokens` only for a set of `TokenCategory` or style props
 - `strict-tokens-runtime` - Enforce `strictTokens` at runtime, optionally scope this behaviour to a set of
   `TokenCategory` or style props
+- `restrict-styled-props` - Adds a `props` on the `styled` JSX Factory to restrict the props that can be passed to the
+  component
 - `remove-negative-spacing` - Removes negative spacing tokens
 - `remove-features` - Removes features from the `styled-system`
 - `minimal-setup` - Removes the built-in presets and allow removing features from the `styled-system`

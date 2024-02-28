@@ -3,6 +3,7 @@ import {
   pluginStrictTokensScope,
   pluginRemoveNegativeSpacing,
   pluginRemoveFeatures,
+  pluginRestrictStyledProps,
   pluginStrictTokensRuntime,
 } from '@pandabox/panda-plugins'
 
@@ -29,8 +30,9 @@ export default defineConfig({
   plugins: [
     pluginStrictTokensScope({ categories: ['colors', 'spacing'] }),
     pluginStrictTokensRuntime({ categories: ['colors', 'spacing'] }),
-    pluginRemoveFeatures({ features: ['no-jsx', 'no-cva'] }),
+    // pluginRemoveFeatures({ features: ['no-jsx', 'no-cva'] }),
     pluginRemoveNegativeSpacing({ spacingTokenType: true, tokenType: true }),
+    pluginRestrictStyledProps(),
   ],
   jsxFramework: 'react',
   strictTokens: true,
