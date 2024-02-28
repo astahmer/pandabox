@@ -121,7 +121,7 @@ describe('atomic', () => {
           import { css as css5 } from '../styled-system/css' with { invalid: "macro" }
 
           "d_flex";
-          css2({ flexDirection: 'column' });
+          "flex_column";
           css3({ fontWeight: 'semibold' });
           css4({ color: 'green.300' });
           css5({ textAlign: 'center' });

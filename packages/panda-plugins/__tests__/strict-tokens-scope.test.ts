@@ -32,8 +32,6 @@ describe('strict-tokens-scope', () => {
       	insetInlineStart: Tokens["spacing"];
       	right: Tokens["spacing"];
       	bottom: Tokens["spacing"];
-      	insetX: Tokens["spacing"] | CssProperties["insetInline"];
-      	insetY: Tokens["spacing"] | CssProperties["insetBlock"];
       	float: "left" | "right" | "start" | "end";
       	hideFrom: Tokens["breakpoints"];
       	hideBelow: Tokens["breakpoints"];
@@ -188,8 +186,6 @@ describe('strict-tokens-scope', () => {
       	caretColor: Tokens["colors"];
       	scrollbar: "visible" | "hidden";
       	scrollMargin: Tokens["spacing"];
-      	scrollMarginX: Tokens["spacing"] | CssProperties["scrollMarginInline"];
-      	scrollMarginY: Tokens["spacing"] | CssProperties["scrollMarginBlock"];
       	scrollMarginLeft: Tokens["spacing"];
       	scrollMarginRight: Tokens["spacing"];
       	scrollMarginTop: Tokens["spacing"];
@@ -207,8 +203,6 @@ describe('strict-tokens-scope', () => {
       	scrollPaddingInline: Tokens["spacing"];
       	scrollPaddingInlineEnd: Tokens["spacing"];
       	scrollPaddingInlineStart: Tokens["spacing"];
-      	scrollPaddingX: Tokens["spacing"] | CssProperties["scrollPaddingInline"];
-      	scrollPaddingY: Tokens["spacing"] | CssProperties["scrollPaddingBlock"];
       	scrollPaddingLeft: Tokens["spacing"];
       	scrollPaddingRight: Tokens["spacing"];
       	scrollPaddingTop: Tokens["spacing"];
@@ -239,6 +233,8 @@ describe('strict-tokens-scope', () => {
         export interface PropertyTypes extends PropertyValueTypes {
         
       	pos: Shorthand<"position">;
+      	insetX: Shorthand<"insetInline">;
+      	insetY: Shorthand<"insetBlock">;
       	insetEnd: Shorthand<"insetInlineEnd">;
       	end: Shorthand<"insetInlineEnd">;
       	insetStart: Shorthand<"insetInlineStart">;
@@ -325,6 +321,10 @@ describe('strict-tokens-scope', () => {
       	shadowColor: Shorthand<"boxShadowColor">;
       	x: Shorthand<"translateX">;
       	y: Shorthand<"translateY">;
+      	scrollMarginY: Shorthand<"scrollMarginBlock">;
+      	scrollMarginX: Shorthand<"scrollMarginInline">;
+      	scrollPaddingY: Shorthand<"scrollPaddingBlock">;
+      	scrollPaddingX: Shorthand<"scrollPaddingInline">;
       }
 
       type StrictableProps =
@@ -449,8 +449,6 @@ describe('strict-tokens-scope', () => {
       	insetInlineStart: Tokens["spacing"];
       	right: Tokens["spacing"];
       	bottom: Tokens["spacing"];
-      	insetX: Tokens["spacing"] | CssProperties["insetInline"];
-      	insetY: Tokens["spacing"] | CssProperties["insetBlock"];
       	float: "left" | "right" | "start" | "end";
       	hideFrom: Tokens["breakpoints"];
       	hideBelow: Tokens["breakpoints"];
@@ -605,8 +603,6 @@ describe('strict-tokens-scope', () => {
       	caretColor: Tokens["colors"];
       	scrollbar: "visible" | "hidden";
       	scrollMargin: Tokens["spacing"];
-      	scrollMarginX: Tokens["spacing"] | CssProperties["scrollMarginInline"];
-      	scrollMarginY: Tokens["spacing"] | CssProperties["scrollMarginBlock"];
       	scrollMarginLeft: Tokens["spacing"];
       	scrollMarginRight: Tokens["spacing"];
       	scrollMarginTop: Tokens["spacing"];
@@ -624,8 +620,6 @@ describe('strict-tokens-scope', () => {
       	scrollPaddingInline: Tokens["spacing"];
       	scrollPaddingInlineEnd: Tokens["spacing"];
       	scrollPaddingInlineStart: Tokens["spacing"];
-      	scrollPaddingX: Tokens["spacing"] | CssProperties["scrollPaddingInline"];
-      	scrollPaddingY: Tokens["spacing"] | CssProperties["scrollPaddingBlock"];
       	scrollPaddingLeft: Tokens["spacing"];
       	scrollPaddingRight: Tokens["spacing"];
       	scrollPaddingTop: Tokens["spacing"];
@@ -656,6 +650,8 @@ describe('strict-tokens-scope', () => {
         export interface PropertyTypes extends PropertyValueTypes {
         
       	pos: Shorthand<"position">;
+      	insetX: Shorthand<"insetInline">;
+      	insetY: Shorthand<"insetBlock">;
       	insetEnd: Shorthand<"insetInlineEnd">;
       	end: Shorthand<"insetInlineEnd">;
       	insetStart: Shorthand<"insetInlineStart">;
@@ -742,6 +738,10 @@ describe('strict-tokens-scope', () => {
       	shadowColor: Shorthand<"boxShadowColor">;
       	x: Shorthand<"translateX">;
       	y: Shorthand<"translateY">;
+      	scrollMarginY: Shorthand<"scrollMarginBlock">;
+      	scrollMarginX: Shorthand<"scrollMarginInline">;
+      	scrollPaddingY: Shorthand<"scrollPaddingBlock">;
+      	scrollPaddingX: Shorthand<"scrollPaddingInline">;
       }
 
       type StrictableProps =
@@ -870,8 +870,6 @@ describe('strict-tokens-scope', () => {
       	insetInlineStart: Tokens["spacing"];
       	right: Tokens["spacing"];
       	bottom: Tokens["spacing"];
-      	insetX: Tokens["spacing"] | CssProperties["insetInline"];
-      	insetY: Tokens["spacing"] | CssProperties["insetBlock"];
       	float: "left" | "right" | "start" | "end";
       	hideFrom: Tokens["breakpoints"];
       	hideBelow: Tokens["breakpoints"];
@@ -1026,8 +1024,6 @@ describe('strict-tokens-scope', () => {
       	caretColor: Tokens["colors"];
       	scrollbar: "visible" | "hidden";
       	scrollMargin: Tokens["spacing"];
-      	scrollMarginX: Tokens["spacing"] | CssProperties["scrollMarginInline"];
-      	scrollMarginY: Tokens["spacing"] | CssProperties["scrollMarginBlock"];
       	scrollMarginLeft: Tokens["spacing"];
       	scrollMarginRight: Tokens["spacing"];
       	scrollMarginTop: Tokens["spacing"];
@@ -1045,8 +1041,6 @@ describe('strict-tokens-scope', () => {
       	scrollPaddingInline: Tokens["spacing"];
       	scrollPaddingInlineEnd: Tokens["spacing"];
       	scrollPaddingInlineStart: Tokens["spacing"];
-      	scrollPaddingX: Tokens["spacing"] | CssProperties["scrollPaddingInline"];
-      	scrollPaddingY: Tokens["spacing"] | CssProperties["scrollPaddingBlock"];
       	scrollPaddingLeft: Tokens["spacing"];
       	scrollPaddingRight: Tokens["spacing"];
       	scrollPaddingTop: Tokens["spacing"];
@@ -1077,6 +1071,8 @@ describe('strict-tokens-scope', () => {
         export interface PropertyTypes extends PropertyValueTypes {
         
       	pos: Shorthand<"position">;
+      	insetX: Shorthand<"insetInline">;
+      	insetY: Shorthand<"insetBlock">;
       	insetEnd: Shorthand<"insetInlineEnd">;
       	end: Shorthand<"insetInlineEnd">;
       	insetStart: Shorthand<"insetInlineStart">;
@@ -1163,6 +1159,10 @@ describe('strict-tokens-scope', () => {
       	shadowColor: Shorthand<"boxShadowColor">;
       	x: Shorthand<"translateX">;
       	y: Shorthand<"translateY">;
+      	scrollMarginY: Shorthand<"scrollMarginBlock">;
+      	scrollMarginX: Shorthand<"scrollMarginInline">;
+      	scrollPaddingY: Shorthand<"scrollPaddingBlock">;
+      	scrollPaddingX: Shorthand<"scrollPaddingInline">;
       }
 
       type StrictableProps =
@@ -1291,8 +1291,6 @@ describe('strict-tokens-scope', () => {
       	insetInlineStart: Tokens["spacing"];
       	right: Tokens["spacing"];
       	bottom: Tokens["spacing"];
-      	insetX: Tokens["spacing"] | CssProperties["insetInline"];
-      	insetY: Tokens["spacing"] | CssProperties["insetBlock"];
       	float: "left" | "right" | "start" | "end";
       	hideFrom: Tokens["breakpoints"];
       	hideBelow: Tokens["breakpoints"];
@@ -1447,8 +1445,6 @@ describe('strict-tokens-scope', () => {
       	caretColor: Tokens["colors"];
       	scrollbar: "visible" | "hidden";
       	scrollMargin: Tokens["spacing"];
-      	scrollMarginX: Tokens["spacing"] | CssProperties["scrollMarginInline"];
-      	scrollMarginY: Tokens["spacing"] | CssProperties["scrollMarginBlock"];
       	scrollMarginLeft: Tokens["spacing"];
       	scrollMarginRight: Tokens["spacing"];
       	scrollMarginTop: Tokens["spacing"];
@@ -1466,8 +1462,6 @@ describe('strict-tokens-scope', () => {
       	scrollPaddingInline: Tokens["spacing"];
       	scrollPaddingInlineEnd: Tokens["spacing"];
       	scrollPaddingInlineStart: Tokens["spacing"];
-      	scrollPaddingX: Tokens["spacing"] | CssProperties["scrollPaddingInline"];
-      	scrollPaddingY: Tokens["spacing"] | CssProperties["scrollPaddingBlock"];
       	scrollPaddingLeft: Tokens["spacing"];
       	scrollPaddingRight: Tokens["spacing"];
       	scrollPaddingTop: Tokens["spacing"];
@@ -1498,6 +1492,8 @@ describe('strict-tokens-scope', () => {
         export interface PropertyTypes extends PropertyValueTypes {
         
       	pos: Shorthand<"position">;
+      	insetX: Shorthand<"insetInline">;
+      	insetY: Shorthand<"insetBlock">;
       	insetEnd: Shorthand<"insetInlineEnd">;
       	end: Shorthand<"insetInlineEnd">;
       	insetStart: Shorthand<"insetInlineStart">;
@@ -1584,6 +1580,10 @@ describe('strict-tokens-scope', () => {
       	shadowColor: Shorthand<"boxShadowColor">;
       	x: Shorthand<"translateX">;
       	y: Shorthand<"translateY">;
+      	scrollMarginY: Shorthand<"scrollMarginBlock">;
+      	scrollMarginX: Shorthand<"scrollMarginInline">;
+      	scrollPaddingY: Shorthand<"scrollPaddingBlock">;
+      	scrollPaddingX: Shorthand<"scrollPaddingInline">;
       }
 
       type StrictableProps =
@@ -1712,8 +1712,6 @@ describe('strict-tokens-scope', () => {
       	insetInlineStart: Tokens["spacing"];
       	right: Tokens["spacing"];
       	bottom: Tokens["spacing"];
-      	insetX: Tokens["spacing"] | CssProperties["insetInline"];
-      	insetY: Tokens["spacing"] | CssProperties["insetBlock"];
       	float: "left" | "right" | "start" | "end";
       	hideFrom: Tokens["breakpoints"];
       	hideBelow: Tokens["breakpoints"];
@@ -1868,8 +1866,6 @@ describe('strict-tokens-scope', () => {
       	caretColor: Tokens["colors"];
       	scrollbar: "visible" | "hidden";
       	scrollMargin: Tokens["spacing"];
-      	scrollMarginX: Tokens["spacing"] | CssProperties["scrollMarginInline"];
-      	scrollMarginY: Tokens["spacing"] | CssProperties["scrollMarginBlock"];
       	scrollMarginLeft: Tokens["spacing"];
       	scrollMarginRight: Tokens["spacing"];
       	scrollMarginTop: Tokens["spacing"];
@@ -1887,8 +1883,6 @@ describe('strict-tokens-scope', () => {
       	scrollPaddingInline: Tokens["spacing"];
       	scrollPaddingInlineEnd: Tokens["spacing"];
       	scrollPaddingInlineStart: Tokens["spacing"];
-      	scrollPaddingX: Tokens["spacing"] | CssProperties["scrollPaddingInline"];
-      	scrollPaddingY: Tokens["spacing"] | CssProperties["scrollPaddingBlock"];
       	scrollPaddingLeft: Tokens["spacing"];
       	scrollPaddingRight: Tokens["spacing"];
       	scrollPaddingTop: Tokens["spacing"];
@@ -1919,6 +1913,8 @@ describe('strict-tokens-scope', () => {
         export interface PropertyTypes extends PropertyValueTypes {
         
       	pos: Shorthand<"position">;
+      	insetX: Shorthand<"insetInline">;
+      	insetY: Shorthand<"insetBlock">;
       	insetEnd: Shorthand<"insetInlineEnd">;
       	end: Shorthand<"insetInlineEnd">;
       	insetStart: Shorthand<"insetInlineStart">;
@@ -2005,6 +2001,10 @@ describe('strict-tokens-scope', () => {
       	shadowColor: Shorthand<"boxShadowColor">;
       	x: Shorthand<"translateX">;
       	y: Shorthand<"translateY">;
+      	scrollMarginY: Shorthand<"scrollMarginBlock">;
+      	scrollMarginX: Shorthand<"scrollMarginInline">;
+      	scrollPaddingY: Shorthand<"scrollPaddingBlock">;
+      	scrollPaddingX: Shorthand<"scrollPaddingInline">;
       }
 
       type StrictableProps =
@@ -2106,7 +2106,7 @@ describe('strict-tokens-scope', () => {
           ? CssPropertyValue<T>
           : PropOrCondition<T, string | number>
 
-      type StrictTokenProps = "top" | "left" | "insetInline" | "insetBlock" | "inset" | "insetBlockEnd" | "insetBlockStart" | "insetInlineEnd" | "insetInlineStart" | "right" | "bottom" | "gap" | "gridGap" | "gridRowGap" | "gridColumnGap" | "rowGap" | "columnGap" | "padding" | "paddingLeft" | "paddingRight" | "paddingTop" | "paddingBottom" | "paddingBlock" | "paddingBlockEnd" | "paddingBlockStart" | "paddingInline" | "paddingInlineEnd" | "paddingInlineStart" | "marginLeft" | "marginRight" | "marginTop" | "marginBottom" | "margin" | "marginBlock" | "marginBlockEnd" | "marginBlockStart" | "marginInline" | "marginInlineEnd" | "marginInlineStart" | "outlineOffset" | "textIndent" | "borderSpacing" | "borderSpacingX" | "borderSpacingY" | "scrollMargin" | "scrollMarginLeft" | "scrollMarginRight" | "scrollMarginTop" | "scrollMarginBottom" | "scrollMarginBlock" | "scrollMarginBlockEnd" | "scrollMarginBlockStart" | "scrollMarginInline" | "scrollMarginInlineEnd" | "scrollMarginInlineStart" | "scrollPadding" | "scrollPaddingBlock" | "scrollPaddingBlockStart" | "scrollPaddingBlockEnd" | "scrollPaddingInline" | "scrollPaddingInlineEnd" | "scrollPaddingInlineStart" | "scrollPaddingLeft" | "scrollPaddingRight" | "scrollPaddingTop" | "scrollPaddingBottom" | "scrollSnapMargin" | "scrollSnapMarginTop" | "scrollSnapMarginBottom" | "scrollSnapMarginLeft" | "scrollSnapMarginRight" | "top" | "left" | "insetInline" | "insetBlock" | "inset" | "insetBlockEnd" | "insetBlockStart" | "end" | "start" | "right" | "bottom" | "gap" | "gridGap" | "gridRowGap" | "gridColumnGap" | "rowGap" | "columnGap" | "p" | "pl" | "pr" | "pt" | "pb" | "paddingY" | "paddingBlockEnd" | "paddingBlockStart" | "px" | "paddingEnd" | "paddingStart" | "ml" | "mr" | "mt" | "mb" | "m" | "marginY" | "marginBlockEnd" | "marginBlockStart" | "marginX" | "marginEnd" | "marginStart" | "ringOffset" | "textIndent" | "borderSpacing" | "borderSpacingX" | "borderSpacingY" | "scrollMargin" | "scrollMarginLeft" | "scrollMarginRight" | "scrollMarginTop" | "scrollMarginBottom" | "scrollMarginBlock" | "scrollMarginBlockEnd" | "scrollMarginBlockStart" | "scrollMarginInline" | "scrollMarginInlineEnd" | "scrollMarginInlineStart" | "scrollPadding" | "scrollPaddingBlock" | "scrollPaddingBlockStart" | "scrollPaddingBlockEnd" | "scrollPaddingInline" | "scrollPaddingInlineEnd" | "scrollPaddingInlineStart" | "scrollPaddingLeft" | "scrollPaddingRight" | "scrollPaddingTop" | "scrollPaddingBottom" | "scrollSnapMargin" | "scrollSnapMarginTop" | "scrollSnapMarginBottom" | "scrollSnapMarginLeft" | "scrollSnapMarginRight"
+      type StrictTokenProps = "top" | "left" | "insetInline" | "insetBlock" | "inset" | "insetBlockEnd" | "insetBlockStart" | "insetInlineEnd" | "insetInlineStart" | "right" | "bottom" | "gap" | "gridGap" | "gridRowGap" | "gridColumnGap" | "rowGap" | "columnGap" | "padding" | "paddingLeft" | "paddingRight" | "paddingTop" | "paddingBottom" | "paddingBlock" | "paddingBlockEnd" | "paddingBlockStart" | "paddingInline" | "paddingInlineEnd" | "paddingInlineStart" | "marginLeft" | "marginRight" | "marginTop" | "marginBottom" | "margin" | "marginBlock" | "marginBlockEnd" | "marginBlockStart" | "marginInline" | "marginInlineEnd" | "marginInlineStart" | "outlineOffset" | "textIndent" | "borderSpacing" | "borderSpacingX" | "borderSpacingY" | "scrollMargin" | "scrollMarginLeft" | "scrollMarginRight" | "scrollMarginTop" | "scrollMarginBottom" | "scrollMarginBlock" | "scrollMarginBlockEnd" | "scrollMarginBlockStart" | "scrollMarginInline" | "scrollMarginInlineEnd" | "scrollMarginInlineStart" | "scrollPadding" | "scrollPaddingBlock" | "scrollPaddingBlockStart" | "scrollPaddingBlockEnd" | "scrollPaddingInline" | "scrollPaddingInlineEnd" | "scrollPaddingInlineStart" | "scrollPaddingLeft" | "scrollPaddingRight" | "scrollPaddingTop" | "scrollPaddingBottom" | "scrollSnapMargin" | "scrollSnapMarginTop" | "scrollSnapMarginBottom" | "scrollSnapMarginLeft" | "scrollSnapMarginRight" | "top" | "left" | "insetX" | "insetY" | "inset" | "insetBlockEnd" | "insetBlockStart" | "end" | "start" | "right" | "bottom" | "gap" | "gridGap" | "gridRowGap" | "gridColumnGap" | "rowGap" | "columnGap" | "p" | "pl" | "pr" | "pt" | "pb" | "paddingY" | "paddingBlockEnd" | "paddingBlockStart" | "px" | "paddingEnd" | "paddingStart" | "ml" | "mr" | "mt" | "mb" | "m" | "marginY" | "marginBlockEnd" | "marginBlockStart" | "marginX" | "marginEnd" | "marginStart" | "ringOffset" | "textIndent" | "borderSpacing" | "borderSpacingX" | "borderSpacingY" | "scrollMargin" | "scrollMarginLeft" | "scrollMarginRight" | "scrollMarginTop" | "scrollMarginBottom" | "scrollMarginY" | "scrollMarginBlockEnd" | "scrollMarginBlockStart" | "scrollMarginX" | "scrollMarginInlineEnd" | "scrollMarginInlineStart" | "scrollPadding" | "scrollPaddingY" | "scrollPaddingBlockStart" | "scrollPaddingBlockEnd" | "scrollPaddingX" | "scrollPaddingInlineEnd" | "scrollPaddingInlineStart" | "scrollPaddingLeft" | "scrollPaddingRight" | "scrollPaddingTop" | "scrollPaddingBottom" | "scrollSnapMargin" | "scrollSnapMarginTop" | "scrollSnapMarginBottom" | "scrollSnapMarginLeft" | "scrollSnapMarginRight"
 
       type Restrict<Key, Value, Fallback> = Key extends StrictTokenProps ? Value : Value | Fallback"
     `)
