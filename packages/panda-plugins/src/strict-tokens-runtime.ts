@@ -1,4 +1,4 @@
-import type { CodegenPrepareHookArgs, CssProperties, PandaPlugin, TokenCategory } from '@pandacss/types'
+import type { CodegenPrepareHookArgs, CssProperties, PandaPlugin, TokenCategory, UserConfig } from '@pandacss/types'
 
 export interface StrictTokensRuntimeOptions {
   categories?: TokenCategory[]
@@ -13,28 +13,36 @@ export interface StrictTokensRuntimeOptions {
  * @see https://panda-css.com/docs/concepts/writing-styles#type-safety
  */
 export const pluginStrictTokensRuntime = (options: StrictTokensRuntimeOptions): PandaPlugin => {
-  let isStrictTokens = false
+  let config: StrictTokensRuntimeConfig
+
   return {
     name: 'strict-tokens-runtime',
     hooks: {
-      'config:resolved': (args) => {
-        if (args.config.strictTokens) isStrictTokens = true
-      },
       'context:created': (args) => {
-        if (!isStrictTokens) {
+        config = {
+          strictTokens: args.ctx.config.strictTokens,
+          shorthands: args.ctx.config.shorthands,
+        }
+        if (!config.strictTokens) {
           args.logger.debug('plugin:strict-tokens-runtime', `strictTokens is not enabled, skipping`)
         }
       },
       'codegen:prepare': (args) => {
-        if (!isStrictTokens) return args.artifacts
+        if (!config.strictTokens) return args.artifacts
 
-        return transformStrictTokensRuntime(args, options)
+        return transformStrictTokensRuntime(args, options, config)
       },
     },
   }
 }
 
-export const transformStrictTokensRuntime = (args: CodegenPrepareHookArgs, options: StrictTokensRuntimeOptions) => {
+export interface StrictTokensRuntimeConfig extends Pick<UserConfig, 'shorthands' | 'strictTokens'> {}
+
+export const transformStrictTokensRuntime = (
+  args: CodegenPrepareHookArgs,
+  options: StrictTokensRuntimeOptions,
+  config?: StrictTokensRuntimeConfig,
+) => {
   // Skip if it shouldnt apply to any category/props
   const { categories, props } = options
   if (categories && !categories.length && props && !props.length) return args.artifacts
@@ -43,7 +51,7 @@ export const transformStrictTokensRuntime = (args: CodegenPrepareHookArgs, optio
   const cssFile = cssFn?.files.find((f) => f.file.includes('css'))
 
   const tokens = args.artifacts.find((art) => art.id === 'design-tokens')
-  const tokenJs = tokens?.files.find((f) => f.file.includes('index.mjs'))
+  const tokenJs = tokens?.files.find((f) => f.file.includes('index.js') || f.file.includes('index.mjs'))
 
   const typesStyles = args.artifacts.find((art) => art.id === 'types-styles')
   const propTypesDts = typesStyles?.files.find((f) => f.file.includes('prop-type'))
@@ -127,23 +135,53 @@ export const transformStrictTokensRuntime = (args: CodegenPrepareHookArgs, optio
 
   // Update the `transform` function to throw an error if a token is not a valid token value
   // (only for the categories/props that are passed as arguments, if any)
-  cssFile.code = cssFile.code.replace(
-    'transform: (prop, value) => {',
-    `transform: (prop, value) => {
-          // Only throw error if the property is in the list of props
-          // bound to a token category and the value is not a valid token value for that category
+  const withStrictChecks = `
+  // Only throw error if the property is in the list of props
+  // bound to a token category and the value is not a valid token value for that category
 
-          if (propList.has(prop)) {
-            const category = categoryByProp.get(prop)
-            if (category) {
-              const values = tokenValues[category]
-              if (values && !values.includes(value)) {
-                throw new Error(\`[super-strict-tokens]: Unknown value:\n { \${prop}: \${value} }\n Valid values in \${category} are: \${values.join(', ')}\`)
-              }
-            }
-          }
-          `,
-  )
+  if (propList.has(prop)) {
+    const category = categoryByProp.get(prop)
+    if (category) {
+      const values = tokenValues[category]
+      if (values && !values.includes(value)) {
+        throw new Error(\`[super-strict-tokens]: Unknown value:\n { \${prop}: \${value} }\n Valid values in \${category} are: \${values.join(', ')}\`)
+      }
+    }
+  }`
+
+  // utility: {
+  //   ${prefix.className ? 'prefix: ' + JSON.stringify(prefix.className) + ',' : ''}
+  //   transform: ${
+  //     utility.hasShorthand
+  //       ? `(prop, value) => {
+  //         const key = resolveShorthand(prop)
+  //         const propKey = classNameByProp.get(key) || hypenateProperty(key)
+  //         return { className: \`$\{propKey}${separator}$\{withoutSpace(value)}\` }
+  //       }`
+  //       : `(key, value) => ({ className: \`$\{classNameByProp.get(key) || hypenateProperty(key)}${separator}$\{withoutSpace(value)}\` })`
+  //   },
+
+  if (config?.shorthands) {
+    cssFile.code = cssFile.code.replace(
+      'transform: (prop, value) => {',
+      `transform: (prop, value) => {
+      ${withStrictChecks}`,
+    )
+  } else {
+    const startStr = 'transform: (key, value) => '
+    const fnStartIndex = cssFile.code.indexOf(startStr) + startStr.length
+    const endStr = 'withoutSpace(value)}'
+    const fnEndIndex = cssFile.code.indexOf(endStr) + endStr.length + 4
+
+    cssFile.code =
+      cssFile.code.slice(0, fnStartIndex) +
+      '{\n' +
+      withStrictChecks +
+      '\nreturn ' +
+      cssFile.code.slice(fnStartIndex, fnEndIndex) +
+      '\n}' +
+      cssFile.code.slice(fnEndIndex)
+  }
 
   return args.artifacts
 }
