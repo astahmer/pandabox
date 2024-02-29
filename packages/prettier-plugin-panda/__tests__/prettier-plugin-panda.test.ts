@@ -1081,4 +1081,65 @@ describe('call expression specifics', () => {
       "
     `)
   })
+
+  test('custom pandaGroupOrder', async () => {
+    const code = `
+  import { Box } from "../styled-system/jsx";
+
+  const App = ({ onClick }: { onClick: () => void }) => {
+    return (
+      <Box bgColor="red" p="4" mx="2" width="120" mt="4">
+        Hello
+      </Box>
+    );
+  }
+  `
+
+    expect(
+      await run(code, {
+        pandaGroupOrder: [
+          'Padding', // changed
+          'System',
+          'Container',
+          'Display',
+          'Visibility',
+          'Position',
+          'Transform',
+          'Flex Layout',
+          'Grid Layout',
+          'Layout',
+          'Border',
+          'Border Radius',
+          'Background', // changed
+          'Margin', // changed
+          'Height',
+          'Color',
+          'Typography',
+          'Shadow',
+          'Table',
+          'List',
+          'Scroll',
+          'Interactivity',
+          'Transition',
+          'Effect',
+          'Other',
+          'Conditions',
+          'Arbitrary conditions',
+          'Css',
+          'Width', // changed
+        ],
+      }),
+    ).toMatchInlineSnapshot(`
+      "import { Box } from "../styled-system/jsx";
+
+      const App = ({ onClick }: { onClick: () => void }) => {
+        return (
+          <Box p="4" bgColor="red" mx="2" mt="4" width="120">
+            Hello
+          </Box>
+        );
+      };
+      "
+    `)
+  })
 })

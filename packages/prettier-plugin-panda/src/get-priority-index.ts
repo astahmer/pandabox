@@ -4,7 +4,7 @@
 import type { CssSemanticGroup } from '@pandacss/types'
 import type { PluginOptions } from './options'
 
-export const groupNames = [
+export const defaultGroupNames = [
   'System',
   'Container',
   'Display',
@@ -36,17 +36,9 @@ export const groupNames = [
   'Css',
 ] as const
 
-export type PriorityGroupName = CssSemanticGroup | (typeof groupNames)[number]
+export type PriorityGroupName = CssSemanticGroup | (typeof defaultGroupNames)[number]
 
-export const groupPriorities = groupNames.reduce(
-  (acc, key, index) => {
-    acc[key] = index + 1
-    return acc
-  },
-  {} as Record<PriorityGroupName, number>,
-)
-
-type Priority = typeof groupPriorities
+type Priority = Record<PriorityGroupName, number>
 
 export type PriorityGroup = {
   name: PriorityGroupName

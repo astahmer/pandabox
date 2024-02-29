@@ -5,7 +5,7 @@ import { getPropertyPriority } from '@pandacss/shared'
 import { TSESTree } from '@typescript-eslint/types'
 import { simpleTraverse } from '@typescript-eslint/typescript-estree'
 import type { ParserOptions } from 'prettier'
-import { getPropPriority, groupPriorities, type PriorityGroup, type PriorityGroupName } from './get-priority-index'
+import { getPropPriority, defaultGroupNames, type PriorityGroup, type PriorityGroupName } from './get-priority-index'
 import type { PluginOptions } from './options'
 
 const NodeType = TSESTree.AST_NODE_TYPES
@@ -19,7 +19,6 @@ export class PrettyPanda {
     public context: PandaContext,
     public prettierOptions?: ParserOptions & Partial<PluginOptions>,
   ) {
-    this.priorityGroups = this.generatePriorityGroups(context)
     this.options = {
       pandaFirstProps: prettierOptions?.pandaFirstProps?.length
         ? prettierOptions?.pandaFirstProps
@@ -29,8 +28,12 @@ export class PrettyPanda {
       pandaOnlyIncluded: prettierOptions?.pandaOnlyIncluded ?? false,
       pandaStylePropsFirst: prettierOptions?.pandaStylePropsFirst ?? true,
       pandaSortOtherProps: prettierOptions?.pandaSortOtherProps ?? true,
+      pandaGroupOrder: prettierOptions?.pandaGroupOrder?.length
+        ? (prettierOptions?.pandaGroupOrder as any)
+        : defaultGroupNames,
       // componentSpecificProps: undefined, // not supported yet
     }
+    this.priorityGroups = this.generatePriorityGroups(context)
   }
 
   generatePriorityGroups = (context: PandaContext) => {
@@ -55,6 +58,15 @@ export class PrettyPanda {
       const set = groups.get(value.group)!
       set.add(key)
     })
+
+    const groupNames = this.options?.pandaGroupOrder
+    const groupPriorities = groupNames.reduce(
+      (acc, key, index) => {
+        acc[key as PriorityGroupName] = index + 1
+        return acc
+      },
+      {} as Record<PriorityGroupName, number>,
+    )
 
     const priorityGroups = [] as PriorityGroup[]
     groups.forEach((keys, _name) => {

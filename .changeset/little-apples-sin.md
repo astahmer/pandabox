@@ -1,5 +1,5 @@
 ---
-"@pandabox/prettier-plugin-panda": patch
+'@pandabox/prettier-plugin-panda': patch
 ---
 
-Add `pandaStylePropsFirst` / `pandaSortOtherProps` options
+Add `pandaStylePropsFirst` / `pandaSortOtherProps` / `pandaGroupOrder` options
