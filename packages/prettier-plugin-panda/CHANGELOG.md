@@ -1,5 +1,11 @@
 # @pandabox/prettier-plugin-panda
 
+## 0.0.3
+
+### Patch Changes
+
+- c68aade: Add `pandaStylePropsFirst` / `pandaSortOtherProps` / `pandaGroupOrder` options
+
 ## 0.0.2
 
 ### Patch Changes
