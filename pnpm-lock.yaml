@@ -183,10 +183,16 @@ importers:
       '@pandacss/shared':
         specifier: ^0.33.0
         version: 0.33.0
+      micromatch:
+        specifier: ^4.0.5
+        version: 4.0.5
     devDependencies:
       '@pandacss/types':
         specifier: ^0.33.0
         version: 0.33.0
+      '@types/micromatch':
+        specifier: ^4.0.6
+        version: 4.0.6
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -3001,6 +3007,10 @@ packages:
       '@types/estree': 1.0.5
     dev: true
 
+  /@types/braces@3.0.4:
+    resolution: {integrity: sha512-0WR3b8eaISjEW7RpZnclONaLFDf7buaowRHdqLp4vLj54AsSAYWfh3DRbfiYJY9XDxMgx1B4sE1Afw2PGpuHOA==}
+    dev: true
+
   /@types/cookie@0.6.0:
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
 
@@ -3061,6 +3071,12 @@ packages:
 
   /@types/mdx@2.0.11:
     resolution: {integrity: sha512-HM5bwOaIQJIQbAYfax35HCKxx7a3KrK3nBtIqJgSOitivTD1y3oW9P3rxY9RkXYPUk7y/AjAohfHKmFpGE79zw==}
+    dev: true
+
+  /@types/micromatch@4.0.6:
+    resolution: {integrity: sha512-2eulCHWqjEpk9/vyic4tBhI8a9qQEl6DaK2n/sF7TweX9YESlypgKyhXMDGt4DAOy/jhLPvVrZc8pTDAMsplJA==}
+    dependencies:
+      '@types/braces': 3.0.4
     dev: true
 
   /@types/minimist@1.2.5:
