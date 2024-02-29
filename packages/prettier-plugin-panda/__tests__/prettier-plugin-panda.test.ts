@@ -157,7 +157,7 @@ describe('JSX style props', () => {
 
     expect(await run(code)).toMatchInlineSnapshot(`
       "import { NotPanda } from "not-panda";
-      <NotPanda m="1" fontSize="md" px="2" py={2}>
+      <NotPanda m="1" py={2} px="2" fontSize="md">
         Hello
       </NotPanda>;
       "
