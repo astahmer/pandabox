@@ -61,9 +61,10 @@ export type PriorityGroup = {
  * and the other is its "inGroup priority", determined by index in that group.
  */
 export function getPropPriority(key: string, config: PluginOptions, priorityGroups: PriorityGroup[]): number {
-  const { firstProps = [], lastProps = [], componentSpecificProps = [] } = config
+  const { pandaFirstProps: firstProps = [], pandaLastProps: lastProps = [],  } = config
   const indexInFirstProps = firstProps.indexOf(key)
   const indexInLastProps = lastProps.indexOf(key)
+  const componentSpecificProps = [] as string[]
 
   if (indexInFirstProps !== -1) {
     return calcPriorityFromIndex({ type: 'reservedFirstProps', value: indexInFirstProps }, config, priorityGroups)
@@ -110,7 +111,8 @@ const calcPriorityFromIndex = (index: Index, config: PluginOptions, priorityGrou
 
   // Perhaps we may want to handle -1 as error in some future.
   // Therefore I set the priority to numbers greater than or equal to zero.
-  const isComponentSpecBeforeStyle = config.isCompPropsBeforeStyleProps
+  // const isComponentSpecBeforeStyle = config.isCompPropsBeforeStyleProps
+  const isComponentSpecBeforeStyle = true
   const basePriorities = {
     firstProps: 0,
     styleProps: 20000,

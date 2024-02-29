@@ -24,21 +24,13 @@ The path to the panda config file.
 
 The current working directory from which the config file will be searched for.
 
-### `firstProps`
+### `pandaFirstProps`
 
 The first props to sort. Defaults to `['as', 'layerStyle', 'textStyle']`.
 
-### `lastProps`
+### `pandaLastProps`
 
 The last props to sort. Defaults to `[]`.
-
-### `isCompPropsBeforeStyleProps`
-
-Whether to sort style props before component props. Defaults to `true`.
-
-### `componentSpecificProps`
-
-The component specific props to sort. Defaults to `undefined`.
 
 ## Example
 
@@ -51,9 +43,8 @@ The component specific props to sort. Defaults to `undefined`.
       "options": {
         "pandaConfigPath": "./panda.config.ts",
         "pandaCwd": "./packages/my-package",
-        "firstProps": ["as"],
-        "lastProps": ["css"],
-        "isCompPropsBeforeStyleProps": true
+        "pandaFirstProps": ["as"],
+        "pandaLastProps": ["css"],
       }
     }
   ]
