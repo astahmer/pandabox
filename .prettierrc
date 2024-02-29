@@ -5,6 +5,5 @@
   "jsxSingleQuote": false,
   "proseWrap": "always",
   "semi": false,
-  "tabWidth": 2,
-  "plugins": ["@pandabox/prettier-plugin-panda"]
+  "tabWidth": 2
 }

@@ -4,7 +4,7 @@
 import type { CssSemanticGroup } from '@pandacss/types'
 import type { PluginOptions } from './options'
 
-export const groupNames = [
+export const defaultGroupNames = [
   'System',
   'Container',
   'Display',
@@ -36,17 +36,9 @@ export const groupNames = [
   'Css',
 ] as const
 
-export type PriorityGroupName = CssSemanticGroup | (typeof groupNames)[number]
+export type PriorityGroupName = CssSemanticGroup | (typeof defaultGroupNames)[number]
 
-export const groupPriorities = groupNames.reduce(
-  (acc, key, index) => {
-    acc[key] = index + 1
-    return acc
-  },
-  {} as Record<PriorityGroupName, number>,
-)
-
-type Priority = typeof groupPriorities
+type Priority = Record<PriorityGroupName, number>
 
 export type PriorityGroup = {
   name: PriorityGroupName
@@ -111,14 +103,13 @@ const calcPriorityFromIndex = (index: Index, config: PluginOptions, priorityGrou
 
   // Perhaps we may want to handle -1 as error in some future.
   // Therefore I set the priority to numbers greater than or equal to zero.
-  // const isComponentSpecBeforeStyle = config.isCompPropsBeforeStyleProps
   const isComponentSpecBeforeStyle = true
   const basePriorities = {
     firstProps: 0,
-    styleProps: 20000,
-    componentSpecificProps: isComponentSpecBeforeStyle ? 10000 : 30000,
-    otherProps: 40000,
-    lastProps: 50000,
+    styleProps: config.pandaStylePropsFirst ? 20_000: 45_000 ,
+    componentSpecificProps: isComponentSpecBeforeStyle ? 10_000 : 30_000,
+    otherProps: 40_000,
+    lastProps: 50_000,
   }
 
   switch (index.type) {
