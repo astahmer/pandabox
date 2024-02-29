@@ -27,7 +27,8 @@ export class PrettyPanda {
       pandaLastProps: prettierOptions?.pandaLastProps ?? [],
       pandaOnlyComponents: prettierOptions?.pandaOnlyComponents ?? false,
       pandaOnlyIncluded: prettierOptions?.pandaOnlyIncluded ?? false,
-      // isCompPropsBeforeStyleProps: true, // options?.displayCompPropsBeforeStyleProps ? ~ : defaultIsCompPropsBeforeStyleProps
+      pandaStylePropsFirst: prettierOptions?.pandaStylePropsFirst ?? true,
+      pandaSortOtherProps: prettierOptions?.pandaSortOtherProps ?? true,
       // componentSpecificProps: undefined, // not supported yet
     }
   }
@@ -233,8 +234,12 @@ export class PrettyPanda {
       return aPriority - bPriority
     }
 
-    // Same Priority. Then compare it alphabetically
-    return a.name < b.name ? -1 : 1
+    // Sort other props alphabetically
+    if (this.options.pandaSortOtherProps) {
+      return a.name < b.name ? -1 : 1
+    }
+
+    return 0
   }
 
   getImports = () => {

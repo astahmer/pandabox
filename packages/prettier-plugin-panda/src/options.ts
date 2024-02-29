@@ -1,4 +1,4 @@
-import type { Plugin, SupportOption } from 'prettier'
+import type { SupportOption } from 'prettier'
 
 export interface PluginOptions {
   pandaConfigPath?: string
@@ -8,7 +8,8 @@ export interface PluginOptions {
   pandaLastProps: string[]
   pandaOnlyComponents: boolean
   pandaOnlyIncluded: boolean
-  // isCompPropsBeforeStyleProps: boolean
+  pandaStylePropsFirst: boolean
+  pandaSortOtherProps: boolean
   // componentSpecificProps: string[] | undefined
 }
 
@@ -43,7 +44,7 @@ export const options = {
   pandaOnlyComponents: {
     type: 'boolean',
     category: 'Panda',
-    description: 'Only sort props in Panda components (JSX patterns and `<styled.xxx /> factory`)',
+    description: 'Only sort props in known Panda components (JSX patterns and `<styled.xxx /> factory`)',
     default: false,
   },
   pandaOnlyIncluded: {
@@ -52,12 +53,18 @@ export const options = {
     description: 'Only sort props in files that are included in the config',
     default: false,
   },
-  // isCompPropsBeforeStyleProps: {
-  //   type: 'boolean',
-  //   category: 'Panda',
-  //   description: 'Whether to sort the style props before the component props',
-  //   default: true,
-  // },
+  pandaStylePropsFirst: {
+    type: 'boolean',
+    category: 'Panda',
+    description: 'Whether to sort the style props before the component props',
+    default: true,
+  },
+  pandaSortOtherProps: {
+    type: 'boolean',
+    category: 'Panda',
+    description: 'Whether to sort the other props alphabetically',
+    default: true,
+  },
   // componentSpecificProps: {
   //   array: true,
   //   type: 'string',
