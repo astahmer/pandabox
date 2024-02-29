@@ -9,7 +9,6 @@ import { getPropPriority, groupPriorities, type PriorityGroup, type PriorityGrou
 import type { PluginOptions } from './options'
 
 const NodeType = TSESTree.AST_NODE_TYPES
-const defaultFirstProps = ['as', 'layerStyle', 'textStyle']
 
 export class PrettyPanda {
   priorityGroups: PriorityGroup[] = []
@@ -22,10 +21,10 @@ export class PrettyPanda {
   ) {
     this.priorityGroups = this.generatePriorityGroups(context)
     this.options = {
-      firstProps: prettierOptions?.firstProps ?? defaultFirstProps,
-      lastProps: prettierOptions?.lastProps ?? [],
-      isCompPropsBeforeStyleProps: true, // options?.displayCompPropsBeforeStyleProps ? ~ : defaultIsCompPropsBeforeStyleProps
-      componentSpecificProps: undefined, // not supported yet
+      pandaFirstProps: prettierOptions?.pandaFirstProps?.length ? prettierOptions?.pandaFirstProps : ['as', 'layerStyle', 'textStyle'],
+      pandaLastProps: prettierOptions?.pandaLastProps ?? [],
+      // isCompPropsBeforeStyleProps: true, // options?.displayCompPropsBeforeStyleProps ? ~ : defaultIsCompPropsBeforeStyleProps
+      // componentSpecificProps: undefined, // not supported yet
     }
   }
 

@@ -4,7 +4,7 @@ import typescriptParser from 'prettier/plugins/typescript'
 import type { PluginOptions } from './options'
 import { PrettyPanda } from './pretty-panda'
 
-export { defaultOptions, options } from './options'
+export { options } from './options'
 export type { PluginOptions }
 
 const builder = new Builder()

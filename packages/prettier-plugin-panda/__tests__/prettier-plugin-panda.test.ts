@@ -447,7 +447,7 @@ describe('JSX style props', () => {
   </Box>;
   `
 
-    expect(await run(code, { firstProps: [] })).toMatchInlineSnapshot(`
+    expect(await run(code, { pandaFirstProps: [] })).toMatchInlineSnapshot(`
       "import { Box } from "../styled-system/jsx";
       <Box aria-label="aria-label" className={className} key={key} ref={ref}>
         Hello
@@ -456,7 +456,7 @@ describe('JSX style props', () => {
     `)
   })
 
-  test('if lastProps is specified, that must be the last.', async () => {
+  test('if pandaLastProps is specified, that must be the last.', async () => {
     const code = `
   import { Box } from "../styled-system/jsx";
   <Box
@@ -469,7 +469,7 @@ describe('JSX style props', () => {
   </Box>;
   `
 
-    expect(await run(code, { lastProps: ['onClick', 'aria-label'] })).toMatchInlineSnapshot(`
+    expect(await run(code, { pandaLastProps: ['onClick', 'aria-label'] })).toMatchInlineSnapshot(`
       "import { Box } from "../styled-system/jsx";
       <Box bg={bg} className={className} onClick={onClick} aria-label="aria-label">
         onClick should be the last
@@ -478,7 +478,7 @@ describe('JSX style props', () => {
     `)
   })
 
-  test('if same property is set for both firstProps and lastProps, that of lastProps will be ignored.', async () => {
+  test('if same property is set for both pandaFirstProps and pandaLastProps, that of pandaLastProps will be ignored.', async () => {
     const code = `
   import { Box } from "../styled-system/jsx";
   <Box
@@ -492,8 +492,8 @@ describe('JSX style props', () => {
 
     expect(
       await run(code, {
-        lastProps: ['onClick', 'aria-label'],
-        firstProps: ['onClick', 'aria-label'],
+        pandaLastProps: ['onClick', 'aria-label'],
+        pandaFirstProps: ['onClick', 'aria-label'],
       }),
     ).toMatchInlineSnapshot(`
       "import { Box } from "../styled-system/jsx";
@@ -890,7 +890,7 @@ describe('Call Expression css(xxx) arguments', () => {
   </div>
   `
 
-    expect(await run(code, { firstProps: [] })).toMatchInlineSnapshot(`
+    expect(await run(code, { pandaFirstProps: [] })).toMatchInlineSnapshot(`
       "import { css } from "../styled-system/css";
       <div
         className={css({
@@ -906,7 +906,7 @@ describe('Call Expression css(xxx) arguments', () => {
     `)
   })
 
-  test('if lastProps is specified, that must be the last.', async () => {
+  test('if pandaLastProps is specified, that must be the last.', async () => {
     const code = `
   import { css } from "../styled-system/css";
   <div className={css({ className: className, onClick: onClick, bg: bg, ariaLabel: "ariaLabel" })}>
@@ -914,7 +914,7 @@ describe('Call Expression css(xxx) arguments', () => {
   </div>
   `
 
-    expect(await run(code, { lastProps: ['onClick', 'ariaLabel'] })).toMatchInlineSnapshot(`
+    expect(await run(code, { pandaLastProps: ['onClick', 'ariaLabel'] })).toMatchInlineSnapshot(`
       "import { css } from "../styled-system/css";
       <div
         className={css({
@@ -930,7 +930,7 @@ describe('Call Expression css(xxx) arguments', () => {
     `)
   })
 
-  test('if same property is set for both firstProps and lastProps, that of lastProps will be ignored.', async () => {
+  test('if same property is set for both pandaFirstProps and pandaLastProps, that of pandaLastProps will be ignored.', async () => {
     const code = `
   import { css } from "../styled-system/css";
   <div className={css({ onClick: onClick, bg: bg, ariaLabel: "ariaLabel" })}>
@@ -940,8 +940,8 @@ describe('Call Expression css(xxx) arguments', () => {
 
     expect(
       await run(code, {
-        lastProps: ['onClick', 'ariaLabel'],
-        firstProps: ['onClick', 'ariaLabel'],
+        pandaLastProps: ['onClick', 'ariaLabel'],
+        pandaFirstProps: ['onClick', 'ariaLabel'],
       }),
     ).toMatchInlineSnapshot(`
       "import { css } from "../styled-system/css";

@@ -4,13 +4,13 @@ export interface PluginOptions {
   pandaConfigPath?: string
   pandaCwd?: string
   //
-  firstProps: string[]
-  lastProps: string[]
-  isCompPropsBeforeStyleProps: boolean
-  componentSpecificProps: string[] | undefined
+  pandaFirstProps: string[]
+  pandaLastProps: string[]
+  // isCompPropsBeforeStyleProps: boolean
+  // componentSpecificProps: string[] | undefined
 }
 
-export const options: Plugin['options'] = {
+export const options = {
   pandaConfigPath: {
     type: 'path',
     category: 'Panda',
@@ -24,38 +24,30 @@ export const options: Plugin['options'] = {
     default: undefined,
   },
   //
-  firstProps: {
+  pandaFirstProps: {
     array: true,
     type: 'string',
     category: 'Panda',
     description: 'The first props to sort',
+    default: [{ value: []}]
   },
-  lastProps: {
+  pandaLastProps: {
     array: true,
     type: 'string',
     category: 'Panda',
     description: 'The last props to sort',
+    default: [{ value: []}]
   },
-  isCompPropsBeforeStyleProps: {
-    type: 'boolean',
-    category: 'Panda',
-    description: 'Whether to sort the style props before the component props',
-    default: true,
-  },
-  componentSpecificProps: {
-    array: true,
-    type: 'string',
-    category: 'Panda',
-    description: 'The component specific props to sort',
-  },
-} satisfies Record<keyof PluginOptions, SupportOption>
-
-export const defaultOptions: Plugin['defaultOptions'] = {
-  pandaConfigPath: options.pandaConfigPath.default,
-  pandaCwd: options.pandaCwd.default,
-  //
-  firstProps: options.firstProps.default,
-  lastProps: options.lastProps.default,
-  isCompPropsBeforeStyleProps: options.isCompPropsBeforeStyleProps.default,
-  componentSpecificProps: options.componentSpecificProps.default,
+  // isCompPropsBeforeStyleProps: {
+  //   type: 'boolean',
+  //   category: 'Panda',
+  //   description: 'Whether to sort the style props before the component props',
+  //   default: true,
+  // },
+  // componentSpecificProps: {
+  //   array: true,
+  //   type: 'string',
+  //   category: 'Panda',
+  //   description: 'The component specific props to sort',
+  // },
 } satisfies Record<keyof PluginOptions, SupportOption>
