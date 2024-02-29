@@ -21,8 +21,12 @@ export class PrettyPanda {
   ) {
     this.priorityGroups = this.generatePriorityGroups(context)
     this.options = {
-      pandaFirstProps: prettierOptions?.pandaFirstProps?.length ? prettierOptions?.pandaFirstProps : ['as', 'layerStyle', 'textStyle'],
+      pandaFirstProps: prettierOptions?.pandaFirstProps?.length
+        ? prettierOptions?.pandaFirstProps
+        : ['as', 'layerStyle', 'textStyle'],
       pandaLastProps: prettierOptions?.pandaLastProps ?? [],
+      pandaOnlyComponents: prettierOptions?.pandaOnlyComponents ?? false,
+      pandaOnlyIncluded: prettierOptions?.pandaOnlyIncluded ?? false,
       // isCompPropsBeforeStyleProps: true, // options?.displayCompPropsBeforeStyleProps ? ~ : defaultIsCompPropsBeforeStyleProps
       // componentSpecificProps: undefined, // not supported yet
     }
@@ -144,8 +148,12 @@ export class PrettyPanda {
           // <> ... </>
           if (!tagName) return
 
-          const isPandaComponent = file.matchTag(tagName) && file.find(tagIdentifier)
-          if (!isPandaComponent) return
+          if (this.options.pandaOnlyComponents) {
+            const isPandaComponent = file.isPandaComponent(tagName) && file.find(tagIdentifier)
+            if (!isPandaComponent) return
+          } else if (!file.matchTag(tagName)) {
+            return
+          }
 
           if (ignoredLines.includes(node.loc.start.line - 1)) {
             return

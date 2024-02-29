@@ -6,6 +6,8 @@ export interface PluginOptions {
   //
   pandaFirstProps: string[]
   pandaLastProps: string[]
+  pandaOnlyComponents: boolean
+  pandaOnlyIncluded: boolean
   // isCompPropsBeforeStyleProps: boolean
   // componentSpecificProps: string[] | undefined
 }
@@ -29,14 +31,26 @@ export const options = {
     type: 'string',
     category: 'Panda',
     description: 'The first props to sort',
-    default: [{ value: []}]
+    default: [{ value: [] }],
   },
   pandaLastProps: {
     array: true,
     type: 'string',
     category: 'Panda',
     description: 'The last props to sort',
-    default: [{ value: []}]
+    default: [{ value: [] }],
+  },
+  pandaOnlyComponents: {
+    type: 'boolean',
+    category: 'Panda',
+    description: 'Only sort props in Panda components (JSX patterns and `<styled.xxx /> factory`)',
+    default: false,
+  },
+  pandaOnlyIncluded: {
+    type: 'boolean',
+    category: 'Panda',
+    description: 'Only sort props in files that are included in the config',
+    default: false,
   },
   // isCompPropsBeforeStyleProps: {
   //   type: 'boolean',
