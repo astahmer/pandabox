@@ -1,8 +1,9 @@
 import { defineConfig } from '@pandacss/dev'
 import { preset as basePreset } from '@pandacss/preset-base'
+import { createUtopia } from '@pandabox/presets'
 
 export default defineConfig({
-  presets: ['@pandacss/preset-panda', '@park-ui/panda-preset'],
+  presets: ['@pandacss/preset-panda', '@park-ui/panda-preset', createUtopia()],
 
   // Whether to use css reset
   preflight: true,

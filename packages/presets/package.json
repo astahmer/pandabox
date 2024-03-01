@@ -1,0 +1,58 @@
+{
+  "name": "@pandabox/presets",
+  "version": "0.0.0",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch src",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "utopia-core": "^1.3.0"
+  },
+  "devDependencies": {
+    "@pandacss/dev": "^0.33.0",
+    "@pandacss/types": "^0.33.0",
+    "tsup": "^8.0.2",
+    "vitest": "^1.3.1"
+  },
+  "homepage": "https://astahmer.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astahmer/pandabox.git",
+    "directory": "packages/presets"
+  },
+  "author": "Alexandre Stahmer",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "files": [
+    "src",
+    "dist"
+  ],
+  "keywords": [
+    "pandacss",
+    "pandabox",
+    "panda",
+    "kit",
+    "panda",
+    "plugins",
+    "typesafety",
+    "typescript"
+  ]
+}
