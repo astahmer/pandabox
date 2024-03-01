@@ -63,10 +63,8 @@
     "pandacss",
     "pandabox",
     "panda",
-    "kit",
-    "codemod",
-    "template-literal",
-    "styled2panda",
+    "prettier",
+    "plugin",
     "typesafety",
     "typescript"
   ]

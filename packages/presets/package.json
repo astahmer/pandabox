@@ -49,9 +49,8 @@
     "pandacss",
     "pandabox",
     "panda",
-    "kit",
     "panda",
-    "plugins",
+    "presets",
     "typesafety",
     "typescript"
   ]

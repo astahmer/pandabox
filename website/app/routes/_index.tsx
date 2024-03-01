@@ -12,18 +12,6 @@ export const meta: MetaFunction = () => {
   return [{ title: 'Pandabox' }, { name: 'description', content: '@pandabox / a toolbox for Panda CSS' }]
 }
 
-const link = cx(
-  'group',
-  hstack({
-    _hover: { color: { _dark: 'blue.300', _light: 'blue.500' } },
-  }),
-)
-const linkTitle = css({
-  _light: { color: 'blue.500', _groupHover: { color: 'blue.700' } },
-  _dark: { color: 'blue.400' },
-  _groupHover: { color: { _dark: 'blue.100' } },
-})
-
 export default function Index() {
   return (
     <Layout>
@@ -40,7 +28,12 @@ export default function Index() {
           <Card
             title="@pandabox/panda-plugins"
             description="Transforms the `styled-system` to fit your exact needs"
-            href="https://github.com/astahmer/pandabox"
+            href="https://github.com/astahmer/pandabox/tree/main/packages/panda-plugins"
+          />
+          <Card
+            title="@pandabox/prettier-plugin-panda"
+            description="Prettier plugin for Panda CSS, sort `css(xxx)` and JSX style props`"
+            href="https://github.com/astahmer/pandabox/tree/main/packages/prettier-plugin-panda"
           />
           <Card
             title="@pandabox/unplugin-panda-macro"

@@ -40,8 +40,8 @@
     "pandacss",
     "pandabox",
     "panda",
-    "kit",
     "postcss",
+    "plugins",
     "typesafety",
     "typescript"
   ],
