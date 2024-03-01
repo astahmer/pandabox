@@ -1,7 +1,7 @@
 import type { Monaco } from '@monaco-editor/react'
 import type { editor } from 'monaco-editor'
 import { Project, SourceFile } from 'ts-morph'
-import { EventObject, assign, setup } from 'xstate'
+import { type EventObject, assign, setup } from 'xstate'
 import { urlSaver } from './url-saver'
 import { styled2panda } from '@pandabox/codemods'
 import initialInput from './initial-input?raw'

@@ -1,8 +1,19 @@
 import { defineConfig } from '@pandacss/dev'
 import { preset as basePreset } from '@pandacss/preset-base'
+import { createUtopia } from '@pandabox/presets'
+import { pluginRemoveUnusedCss } from '@pandabox/panda-plugins'
 
 export default defineConfig({
-  presets: ['@pandacss/preset-panda', '@park-ui/panda-preset'],
+  plugins: [pluginRemoveUnusedCss()],
+  presets: [
+    '@pandacss/preset-panda',
+    createUtopia({
+      enabled: { textStyles: true, fontSizes: true },
+      // space: { format: 'index' },
+      // size: { format: 'index' },
+      type: { positiveSteps: 8 },
+    }),
+  ],
 
   // Whether to use css reset
   preflight: true,

@@ -1,8 +1,3 @@
-import { css } from '../styled-system/css'
-// @ts-expect-error pluginRemoveFeatures
-import { cva } from '../styled-system/css'
-// @ts-expect-error pluginRemoveFeatures
-import { cva as cva2 } from '../styled-system/css/cva'
 import { styled } from '../styled-system/jsx'
 
 const Button = styled('button', {
@@ -31,6 +26,7 @@ function App() {
       >
         button
       </Button>
+      <p></p>
       <Basic
         //
         bg="amber.100"

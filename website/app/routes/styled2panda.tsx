@@ -1,4 +1,7 @@
 import type { MetaFunction } from '@remix-run/node'
+import { Link } from '@remix-run/react'
+import { LuChevronLeft } from 'react-icons/lu'
+import { IconButton } from '../components/icon-button'
 import { Layout } from '../components/layout'
 import { Playground } from '../playground/playground'
 
@@ -11,7 +14,15 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
   return (
-    <Layout>
+    <Layout
+      header={
+        <Link to="/">
+          <IconButton css={{ fontSize: 'md' }} title="Home">
+            <LuChevronLeft />
+          </IconButton>
+        </Link>
+      }
+    >
       <Playground />
     </Layout>
   )

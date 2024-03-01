@@ -1,13 +1,17 @@
 {
-  "name": "@pandabox/panda-plugins",
-  "version": "0.0.5",
+  "name": "@pandabox/prettier-plugin",
+  "version": "0.0.3",
+  "description": "Prettier plugin for Panda css",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": {
         "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
+        "default": "./dist/index.js"
       },
       "require": {
         "types": "./dist/index.d.ts",
@@ -17,31 +21,34 @@
   },
   "scripts": {
     "build": "tsup",
-    "dev": "tsup --watch src",
+    "build-fast": "tsup --no-dts",
+    "dev": "pnpm build-fast --watch",
     "typecheck": "tsc --noEmit",
-    "test": "bun ./test-cli.ts test",
-    "codegen": "bun ./test-cli.ts codegen"
+    "test": "vitest"
   },
   "imports": {
     "#pandabox/fixtures": "../fixtures/src/index.ts"
   },
-  "dependencies": {
-    "@pandabox/postcss-plugins": "workspace:^",
-    "postcss": "^8.4.35"
-  },
   "devDependencies": {
-    "@pandacss/dev": "^0.33.0",
     "@pandacss/types": "^0.33.0",
-    "cac": "^6.7.14",
-    "happy-dom": "^13.6.2",
+    "@types/micromatch": "^4.0.6",
+    "prettier": "3.2.5",
     "tsup": "^8.0.2",
-    "vitest": "^1.3.1"
+    "vitest": "1.3.1"
+  },
+  "dependencies": {
+    "@pandacss/config": "^0.33.0",
+    "@pandacss/core": "^0.33.0",
+    "@pandacss/node": "^0.33.0",
+    "@pandacss/preset-base": "^0.33.0",
+    "@pandacss/shared": "^0.33.0",
+    "micromatch": "^4.0.5"
   },
   "homepage": "https://astahmer.dev",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/astahmer/pandabox.git",
-    "directory": "packages/panda-plugins"
+    "directory": "packages/prettier-plugin"
   },
   "author": "Alexandre Stahmer",
   "publishConfig": {
@@ -56,7 +63,8 @@
     "pandacss",
     "pandabox",
     "panda",
-    "plugins",
+    "prettier",
+    "plugin",
     "typesafety",
     "typescript"
   ]

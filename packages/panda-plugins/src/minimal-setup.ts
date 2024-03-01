@@ -1,5 +1,5 @@
 import type { PandaPlugin } from '@pandacss/types'
-import { transformFeatures, type RemoveFeaturesOptions } from '.'
+import { transformFeatures, type RemoveFeaturesOptions } from './remove-features'
 
 /**
  * Enables a minimal setup for Panda CSS.

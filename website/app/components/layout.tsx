@@ -1,7 +1,6 @@
-import '@fontsource/inter'
-
 import { Flex, HStack, Stack } from '#styled-system/jsx'
-import { PropsWithChildren, ReactNode, useEffect } from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
+import { useEffect } from 'react'
 
 import { css } from '#styled-system/css'
 import { hstack } from '#styled-system/patterns'
@@ -16,11 +15,6 @@ import { TwitterIcon } from './twitter-icon'
 interface LayoutProps extends PropsWithChildren {
   header?: ReactNode
 }
-
-const link = css({
-  _dark: { color: 'yellow.300' },
-  _hover: { color: 'blue.400' },
-})
 
 const isDev = import.meta.env.DEV
 
