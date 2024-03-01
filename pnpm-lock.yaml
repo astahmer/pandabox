@@ -195,7 +195,7 @@ importers:
         specifier: ^1.3.1
         version: 1.3.1(@types/node@20.11.21)(happy-dom@13.6.2)
 
-  packages/prettier-plugin-panda:
+  packages/prettier-plugin:
     dependencies:
       '@pandacss/config':
         specifier: ^0.33.0

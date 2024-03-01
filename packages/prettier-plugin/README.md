@@ -1,4 +1,4 @@
-# @pandabox/prettier-plugin-panda
+# @pandabox/prettier-plugin
 
 Prettier plugin for Panda CSS.
 
@@ -10,14 +10,14 @@ Will sort style props based on your local `panda.config.ts`:
 ## Installation
 
 ```bash
-pnpm add -D prettier @pandabox/prettier-plugin-panda
+pnpm add -D prettier @pandabox/prettier-plugin
 ```
 
 ## Usage
 
 ```json
 {
-  "plugins": ["@pandabox/prettier-plugin-panda"],
+  "plugins": ["@pandabox/prettier-plugin"],
   "pandaFirstProps": ["as", "layerStyle", "textStyle"],
   "pandaLastProps": [],
   "pandaOnlyComponents": false,
@@ -35,7 +35,7 @@ The plugin will dynamically resolve your `panda.config.ts` file and sort the sty
 Each utility in the [`@pandacss/preset-base`](https://github.com/chakra-ui/panda/pull/2269/files) has a group name.
 
 The
-[group names and their order](https://github.com/astahmer/pandakit/blob/5e3d5cb6c5bbed211c3bf608b69b307568cdff06/packages/prettier-plugin-panda/src/get-priority-index.ts#L7)
+[group names and their order](https://github.com/astahmer/pandakit/blob/5e3d5cb6c5bbed211c3bf608b69b307568cdff06/packages/prettier-plugin/src/get-priority-index.ts#L7)
 are:
 
 ```ts

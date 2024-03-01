@@ -1,5 +1,5 @@
 {
-  "name": "@pandabox/prettier-plugin-panda",
+  "name": "@pandabox/prettier-plugin",
   "version": "0.0.3",
   "description": "Prettier plugin for Panda css",
   "main": "dist/index.js",
@@ -48,7 +48,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/astahmer/pandabox.git",
-    "directory": "packages/prettier-plugin-panda"
+    "directory": "packages/prettier-plugin"
   },
   "author": "Alexandre Stahmer",
   "publishConfig": {

@@ -31,16 +31,15 @@ export default function Index() {
             href="https://github.com/astahmer/pandabox/tree/main/packages/panda-plugins"
           />
           <Card
-            title="@pandabox/prettier-plugin-panda"
+            title="@pandabox/prettier-plugin"
             description="Prettier plugin for Panda CSS, sort `css(xxx)` and JSX style props`"
-            href="https://github.com/astahmer/pandabox/tree/main/packages/prettier-plugin-panda"
+            href="https://github.com/astahmer/pandabox/tree/main/packages/prettier-plugin"
           />
           <Card
             title="@pandabox/unplugin-panda-macro"
             description="Make your `styled-system` disappear at build-time by inlining the results as class names."
             href="https://github.com/astahmer/pandabox/tree/main/packages/unplugin-panda-macro"
           />
-
           <Card
             title="styled2panda"
             description="Easily migrate code from `styled-components` to Panda CSS"

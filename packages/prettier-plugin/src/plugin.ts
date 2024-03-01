@@ -48,7 +48,7 @@ export const parsers: Plugin['parsers'] = {
         const pretty = new PrettyPanda(ast, ctx, options as any)
         return pretty.format(text)
       } catch (err) {
-        console.log('prettier-plugin-panda error')
+        console.log('prettier-plugin error')
         console.error(err)
         return ast
       }

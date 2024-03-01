@@ -1,4 +1,4 @@
-# @pandabox/prettier-plugin-panda
+# @pandabox/prettier-plugin
 
 ## 0.0.3
 
