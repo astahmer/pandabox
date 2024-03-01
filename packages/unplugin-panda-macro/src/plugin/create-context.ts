@@ -44,7 +44,7 @@ export const createMacroContext = (options: MacroContextOptions) => {
     const css = sheet.toCss({ optimize: true })
     if (!opts.optimizeCss) return css
 
-    const optimized = postcss([removeUnusedCssVars(panda.config.cssVarRoot), removeUnusedKeyframes]).process(css)
+    const optimized = postcss([removeUnusedCssVars, removeUnusedKeyframes]).process(css)
     return optimized.toString()
   }
 

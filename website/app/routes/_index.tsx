@@ -1,12 +1,11 @@
-import { css, cx } from '#styled-system/css'
 import { Grid, Stack, styled } from '#styled-system/jsx'
-import { container, hstack } from '#styled-system/patterns'
+import { container } from '#styled-system/patterns'
 import type { HTMLStyledProps } from '#styled-system/types'
 import type { MetaFunction } from '@remix-run/node'
 import { Link } from '@remix-run/react'
+import type { ReactNode } from 'react'
 import { LuExternalLink } from 'react-icons/lu'
 import { Layout } from '../components/layout'
-import type { ReactNode } from 'react'
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Pandabox' }, { name: 'description', content: '@pandabox / a toolbox for Panda CSS' }]
