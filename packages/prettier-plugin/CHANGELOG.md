@@ -1,5 +1,11 @@
 # @pandabox/prettier-plugin
 
+## 0.0.4
+
+### Patch Changes
+
+- 91b4f3a: rename to `@pandabox/prettier-plugin` instead of `@pandabox/prettier-plugin-panda`
+
 ## 0.0.3
 
 ### Patch Changes
