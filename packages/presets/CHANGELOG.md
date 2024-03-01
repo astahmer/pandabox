@@ -1,6 +1,6 @@
-# @pandabox/postcss-plugins
+# @pandabox/presets
 
-## 0.0.2
+## 0.0.1
 
 ### Patch Changes
 
@@ -9,9 +9,3 @@
   BREAKING: Update `@pandabox/postcss-plugins` `removeUnusedCssVars` API to directly return a postcss plugin
 
   Add `pluginRemoveUnusedCss` to `@pandabox/panda-plugins` that uses `@pandabox/postcss-plugins`
-
-## 0.0.1
-
-### Patch Changes
-
-- ed8bfb4: initial release

@@ -1,5 +1,12 @@
 # @pandabox/unplugin-panda-macro
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies [91b4f3a]
+  - @pandabox/postcss-plugins@0.0.2
+
 ## 0.0.2
 
 ### Patch Changes
