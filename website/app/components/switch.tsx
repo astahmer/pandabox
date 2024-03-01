@@ -1,7 +1,7 @@
 import { css, cx } from '#styled-system/css'
 import { splitCssProps } from '#styled-system/jsx'
 import { switchRecipe, type SwitchRecipeVariantProps } from '#styled-system/recipes'
-import { type Assign, type JsxStyleProps } from '#styled-system/types'
+import type { Assign, JsxStyleProps } from '#styled-system/types'
 import { Switch as ArkSwitch, type SwitchRootProps } from '@ark-ui/react/switch'
 import { type ReactNode } from 'react'
 

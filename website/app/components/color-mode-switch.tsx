@@ -1,5 +1,6 @@
 import { css } from '#styled-system/css'
-import { ComponentPropsWithoutRef, useEffect, useState } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useTheme } from '../vite-themes/provider'
 import { IconButton } from './icon-button'
 

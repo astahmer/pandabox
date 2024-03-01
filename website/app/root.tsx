@@ -1,8 +1,12 @@
 import type { LinksFunction } from '@remix-run/node'
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react'
 import pandaCss from '../styled-system/styles.css?url'
+import inter from '@fontsource/inter?url'
 
-export const links: LinksFunction = () => [{ rel: 'stylesheet', href: pandaCss }]
+export const links: LinksFunction = () => [
+  { rel: 'stylesheet', href: pandaCss },
+  { rel: 'stylesheet', href: inter },
+]
 
 export default function App() {
   return (

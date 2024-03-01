@@ -5,12 +5,8 @@ import { Panel, PanelGroup } from 'react-resizable-panels'
 import { useTheme } from '../vite-themes/provider'
 import { ResizeHandle } from './resize-handle'
 
-import {
-  DiffEditorProps,
-  EditorProps,
-  DiffEditor as MonacoDiffEditor,
-  Editor as MonacoEditor,
-} from '@monaco-editor/react'
+import type { DiffEditorProps, EditorProps } from '@monaco-editor/react'
+import { DiffEditor as MonacoDiffEditor, Editor as MonacoEditor } from '@monaco-editor/react'
 import ReactDeclaration from '../../dts/react.d.ts?raw'
 import { Switch } from '../components/switch'
 import { playgroundActor } from './machine'
