@@ -6,7 +6,7 @@
     "define-theme": "pnpm --filter @pandabox/define-theme",
     "knip": "knip",
     "release": "changeset publish",
-    "dev": "pnpm  --filter=./packages/* dev",
+    "dev": "pnpm --filter=./packages/* dev",
     "build": "pnpm --filter @pandabox/* run build",
     "typecheck": "pnpm --filter @pandabox/* run typecheck",
     "test": "vitest",
