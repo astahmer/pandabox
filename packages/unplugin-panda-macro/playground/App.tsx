@@ -30,16 +30,16 @@ export const App = () => {
       <div
         className={css(
           {
+            textStyle: '4xl',
             display: 'flex',
             flexDirection: 'column',
-            fontWeight: 'semibold',
             color: 'green.300',
             textAlign: 'center',
-            textStyle: '4xl',
+            fontWeight: 'semibold',
           },
           {
-            bg: 'yellow.200',
             color: 'red.500',
+            bg: 'yellow.200',
           },
           overrides,
         )}
@@ -49,7 +49,7 @@ export const App = () => {
           <span>Hello from Panda</span>
         </Stack>
       </div>
-      <div className={button({ visual: 'funky', size: 'lg' })}>Button</div>
+      <div className={button({ size: 'lg', visual: 'funky' })}>Button</div>
       <div className={atomicRecipe({ visual: 'solid', size: 'sm' })}>Atomic Button</div>
     </div>
   )
