@@ -67,7 +67,7 @@ export class BuilderResolver {
         return current
       }
 
-      const synchronizing = builder.setup({ configPath })
+      const synchronizing = builder.setup({ configPath, cwd: configDirpath })
       this.synchronizingByConfigDirpath.set(configDirpath, synchronizing)
 
       synchronizing.finally(() => {
