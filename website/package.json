@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "remix vite:dev",
-    "build": "pnpm panda && remix vite:build",
+    "prebuild": "pnpm --filter @pandabox/* run build",
+    "vercel:build": "pnpm prebuild && pnpm panda && remix vite:build",
+    "build": "remix vite:build",
     "start": "npx http-server build/client/",
     "start-server": "remix-serve ./build/server/index.js",
     "typecheck": "tsc --noEmit",
@@ -50,7 +52,8 @@
     "dts-bundle-generator": "^9.3.1",
     "typescript": "^5.3.3",
     "vite": "^5.1.4",
-    "vite-plugin-inspect": "^0.8.3"
+    "vite-plugin-inspect": "^0.8.3",
+    "vite-tsconfig-paths": "^4.3.1"
   },
   "engines": {
     "node": ">=18.0.0"

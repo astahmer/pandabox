@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [pluginRemoveUnusedCss()],
   presets: [
     '@pandacss/preset-panda',
+    '@park-ui/panda-preset',
     createUtopia({
       enabled: { textStyles: true, fontSizes: true },
       // space: { format: 'index' },
