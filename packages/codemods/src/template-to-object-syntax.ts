@@ -1,7 +1,8 @@
 import MagicString from 'magic-string'
 import postcss, { CssSyntaxError } from 'postcss'
 import postcssJs from 'postcss-js'
-import { Node, SourceFile, TaggedTemplateExpression, TemplateSpan } from 'ts-morph'
+import type { SourceFile, TaggedTemplateExpression, TemplateSpan } from 'ts-morph'
+import { Node } from 'ts-morph'
 
 export interface TemplateToObjectSyntaxOptions {
   sourceFile: SourceFile
