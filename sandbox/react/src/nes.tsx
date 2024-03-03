@@ -1,38 +1,87 @@
-import { css } from '../styled-system/css'
-import { HStack, Stack } from '../styled-system/jsx'
-import { BadgeVariantProps, avatar, badge, button } from '../styled-system/recipes'
 import '@fontsource/press-start-2p'
+import React, { ReactNode } from 'react'
+import { css, cva, cx } from '../styled-system/css'
+import { HStack, Stack } from '../styled-system/jsx'
+import { SectionVariantProps, avatar, badge, balloon, button, section } from '../styled-system/recipes'
+import { ComponentProps, RecipeVariant } from '../styled-system/types'
 
-interface BadgeProps extends Pick<BadgeVariantProps, 'variant'> {
-  text: string
-  text2?: string
-  icon?: string
+type BadgeVariantProps = RecipeVariant<typeof badgeVariant>
+interface BadgeProps extends ComponentProps<'span'>, Partial<Pick<BadgeVariantProps, 'variant'>> {}
+
+const BadgeText = (props: BadgeProps) => {
+  const { variant, children, className, ...rest } = props
+  return (
+    <span {...rest} className={cx('badge-text', badgeVariant({ variant }), className)}>
+      {children}
+    </span>
+  )
+}
+const BadgeText2 = (props: BadgeProps) => {
+  const { variant, children, className, ...rest } = props
+  return (
+    <span {...rest} className={cx('badge-text badge-text2', badgeVariant({ variant }), className)}>
+      {children}
+    </span>
+  )
+}
+const BadgeIcon = (props: BadgeProps) => {
+  const { variant, children, className, ...rest } = props
+  return (
+    <span {...rest} className={cx('badge-icon', badgeVariant({ variant }), className)}>
+      {children}
+    </span>
+  )
 }
 
-const getVariants = (props: BadgeProps) => {
-  const { text2, icon, variant } = props
-  const variants: BadgeVariantProps = { isIcon: Boolean(icon), isSplited: Boolean(text2), variant }
+const badgeVariant = cva({
+  variants: {
+    variant: {
+      primary: {
+        '--badge-bg': '{colors.nes.variants.primary}',
+      },
+      success: {
+        '--badge-bg': '{colors.nes.variants.success}',
+      },
+      warning: {
+        '--badge-color': '{colors.nes.base}',
+        '--badge-bg': '{colors.nes.variants.warning}',
+      },
+      error: {
+        '--badge-bg': '{colors.nes.variants.error}',
+      },
+    },
+  },
+})
 
-  if (!variants.isIcon) {
-    delete variants.isIcon
-  }
-  if (!variants.isSplited) {
-    delete variants.isSplited
-  }
-
-  return variants
-}
-
-const Badge = (props: BadgeProps) => {
-  const { text, text2, icon } = props
-  const classes = badge(getVariants(props))
+const Badge = (props: BadgeProps & { icon?: ReactNode }) => {
+  const { variant, icon, children } = props
+  const isSplited = React.Children.count(children) > 1 ? true : undefined
 
   return (
-    <div className={classes.root}>
-      <span className={classes.text}>{text}</span>
-      {text2 && <span className={classes.text2}>{text2}</span>}
-      {icon && <span className={classes.icon}>{icon}</span>}
+    <div className={cx(badge({ isSplited }), badgeVariant({ variant }))}>
+      {children}
+      {icon}
     </div>
+  )
+}
+
+interface SectionProps extends ComponentProps<'section'> {
+  variant?: SectionVariantProps['variant']
+  rounded?: boolean
+}
+
+const Section = (props: SectionProps) => {
+  const { variant, rounded, title, children, ...rest } = props
+  return (
+    <section
+      {...rest}
+      data-rounded={Boolean(rounded) ? true : undefined}
+      data-with-title={Boolean(title) ? true : undefined}
+      className={section({ variant })}
+    >
+      <span className="nes-section-title">{title}</span>
+      {children}
+    </section>
   )
 }
 
@@ -46,9 +95,22 @@ function App() {
         </HStack>
         <HStack>
           <span>Badge</span>
-          <Badge text="Hello" />
-          <Badge text="Left" text2="Right" />
-          <Badge text="With Icon" icon="🐼" />
+          <Badge>
+            <BadgeText>Hello</BadgeText>
+          </Badge>
+          <Badge variant="warning">
+            <BadgeText>Hello</BadgeText>
+          </Badge>
+          <Badge>
+            <BadgeText variant="primary">Hello</BadgeText>
+          </Badge>
+          <Badge>
+            <BadgeText>Left</BadgeText>
+            <BadgeText2 variant="success">Right</BadgeText2>
+          </Badge>
+          <Badge icon={<BadgeIcon>🐼</BadgeIcon>}>
+            <BadgeText>Hello</BadgeText>
+          </Badge>
         </HStack>
         <HStack>
           <span>Button</span>
@@ -60,6 +122,38 @@ function App() {
           <div data-disabled className={button({})}>
             Disabled
           </div>
+        </HStack>
+        <HStack>
+          <span>Balloon</span>
+          <div className={balloon()}>Default</div>
+          <div data-from="left" className={balloon()}>
+            fromLeft
+          </div>
+          <div data-from="right" className={balloon()}>
+            fromRight
+          </div>
+          <div className={balloon({ variant: 'dark' })}>dark</div>
+          <div data-from="left" className={balloon({ variant: 'dark' })}>
+            dark fromLeft
+          </div>
+          <div data-from="right" className={balloon({ variant: 'dark' })}>
+            dark fromRight
+          </div>
+        </HStack>
+        <HStack>
+          <span>Section</span>
+          <div className={section()}>Default</div>
+          <Section title="Title">content</Section>
+          <Section title="Title" rounded>
+            content
+          </Section>
+          <div className={section({ variant: 'dark' })}>dark</div>
+          <Section title="Title" variant="dark">
+            content
+          </Section>
+          <Section title="Title" variant="dark" rounded>
+            rounded
+          </Section>
         </HStack>
       </Stack>
     </div>

@@ -1,5 +1,6 @@
 import { defineRecipe, defineSlotRecipe, defineStyles, defineTextStyles, type Preset } from '@pandacss/dev'
 import type { TextStyle, Token } from '@pandacss/types'
+import json from '../assets/uris.json'
 
 const avatar = defineRecipe({
   className: 'nes-avatar',
@@ -27,93 +28,56 @@ const avatar = defineRecipe({
   },
 })
 
-const badge = defineSlotRecipe({
+const badge = defineRecipe({
   className: 'nes-badge',
-  slots: ['root', 'text', 'text2', 'icon'],
   base: {
-    root: {
-      position: 'relative',
-      display: 'inline-block',
-      width: '10.5rem',
-      height: '1.875rem',
-      margin: '0.5rem',
-      fontSize: '0.9rem',
-      whiteSpace: 'nowrap',
-      verticalAlign: 'top',
-      userSelect: 'none',
-      //
-      '--badge-bg': '{colors.nes.base}',
-      '--badge-color': '{colors.nes.background}',
-      '--badge-shadow-1': '0 0.5em var(--badge-bg), 0 -0.5em var(--badge-bg)',
-      '--badge-shadow': 'var(--badge-shadow-1), 0.5em 0 var(--badge-bg), -0.5em 0 var(--badge-bg)',
-      //
-    },
-    text: {
+    position: 'relative',
+    display: 'inline-block',
+    width: '10.5rem',
+    height: '1.875rem',
+    margin: '0.5rem',
+    fontSize: '0.9rem',
+    whiteSpace: 'nowrap',
+    verticalAlign: 'top',
+    userSelect: 'none',
+    //
+    '--badge-bg': '{colors.nes.base}',
+    '--badge-color': '{colors.nes.background}',
+    '--badge-shadow':
+      '0 0.5em var(--badge-bg), 0 -0.5em var(--badge-bg), 0.5em 0 var(--badge-bg), -0.5em 0 var(--badge-bg)',
+    '& .badge-text': {
       position: 'absolute',
       top: '0',
       width: '100%',
-      color: 'nes.white',
+      color: 'var(--badge-color)',
       textAlign: 'center',
       backgroundColor: 'var(--badge-bg)',
       boxShadow: 'var(--badge-shadow)',
     },
   },
   variants: {
-    variant: {
-      primary: {
-        root: {
-          '--badge-color': '{colors.nes.variants.primary}',
-        },
-      },
-      success: {
-        root: {
-          '--badge-color': '{colors.nes.variants.success}',
-        },
-      },
-      warning: {
-        root: {
-          '--badge-bg': '{colors.nes.base}',
-          '--badge-text': '{colors.nes.variants.warning}',
-        },
-      },
-      error: {
-        root: {
-          '--badge-color': '{colors.nes.variants.error}',
-        },
-      },
-    },
     isSplited: {
       true: {
-        text: {
-          position: 'absolute',
-          top: '0',
+        '& .badge-text': {
           width: '50%',
-          color: 'nes.white',
-          textAlign: 'center',
-          backgroundColor: 'nes.black',
           left: '0',
-          '--badge-shadow': 'var(--badge-shadow-1), 0 0 var(--badge-bg), -0.5em 0 var(--badge-bg)',
-          boxShadow: 'var(--badge-shadow)',
+          '--badge-shadow':
+            '0 0.5em var(--badge-bg), 0 -0.5em var(--badge-bg), 0 0 var(--badge-bg), -0.5em 0 var(--badge-bg)',
         },
-        text2: {
-          position: 'absolute',
-          top: '0',
-          width: '50%',
-          color: 'white',
-          textAlign: 'center',
-          backgroundColor: 'nes.black',
-          '--badge-shadow': 'var(--badge-shadow-1), 0.5em 0 var(--badge-bg), 0 0 var(--badge-bg)',
-          boxShadow: 'var(--badge-shadow)',
+        '& .badge-text2': {
+          left: 'unset',
+          right: '0',
+          '--badge-shadow':
+            '0 0.5em var(--badge-bg), 0 -0.5em var(--badge-bg), 0.5em 0 var(--badge-bg), 0 0 var(--badge-bg)',
         },
       },
     },
     isIcon: {
       true: {
-        root: {
-          width: '5.25rem',
-        },
-        icon: {
-          '--badge-shadow': 'var(--badge-shadow-1), 0.5em 0 var(--badge-bg), -0.5em 0 var(--badge-bg)',
+        width: '5.25rem',
+        '& .badge-icon': {
+          '--badge-shadow':
+            '0 0.5em var(--badge-bg), 0 -0.5em var(--badge-bg), 0.5em 0 var(--badge-bg), -0.5em 0 var(--badge-bg)',
           position: 'absolute',
           top: '-2.8rem',
           left: '-2.7rem',
@@ -129,7 +93,7 @@ const badge = defineSlotRecipe({
           backgroundColor: 'nes.black',
           boxShadow: 'var(--badge-shadow)',
         },
-        text: {
+        '& .badge-text': {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -145,7 +109,7 @@ const badge = defineSlotRecipe({
   },
 })
 
-const roundedCorners = ({ isDark, isCompact }: { isDark?: boolean; isCompact?: boolean }) => {
+const roundedCorners = ({ isDark, isCompact }: { isDark?: boolean; isCompact?: boolean } = {}) => {
   return defineStyles({
     borderStyle: 'solid',
     borderWidth: 'nes',
@@ -176,11 +140,57 @@ const balloon = defineRecipe({
       position: 'absolute',
       content: '""',
     },
+    '&[data-from=left]': {
+      '&::before, &::after': {
+        left: '2rem',
+      },
+      '&:before': {
+        bottom: '-14px',
+        width: '26px',
+        height: '10px',
+        backgroundColor: 'nes.background',
+        borderRight: '4px solid {colors.nes.base}',
+        borderLeft: '4px solid {colors.nes.base}',
+      },
+      '&:after': {
+        bottom: '-18px',
+        width: '18px',
+        height: '4px',
+        marginRight: '8px',
+        color: 'nes.base',
+        backgroundColor: 'nes.background',
+        boxShadow: '-4px 0, 4px 0, -4px 4px {colors.nes.background}, 0 4px, -8px 4px, -4px 8px, -8px 8px',
+      },
+    },
+    '&[data-from=right]': {
+      '&::before, &::after': {
+        right: '2rem',
+      },
+      '&:before': {
+        bottom: '-14px',
+        width: '26px',
+        height: '10px',
+        backgroundColor: 'nes.background',
+        borderRight: '4px solid {colors.nes.base}',
+        borderLeft: '4px solid {colors.nes.base}',
+      },
+      '&:after': {
+        bottom: '-18px',
+        width: '18px',
+        height: '4px',
+        marginLeft: '8px',
+        backgroundColor: 'nes.background',
+        boxShadow: '-4px 0, 4px 0, 4px 4px {colors.nes.background}, 0 4px, 8px 4px, 4px 8px, 8px 8px',
+      },
+    },
   },
   variants: {
     variant: {
+      outline: {
+        ...roundedCorners(),
+      },
       dark: {
-        ...roundedCorners({ isDark: true, isCompact: false }),
+        ...roundedCorners({ isDark: true }),
         color: 'nes.background',
         backgroundColor: 'nes.base',
         borderImageOutset: '2',
@@ -193,57 +203,27 @@ const balloon = defineRecipe({
           color: 'nes.background',
           backgroundColor: 'nes.base',
         },
-        '--before-shadow-left': '-5px 10px 0 6px {colors.nes.base}',
-        '--before-shadow-right': '5px 10px 0 6px {colors.nes.base}',
-        '--after-shadow-left': '-4px 0, 4px 0, -4px 4px {colors.nes.base}, 0 4px, -8px 4px, -4px 8px, -8px 8px',
-        '--after-shadow-right': '-4px 0, 4px 0, 4px 4px {colors.nes.base}, 0 4px, 8px 4px, 4px 8px, 8px 8px',
-      },
-    },
-    position: {
-      fromLeft: {
-        '&::before, &::after': {
-          left: '2rem',
+        '&[data-from=left]': {
+          '&:before': {
+            boxShadow: '-5px 10px 0 6px {colors.nes.base}',
+          },
+          '&:after': {
+            boxShadow: '-4px 0, 4px 0, -4px 4px {colors.nes.base}, 0 4px, -8px 4px, -4px 8px, -8px 8px',
+          },
         },
-        '&:before': {
-          bottom: '-14px',
-          width: '26px',
-          height: '10px',
-          backgroundColor: 'nes.background',
-          borderRight: '4px solid {colors.nes.base}',
-          borderLeft: '4px solid {colors.nes.base}',
-        },
-        '&:after': {
-          bottom: '-18px',
-          width: '18px',
-          height: '4px',
-          marginRight: '8px',
-          color: 'nes.base',
-          backgroundColor: 'nes.background',
-          boxShadow: '-4px 0, 4px 0, -4px 4px {colors.nes.background}, 0 4px, -8px 4px, -4px 8px, -8px 8px',
-        },
-      },
-      fromRight: {
-        '&::before, &::after': {
-          right: '2rem',
-        },
-        '&:before': {
-          bottom: '-14px',
-          width: '26px',
-          height: '10px',
-          backgroundColor: 'nes.background',
-          borderRight: '4px solid {colors.nes.base}',
-          borderLeft: '4px solid {colors.nes.base}',
-        },
-        '&:after': {
-          bottom: '-18px',
-          width: '18px',
-          height: '4px',
-          marginLeft: '8px',
-          backgroundColor: 'nes.background',
-          boxShadow: '-4px 0, 4px 0, 4px 4px {colors.nes.background}, 0 4px, 8px 4px, 4px 8px, 8px 8px',
+        '&[data-from=right]': {
+          '&:before': {
+            boxShadow: '5px 10px 0 6px {colors.nes.base}',
+          },
+          '&:after': {
+            boxShadow: '-4px 0, 4px 0, 4px 4px {colors.nes.base}, 0 4px, 8px 4px, 4px 8px, 8px 8px',
+          },
         },
       },
     },
+  },
+  defaultVariants: {
+    variant: 'outline',
   },
 })
 
@@ -276,15 +256,12 @@ const button = defineRecipe({
     _hover: {
       color: 'var(--text-color)',
       backgroundColor: 'colorPalette.hover',
-      //   color: 'nes.base',
       textDecoration: 'none',
-      //   backgroundColor: 'nes.hover',
       _after: {
         boxShadow: 'inset -6px -6px var(--shadow-color)',
       },
     },
     _focus: {
-      //   boxShadow: '0 0 0 6px {colors.nes.variants.default.shadow/30}',
       boxShadow: '0 0 0 6px {colors.nes.variants.default.shadow}',
       outline: 'none',
     },
@@ -324,6 +301,131 @@ const button = defineRecipe({
       error: {
         '--text-color': 'colors.nes.background',
         colorPalette: 'nes.variants.error',
+      },
+    },
+  },
+})
+
+const section = defineRecipe({
+  className: 'nes-section',
+  base: {
+    position: 'relative',
+    padding: '1.5rem 2rem',
+    borderColor: 'black',
+    borderStyle: 'solid',
+    borderWidth: '4px',
+
+    '& > :last-child': {
+      marginBottom: '0',
+    },
+
+    '&.is-centered': {
+      textAlign: 'center',
+    },
+
+    '&.is-right': {
+      textAlign: 'right',
+    },
+
+    '&[data-with-title]': {
+      '& > .nes-section-title': {
+        display: 'table',
+        padding: '0 0.5rem',
+        margin: '-1.8rem 0 1rem',
+        fontSize: '1rem',
+        backgroundColor: 'nes.background',
+      },
+
+      '&.is-centered': {
+        '& > .nes-section-title': {
+          margin: '-2rem auto 1rem',
+        },
+      },
+
+      '&.is-right': {
+        '& > .nes-section-title': {
+          margin: '-2rem 0 1rem auto',
+        },
+      },
+    },
+
+    '&[data-rounded]': {
+      ...roundedCorners(),
+
+      padding: '1rem 1.5rem',
+      margin: '{borderWidths.nes}',
+
+      '&[data-with-title]': {
+        '& > .nes-section-title': {
+          marginTop: '-1.5rem',
+        },
+
+        '&.is-centered': {
+          '& > .nes-section-title': {
+            margin: '-1.5rem auto 1rem',
+          },
+        },
+
+        '&.is-right': {
+          '& > .nes-section-title': {
+            margin: '-1.5rem 0 1rem auto',
+          },
+        },
+      },
+    },
+  },
+  variants: {
+    variant: {
+      dark: {
+        position: 'relative',
+        margin: '{borderWidths.nes}',
+        color: 'nes.background',
+        backgroundColor: 'nes.base',
+        borderColor: 'nes.background',
+
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: 'calc(-1 * {borderWidths.nes} * 1.8)',
+          right: 'calc(-1 * {borderWidths.nes} * 1.8)',
+          bottom: 'calc(-1 * {borderWidths.nes} * 1.8)',
+          left: 'calc(-1 * {borderWidths.nes} * 1.8)',
+          zIndex: '-1',
+          backgroundColor: 'nes.base',
+        },
+
+        '&[data-with-title]': {
+          '& > .nes-section-title': {
+            color: 'nes.background',
+            backgroundColor: 'nes.base',
+          },
+        },
+
+        '&[data-rounded]': {
+          ...roundedCorners({ isDark: true }),
+
+          '&::after': {
+            content: 'none',
+          },
+
+          '&[data-with-title]': {
+            '& > .nes-section-title': {
+              marginTop: '-1.3rem',
+            },
+          },
+
+          '&.is-centered': {
+            '& > .nes-section-title': {
+              margin: '-1.3rem auto 1rem',
+            },
+          },
+
+          '&.is-right': {
+            '& > .nes-section-title': {
+              margin: '-1.3rem 0 1rem auto',
+            },
+          },
+        },
       },
     },
   },
@@ -431,8 +533,8 @@ export const nesCss: Preset = {
           PressStart2P: { value: "'Press Start 2P', system-ui" },
         },
         assets: {
-          cursor: { value: { type: 'url', value: '../assets/cursor.png' } },
-          cursorClick: { value: { type: 'url', value: '../assets/cursor-click.png' } },
+          cursor: { value: { type: 'url', value: json['assets/cursor.png'] } },
+          cursorClick: { value: { type: 'url', value: json['assets/cursor-click.png'] } },
           borderImage: {
             value: {
               type: 'svg',
@@ -454,11 +556,10 @@ export const nesCss: Preset = {
       },
       recipes: {
         avatar,
+        badge,
         balloon,
         button,
-      },
-      slotRecipes: {
-        badge,
+        section,
       },
     },
   },

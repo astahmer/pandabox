@@ -14,9 +14,21 @@
         "default": "./dist/index.js"
       }
     },
-    "./PressStart2P": "./static/PressStart2P.ttf"
+    "./nes.css": {
+      "source": "./src/nes.css.ts",
+      "types": "./dist/nes.css.d.ts",
+      "import": {
+        "types": "./dist/nes.css.d.mts",
+        "default": "./dist/nes.css.mjs"
+      },
+      "require": {
+        "types": "./dist/nes.css.d.ts",
+        "default": "./dist/nes.css.js"
+      }
+    }
   },
   "scripts": {
+    "prebuild": "node ./prepare.mjs",
     "build": "tsup",
     "dev": "tsup --watch src",
     "typecheck": "tsc --noEmit",
@@ -29,6 +41,7 @@
   "devDependencies": {
     "@pandacss/dev": "^0.33.0",
     "@pandacss/types": "^0.33.0",
+    "file-type": "^19.0.0",
     "tsup": "^8.0.2",
     "vitest": "^1.3.1"
   },

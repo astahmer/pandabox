@@ -28,6 +28,8 @@ export default defineConfig({
   outdir: 'styled-system',
 
   //
+  // presets: ['@pandacss/dev/presets', createNesCss()],
+  // presets: ['@pandacss/dev/presets', '@pandabox/presets/nes.css'],
   presets: ['@pandacss/dev/presets', nesCss],
   plugins: [
     // pluginStrictTokensScope({ categories: ['colors', 'spacing'] }),
