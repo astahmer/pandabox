@@ -13,7 +13,8 @@
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       }
-    }
+    },
+    "./PressStart2P": "./static/PressStart2P.ttf"
   },
   "scripts": {
     "build": "tsup",
@@ -22,6 +23,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "nes.css": "^2.3.0",
     "utopia-core": "^1.3.0"
   },
   "devDependencies": {
@@ -43,7 +45,8 @@
   "sideEffects": false,
   "files": [
     "src",
-    "dist"
+    "dist",
+    "static"
   ],
   "keywords": [
     "pandacss",

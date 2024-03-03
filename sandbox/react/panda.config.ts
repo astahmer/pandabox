@@ -6,6 +6,7 @@ import {
   pluginRestrictStyledProps,
   pluginStrictTokensRuntime,
 } from '@pandabox/panda-plugins'
+import { nesCss } from '@pandabox/presets'
 
 export default defineConfig({
   // Whether to use css reset
@@ -27,14 +28,15 @@ export default defineConfig({
   outdir: 'styled-system',
 
   //
+  presets: ['@pandacss/dev/presets', nesCss],
   plugins: [
-    pluginStrictTokensScope({ categories: ['colors', 'spacing'] }),
-    pluginStrictTokensRuntime({ categories: ['colors', 'spacing'] }),
+    // pluginStrictTokensScope({ categories: ['colors', 'spacing'] }),
+    // pluginStrictTokensRuntime({ categories: ['colors', 'spacing'] }),
     // pluginRemoveFeatures({ features: ['no-jsx', 'no-cva'] }),
-    pluginRemoveNegativeSpacing({ spacingTokenType: true, tokenType: true }),
-    pluginRestrictStyledProps(),
+    // pluginRemoveNegativeSpacing({ spacingTokenType: true, tokenType: true }),
+    // pluginRestrictStyledProps(),
   ],
   jsxFramework: 'react',
-  strictTokens: true,
+  // strictTokens: true,
   // outExtension: 'js',
 })
