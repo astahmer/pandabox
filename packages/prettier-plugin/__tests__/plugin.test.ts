@@ -686,12 +686,12 @@ describe('Call Expression css(xxx) arguments', () => {
         className={css({
           as: "div",
           m: "1",
-          py: "2",
           px: "2",
-          fontSize: "md",
           key: key,
           onClick: onClick,
           ...props,
+          py: "2",
+          fontSize: "md",
         })}
       >
         Hello
@@ -1139,6 +1139,346 @@ describe('call expression specifics', () => {
           </Box>
         );
       };
+      "
+    `)
+  })
+
+  test('sort arbitrary conditions last', async () => {
+    const code = `
+    import { css } from '../styled-system/css'
+
+    const styles = css({
+      '&[data-disabled]': {
+        backgroundColor: 'gray',
+        color: 'black',
+      },
+      color: 'white',
+      ...props,
+      _hover: {
+        backgroundColor: 'darkblue',
+      },
+      backgroundColor: 'blue',
+    });
+  `
+
+    expect(await run(code)).toMatchInlineSnapshot(`
+      "import { css } from "../styled-system/css";
+
+      const styles = css({
+        color: "white",
+        "&[data-disabled]": {
+          color: "black",
+          backgroundColor: "gray",
+        },
+        ...props,
+        backgroundColor: "blue",
+        _hover: {
+          backgroundColor: "darkblue",
+        },
+      });
+      "
+    `)
+  })
+
+  test('sort nested objects (conditionals)', async () => {
+    const code = `
+    import { css } from '../styled-system/css'
+
+    const styles = css({
+      '&[data-disabled]': {
+        fontSize: '2xl',
+        backgroundColor: 'gray',
+        color: 'black',
+        height: '2rem',
+        md: {
+          _hover: {
+            fontSize: '2xl',
+            backgroundColor: 'gray',
+            color: 'black',
+            height: '2rem',
+          },
+          color: "white",
+        }
+      },
+      _hover: {
+        fontSize: '2xl',
+        backgroundColor: 'gray',
+        color: 'black',
+        height: '2rem',
+      },
+    });
+  `
+
+    expect(await run(code)).toMatchInlineSnapshot(`
+      "import { css } from "../styled-system/css";
+
+      const styles = css({
+        _hover: {
+          height: "2rem",
+          color: "black",
+          fontSize: "2xl",
+          backgroundColor: "gray",
+        },
+        "&[data-disabled]": {
+          height: "2rem",
+          color: "black",
+          fontSize: "2xl",
+          backgroundColor: "gray",
+          md: {
+            color: "white",
+            _hover: {
+              height: "2rem",
+              color: "black",
+              fontSize: "2xl",
+              backgroundColor: "gray",
+            },
+          },
+        },
+      });
+      "
+    `)
+  })
+
+  test('sort cva', async () => {
+    const code = `
+    import { cva } from '../styled-system/css'
+
+    const buttonStyle = cva({
+      defaultVariants: {
+        size: 'md',
+        variant: 'solid',
+      },
+      base: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        display: 'inline-flex',
+      },
+      variants: {
+        size: {
+          sm: {
+            padding: '0 0.5rem',
+            height: '2.5rem',
+            minWidth: '2.5rem',
+            textStyle: 'headline.h1',
+          },
+          md: {
+            padding: '0 0.75rem',
+            minWidth: '3rem',
+            height: '3rem',
+          },
+        },
+        variant: {
+          solid: {
+            '&[data-disabled]': {
+              backgroundColor: 'gray',
+              color: 'black',
+            },
+            color: 'white',
+            _hover: {
+              backgroundColor: 'darkblue',
+            },
+            backgroundColor: 'blue',
+          },
+          outline: {
+            '&:focus': {
+              color: 'white',
+              fontSize: '2xl',
+              height: '2rem',
+            },
+            border: '1px solid blue',
+            color: 'blue',
+            '&[data-disabled]': {
+              backgroundColor: 'transparent',
+              border: '1px solid gray',
+              color: 'gray',
+            },
+            _hover: {
+              backgroundColor: 'blue',
+              color: 'white',
+            },
+            '&:disabled': {
+              opacity: '0.5',
+            },
+            backgroundColor: 'transparent',
+          },
+        },
+      },
+    })
+  `
+
+    expect(await run(code)).toMatchInlineSnapshot(`
+      "import { cva } from "../styled-system/css";
+
+      const buttonStyle = cva({
+        base: {
+          display: "inline-flex",
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        variants: {
+          size: {
+            sm: {
+              textStyle: "headline.h1",
+              minWidth: "2.5rem",
+              height: "2.5rem",
+              padding: "0 0.5rem",
+            },
+            md: {
+              minWidth: "3rem",
+              height: "3rem",
+              padding: "0 0.75rem",
+            },
+          },
+          variant: {
+            solid: {
+              color: "white",
+              backgroundColor: "blue",
+              _hover: {
+                backgroundColor: "darkblue",
+              },
+              "&[data-disabled]": {
+                color: "black",
+                backgroundColor: "gray",
+              },
+            },
+            outline: {
+              border: "1px solid blue",
+              color: "blue",
+              backgroundColor: "transparent",
+              _hover: {
+                color: "white",
+                backgroundColor: "blue",
+              },
+              "&:focus": {
+                height: "2rem",
+                color: "white",
+                fontSize: "2xl",
+              },
+              "&[data-disabled]": {
+                border: "1px solid gray",
+                color: "gray",
+                backgroundColor: "transparent",
+              },
+              "&:disabled": {
+                opacity: "0.5",
+              },
+            },
+          },
+        },
+        defaultVariants: {
+          size: "md",
+          variant: "solid",
+        },
+      });
+      "
+    `)
+  })
+
+  test('sort defineStyles / defineRecipe', async () => {
+    const code = `
+    import { defineStyles, defineRecipe, defineSlotRecipe as defineSlotRecipeAlias } from '@pandacss/dev'
+
+    const styles = defineStyles({
+      '&[data-disabled]': {
+        backgroundColor: 'gray',
+        color: 'black',
+      },
+      color: 'white',
+      ...props,
+      _hover: {
+        backgroundColor: 'darkblue',
+      },
+      backgroundColor: 'blue',
+    });
+
+    const recipe = defineRecipe({
+      variants: {},
+      base: {
+        '&[data-disabled]': {
+          backgroundColor: 'gray',
+          color: 'black',
+        },
+        color: 'white',
+        ...props,
+        _hover: {
+          backgroundColor: 'darkblue',
+        },
+        backgroundColor: 'blue',
+      }
+    });
+
+    const slotRecipe = defineSlotRecipeAlias({
+      variants: {},
+      base: {
+        root: {
+          '&[data-disabled]': {
+            backgroundColor: 'gray',
+            color: 'black',
+          },
+          color: 'white',
+          ...props,
+          _hover: {
+            backgroundColor: 'darkblue',
+          },
+          backgroundColor: 'blue',
+        }
+      }
+    });
+  `
+
+    expect(await run(code)).toMatchInlineSnapshot(`
+      "import {
+        defineStyles,
+        defineRecipe,
+        defineSlotRecipe as defineSlotRecipeAlias,
+      } from "@pandacss/dev";
+
+      const styles = defineStyles({
+        color: "white",
+        "&[data-disabled]": {
+          color: "black",
+          backgroundColor: "gray",
+        },
+        ...props,
+        backgroundColor: "blue",
+        _hover: {
+          backgroundColor: "darkblue",
+        },
+      });
+
+      const recipe = defineRecipe({
+        base: {
+          color: "white",
+          "&[data-disabled]": {
+            color: "black",
+            backgroundColor: "gray",
+          },
+          ...props,
+          backgroundColor: "blue",
+          _hover: {
+            backgroundColor: "darkblue",
+          },
+        },
+        variants: {},
+      });
+
+      const slotRecipe = defineSlotRecipeAlias({
+        base: {
+          root: {
+            color: "white",
+            "&[data-disabled]": {
+              color: "black",
+              backgroundColor: "gray",
+            },
+            ...props,
+            backgroundColor: "blue",
+            _hover: {
+              backgroundColor: "darkblue",
+            },
+          },
+        },
+        variants: {},
+      });
       "
     `)
   })

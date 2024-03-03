@@ -9,6 +9,8 @@ import { getPropPriority, defaultGroupNames, type PriorityGroup, type PriorityGr
 import type { PluginOptions } from './options'
 
 const NodeType = TSESTree.AST_NODE_TYPES
+const cvaOrder = ['base', 'variants', 'defaultVariants']
+const pandaConfigFns = ['defineStyles', 'defineRecipe', 'defineSlotRecipe']
 
 export class PrettyPanda {
   priorityGroups: PriorityGroup[] = []
@@ -124,6 +126,8 @@ export class PrettyPanda {
 
     // Only keep imports from panda
     const importDeclarations = this.getImports().filter((result) => {
+      if (result.mod === '@pandacss/dev' && pandaConfigFns.includes(result.name)) return true
+
       return this.context.imports.match(result, (mod) => {
         const { tsOptions } = this.context.parserOptions
         if (!tsOptions?.pathMappings) return
@@ -177,7 +181,7 @@ export class PrettyPanda {
             if (a.type !== NodeType.JSXAttribute || b.type !== NodeType.JSXAttribute) return 0
             if (a.name.type !== NodeType.JSXIdentifier || b.name.type !== NodeType.JSXIdentifier) return 0
 
-            return this.compareProp(a.name, b.name)
+            return this.compareIdent(a.name, b.name)
           })
 
           // sort style props inside css={{ ... }} prop
@@ -194,7 +198,7 @@ export class PrettyPanda {
               if (a.type !== NodeType.Property || b.type !== NodeType.Property) return 0
               if (a.key.type !== NodeType.Identifier || b.key.type !== NodeType.Identifier) return 0
 
-              return this.compareProp(a.key, b.key)
+              return this.compareIdent(a.key, b.key)
             })
           }
         }
@@ -214,23 +218,25 @@ export class PrettyPanda {
           if (!fnName) return
 
           // also sort patterns (e.g. `stack.raw({ direction: "row", mt: "4" })`)
-          const isPandaFn = file.matchFn(fnName) && file.find(fnName)
+          const foundImport = file.find(fnName)
+          const isRuntimeFn = file.matchFn(fnName) && foundImport
+
+          // and also sort config functions `defineStyles`, `defineRecipe`, `defineSlotRecipe`
+          const isPandaFn = isRuntimeFn || (foundImport && foundImport.mod === '@pandacss/dev')
           if (!isPandaFn) return
 
           if (ignoredLines.includes(node.loc.start.line - 1)) {
             return
           }
 
-          node.arguments.forEach((arg) => {
-            if (arg.type !== NodeType.ObjectExpression) return
-
-            arg.properties.sort((a, b) => {
-              if (a.type !== NodeType.Property || b.type !== NodeType.Property) return 0
-              if (a.key.type !== NodeType.Identifier || b.key.type !== NodeType.Identifier) return 0
-
-              return this.compareProp(a.key, b.key)
+          if (fnName === 'cva') {
+            this.sortCvaConfig(node)
+          } else {
+            // css / css.raw / {pattern(?.raw)}
+            node.arguments.forEach((arg) => {
+              this.sortObjectProperties(arg)
             })
-          })
+          }
         }
       },
     })
@@ -238,7 +244,117 @@ export class PrettyPanda {
     return this.ast
   }
 
-  compareProp = (a: TSESTree.Identifier | TSESTree.JSXIdentifier, b: TSESTree.Identifier | TSESTree.JSXIdentifier) => {
+  sortObjectProperties = (node: TSESTree.Node) => {
+    if (node.type !== NodeType.ObjectExpression) return
+    node.properties = this.sortProps(node.properties)
+  }
+
+  sortCvaConfig = (node: TSESTree.CallExpression) => {
+    node.arguments.forEach((arg) => {
+      if (arg.type !== NodeType.ObjectExpression) return
+
+      // Sort cva root keys in predefined order
+      arg.properties.sort((a, b) => {
+        if (a.type !== NodeType.Property || b.type !== NodeType.Property) return 0
+        if (a.key.type !== NodeType.Identifier || b.key.type !== NodeType.Identifier) return 0
+
+        return cvaOrder.indexOf(a.key.name) - cvaOrder.indexOf(b.key.name)
+      })
+
+      // Sort each variants styles object
+      arg.properties.forEach((prop) => {
+        if (prop.type !== NodeType.Property) return
+        if (prop.key.type !== NodeType.Identifier) return
+
+        if (prop.key.name === 'base') {
+          this.sortObjectProperties(prop.value)
+        } else if (prop.key.name === 'variants') {
+          const variants = prop.value
+          if (variants.type !== NodeType.ObjectExpression) return
+
+          variants.properties.forEach((variant) => {
+            if (variant.type !== NodeType.Property) return
+
+            const variantObj = variant.value
+            if (variantObj.type !== NodeType.ObjectExpression) return
+            variantObj.properties.forEach((variantProp) => {
+              if (variantProp.type !== NodeType.Property) return
+              if (variantProp.key.type !== NodeType.Identifier) return
+
+              const styles = variantProp.value
+              if (styles.type !== NodeType.ObjectExpression) return
+              this.sortObjectProperties(styles)
+            })
+          })
+        }
+      })
+    })
+  }
+
+  sortProps = (unsorted: (TSESTree.Property | TSESTree.SpreadElement)[]) => {
+    const noSpread = isOnlyProperties(unsorted)
+
+    if (noSpread) {
+      const sorted = [...unsorted].sort((a, b) => this.compareProp(a, b))
+      return this.sortNestedProps(sorted)
+    }
+
+    // contains SpreadElement
+    // Sort sections which has only Properties.
+    let start = 0
+    let end = 0
+    let sorted: (TSESTree.Property | TSESTree.SpreadElement)[] = []
+
+    for (let i = 0; i < unsorted.length; i++) {
+      if (unsorted[i].type === NodeType.SpreadElement) {
+        end = i
+        if (start < end) {
+          // Sort sections which don't have SpreadElement.
+          const sectionToSort = unsorted.slice(start, end) as TSESTree.Property[]
+          const sectionSorted = sectionToSort.sort((a, b) => this.compareProp(a, b))
+          sorted = sorted.concat(sectionSorted)
+        }
+        // SpreadElement will be pushed as is.
+        sorted.push(unsorted[i])
+
+        start = i + 1
+      } else if (i === unsorted.length - 1) {
+        // This is last property and not spread one.
+        end = i + 1
+        if (start < end) {
+          const sectionToSort = unsorted.slice(start, end) as TSESTree.Property[]
+          const sectionSorted = sectionToSort.sort((a, b) => this.compareProp(a, b))
+          sorted = sorted.concat(sectionSorted)
+        }
+      }
+    }
+
+    return this.sortNestedProps(sorted)
+  }
+
+  sortNestedProps = (props: (TSESTree.Property | TSESTree.SpreadElement)[]) => {
+    return props.map((prop) => {
+      if (prop.type === NodeType.Property && prop.value.type === NodeType.ObjectExpression) {
+        prop.value.properties = this.sortProps(prop.value.properties)
+      }
+
+      return prop
+    })
+  }
+
+  compareProp = (a: TSESTree.Property, b: TSESTree.Property) => {
+    if (a.type !== NodeType.Property || b.type !== NodeType.Property) return 0
+
+    // Sort arbitrary conditions last
+    if (a.key.type === NodeType.Literal) return 1
+    if (b.key.type === NodeType.Literal) return -1
+
+    if (a.key.type !== NodeType.Identifier || b.key.type !== NodeType.Identifier) return 0
+
+    return this.compareIdent(a.key, b.key)
+  }
+
+  compareIdent = (a: TSESTree.Identifier | TSESTree.JSXIdentifier, b: TSESTree.Identifier | TSESTree.JSXIdentifier) => {
     const aPriority = this.getPriority(a.name.toString())
     const bPriority = this.getPriority(b.name.toString())
 
@@ -280,3 +396,9 @@ export class PrettyPanda {
 
 const uniq = <T>(...items: T[][]): T[] =>
   items.filter(Boolean).reduce<T[]>((acc, item) => Array.from(new Set([...acc, ...item])), [])
+
+const isOnlyProperties = (
+  properties: (TSESTree.Property | TSESTree.SpreadElement)[],
+): properties is TSESTree.Property[] => {
+  return properties.every((property) => property.type === NodeType.Property)
+}
