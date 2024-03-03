@@ -1,5 +1,12 @@
 # @pandabox/prettier-plugin
 
+## 0.0.5
+
+### Patch Changes
+
+- 31ea13e: feat(prettier): sort nested objects / cva / defineStyles / defineRecipe / defineSlotRecipes
+- 771ff92: Set `cwd` to the config dirpath so that the plugin can resolve the config file when using `presets` from npm
+
 ## 0.0.4
 
 ### Patch Changes
