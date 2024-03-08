@@ -15,10 +15,23 @@ const ids = {
 }
 
 export interface PluginOptions extends Partial<TransformOptions> {
+  /** @see https://panda-css.com/docs/references/config#cwd */
   cwd?: string
-  configPath?: string
+  /** @see https://panda-css.com/docs/references/cli#--config--c-1 */
+  configPath?: string | undefined
+  /**
+   * @see https://www.npmjs.com/package/@rollup/pluginutils#include-and-exclude
+   * @default `[/\.[cm]?[jt]sx?$/]`
+   */
   include?: string | RegExp | (string | RegExp)[]
+  /**
+   * @see https://www.npmjs.com/package/@rollup/pluginutils#include-and-exclude
+   * @default [/node_modules/]
+   */
   exclude?: string | RegExp | (string | RegExp)[]
+  /**
+   * Will remove unused CSS variables and keyframes from the generated CSS
+   */
   optimizeCss?: boolean
 }
 
@@ -31,7 +44,7 @@ export const unpluginFactory: UnpluginFactory<PluginOptions | undefined> = (rawO
 
   const getCtx = async () => {
     await init()
-    if (!_ctx) throw new Error('@pandabox/vite context not initialized')
+    if (!_ctx) throw new Error('@pandabox/unplugin-panda-macro context not initialized')
     return _ctx as MacroContext
   }
 
@@ -56,10 +69,8 @@ export const unpluginFactory: UnpluginFactory<PluginOptions | undefined> = (rawO
     async load(id) {
       if (id !== ids.resolvedVirtualModuleId) return
 
-      console.time('toCss')
       const ctx = await getCtx()
       const css = ctx.toCss(options)
-      console.timeEnd('toCss')
 
       return css
     },
