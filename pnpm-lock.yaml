@@ -203,6 +203,9 @@ importers:
       '@pandacss/core':
         specifier: ^0.33.0
         version: 0.33.0
+      '@pandacss/is-valid-prop':
+        specifier: ^0.34.1
+        version: 0.34.1
       '@pandacss/node':
         specifier: ^0.33.0
         version: 0.33.0(typescript@5.3.3)
@@ -429,6 +432,9 @@ importers:
       '@pandabox/codemods':
         specifier: workspace:^
         version: link:../packages/codemods
+      '@pandabox/prettier-plugin':
+        specifier: workspace:^
+        version: link:../packages/prettier-plugin
       '@remix-run/css-bundle':
         specifier: ^2.8.0
         version: 2.8.0
@@ -2548,6 +2554,10 @@ packages:
 
   /@pandacss/is-valid-prop@0.33.0:
     resolution: {integrity: sha512-P7lvmlH3idILBIBM651dVDecSlRLNpAuxIJltypw5tX5IdRfigouu2h+5n2vQRYThm3fgKp4boH6PA2gXt+kkA==}
+
+  /@pandacss/is-valid-prop@0.34.1:
+    resolution: {integrity: sha512-4eWCqgAJYHuvxCK/DieNzLZb+YXqqgk7sa7J4gNg6sDbITQa00pEHqhBEcaC2AsaGOkVxRNhCZ7cm1gOxTKnZw==}
+    dev: false
 
   /@pandacss/logger@0.33.0:
     resolution: {integrity: sha512-UfZ6Aza579qT3LbX/I2AkphuVxgXEd/lZfQrmEZJ4n1WOIW0E47k10e4q0SVU988pwhMLInnJDskvurSOrirbw==}

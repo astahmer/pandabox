@@ -16,21 +16,21 @@ export function IconButton(props: IconButtonProps) {
 }
 
 export const iconButton = css.raw({
-  transition: 'colors',
-  transitionDuration: '100ms',
   colorPalette: 'gray',
-  position: 'relative',
   display: 'flex',
+  position: 'relative',
   justifyContent: 'center',
   alignItems: 'center',
-  cursor: 'pointer',
+  borderRadius: 'md',
   w: '40px',
   h: '40px',
-  borderRadius: 'md',
   bg: { base: 'gray.100', _dark: 'gray.700' },
+  transition: 'colors',
+  transitionDuration: '100ms',
+  cursor: 'pointer',
   _hover: {
-    bg: 'colorPalette.400',
     color: 'white',
+    bg: 'colorPalette.400',
     _dark: {
       bg: 'colorPalette.600',
     },

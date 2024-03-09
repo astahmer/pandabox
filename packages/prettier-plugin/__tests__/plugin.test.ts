@@ -135,13 +135,13 @@ describe('JSX style props', () => {
 
       <Box
         as="div"
-        m="1"
-        py={2}
-        px="2"
-        fontSize="md"
         key={key}
         onClick={onClick}
+        m="1"
+        px="2"
         {...props}
+        py={2}
+        fontSize="md"
       >
         Hello
       </Box>;
@@ -187,7 +187,7 @@ describe('JSX style props', () => {
 
     expect(await run(code)).toMatchInlineSnapshot(`
       "import { Box } from "../styled-system/jsx";
-      <Box outline="outline" aaaa>
+      <Box aaaa outline="outline">
         Hello
       </Box>;
       "
@@ -204,13 +204,13 @@ describe('JSX style props', () => {
       "import { Box } from "../styled-system/jsx";
       <Box
         as="div"
-        m="1"
-        py={2}
-        px="2"
-        fontSize="md"
-        key={key}
         onClick={onClick}
+        key={key}
+        m="1"
+        px="2"
         {...props}
+        py={2}
+        fontSize="md"
       >
         Hello
       </Box>;
@@ -248,7 +248,7 @@ describe('JSX style props', () => {
 
     expect(await run(code)).toMatchInlineSnapshot(`
       "import { Box } from "../styled-system/jsx";
-      <Box data-index={1} data-test-id="data-test-id" onClick={onClick}>
+      <Box onClick={onClick} data-test-id="data-test-id" data-index={1}>
         Hello
       </Box>;
       "
@@ -314,12 +314,12 @@ describe('JSX style props', () => {
         userSelect="userSelect"
         transition="transition"
         animation="animation"
-        cursor="cursor"
-        overflowWrap="overflowWrap"
-        pointerEvents="pointerEvents"
-        resize="resize"
         transform="transform"
+        resize="resize"
         whiteSpace="whiteSpace"
+        pointerEvents="pointerEvents"
+        overflowWrap="overflowWrap"
+        cursor="cursor"
       >
         Same priority should be sorted in defined order
       </Box>;
@@ -357,6 +357,7 @@ describe('JSX style props', () => {
       "import { Box } from "../styled-system/jsx";
       <Box
         as={as}
+        data-test-id={dataTestId}
         display={display}
         position={position}
         flex={flex}
@@ -372,7 +373,6 @@ describe('JSX style props', () => {
         shadow={shadow}
         animation={animation}
         _hover={_hover}
-        data-test-id={dataTestId}
       >
         Hello
       </Box>;
@@ -397,8 +397,8 @@ describe('JSX style props', () => {
       "import { Box } from "../styled-system/jsx";
       <Box
         className={className}
-        dangerouslySetInnerHtml={dangerouslySetInnerHtml}
         key={key}
+        dangerouslySetInnerHtml={dangerouslySetInnerHtml}
         ref={ref}
       >
         Hello
@@ -423,10 +423,10 @@ describe('JSX style props', () => {
     expect(await run(code)).toMatchInlineSnapshot(`
       "import { Box } from "../styled-system/jsx";
       <Box
-        p={p}
-        aria-label="aria-label"
         // variant={variant}
         className={className}
+        aria-label="aria-label"
+        p={p}
       >
         Hello
       </Box>;
@@ -449,7 +449,7 @@ describe('JSX style props', () => {
 
     expect(await run(code, { pandaFirstProps: [] })).toMatchInlineSnapshot(`
       "import { Box } from "../styled-system/jsx";
-      <Box aria-label="aria-label" className={className} key={key} ref={ref}>
+      <Box className={className} key={key} ref={ref} aria-label="aria-label">
         Hello
       </Box>;
       "
@@ -471,7 +471,7 @@ describe('JSX style props', () => {
 
     expect(await run(code, { pandaLastProps: ['onClick', 'aria-label'] })).toMatchInlineSnapshot(`
       "import { Box } from "../styled-system/jsx";
-      <Box bg={bg} className={className} onClick={onClick} aria-label="aria-label">
+      <Box className={className} bg={bg} onClick={onClick} aria-label="aria-label">
         onClick should be the last
       </Box>;
       "
@@ -667,7 +667,7 @@ describe('Call Expression css(xxx) arguments', () => {
 
     expect(await run(code)).toMatchInlineSnapshot(`
       "import { css } from "../styled-system/css";
-      <div className={css({ outline: "outline", aaaa: "aaaa" })}>Hello</div>;
+      <div className={css({ aaaa: "aaaa", outline: "outline" })}>Hello</div>;
       "
     `)
   })
@@ -685,10 +685,10 @@ describe('Call Expression css(xxx) arguments', () => {
       <div
         className={css({
           as: "div",
+          onClick: onClick,
+          key: key,
           m: "1",
           px: "2",
-          key: key,
-          onClick: onClick,
           ...props,
           py: "2",
           fontSize: "md",
@@ -726,7 +726,7 @@ describe('Call Expression css(xxx) arguments', () => {
     expect(await run(code)).toMatchInlineSnapshot(`
       "import { css } from "../styled-system/css";
       <div
-        className={css({ dataIndex: 1, dataTestId: dataTestId, onClick: onClick })}
+        className={css({ onClick: onClick, dataTestId: dataTestId, dataIndex: 1 })}
       >
         Hello
       </div>;
@@ -783,12 +783,12 @@ describe('Call Expression css(xxx) arguments', () => {
           userSelect: "userSelect",
           transition: "transition",
           animation: "animation",
-          cursor: "cursor",
-          overflowWrap: "overflowWrap",
-          pointerEvents: "pointerEvents",
-          resize: "resize",
           transform: "transform",
+          resize: "resize",
           whiteSpace: "whiteSpace",
+          pointerEvents: "pointerEvents",
+          overflowWrap: "overflowWrap",
+          cursor: "cursor",
         })}
       >
         Hello
@@ -810,6 +810,7 @@ describe('Call Expression css(xxx) arguments', () => {
       <div
         className={css({
           as: as,
+          dataTestId: dataTestId,
           display: display,
           position: position,
           flex: flex,
@@ -825,7 +826,6 @@ describe('Call Expression css(xxx) arguments', () => {
           shadow: shadow,
           animation: animation,
           _hover: _hover,
-          dataTestId: dataTestId,
         })}
       >
         Hello
@@ -847,8 +847,8 @@ describe('Call Expression css(xxx) arguments', () => {
       <div
         className={css({
           className: className,
-          dangerouslySetInnerHTML: dangerouslySetInnerHTML,
           key: key,
+          dangerouslySetInnerHTML: dangerouslySetInnerHTML,
           ref: ref,
         })}
       >
@@ -870,10 +870,10 @@ describe('Call Expression css(xxx) arguments', () => {
       "import { css } from "../styled-system/css";
       <div
         className={css({
-          p: p,
-          ariaLabel: "ariaLabel",
           className: className,
+          ariaLabel: "ariaLabel",
           variant: variant,
+          p: p,
         })}
       >
         Hello
@@ -894,10 +894,10 @@ describe('Call Expression css(xxx) arguments', () => {
       "import { css } from "../styled-system/css";
       <div
         className={css({
-          ariaLabel: "ariaLabel",
           className: className,
           key: key,
           ref: ref,
+          ariaLabel: "ariaLabel",
         })}
       >
         Hello
@@ -918,8 +918,8 @@ describe('Call Expression css(xxx) arguments', () => {
       "import { css } from "../styled-system/css";
       <div
         className={css({
-          bg: bg,
           className: className,
+          bg: bg,
           onClick: onClick,
           ariaLabel: "ariaLabel",
         })}
@@ -1447,6 +1447,7 @@ describe('call expression specifics', () => {
       });
 
       const recipe = defineRecipe({
+        variants: {},
         base: {
           color: "white",
           "&[data-disabled]": {
@@ -1459,10 +1460,10 @@ describe('call expression specifics', () => {
             backgroundColor: "darkblue",
           },
         },
-        variants: {},
       });
 
       const slotRecipe = defineSlotRecipeAlias({
+        variants: {},
         base: {
           root: {
             color: "white",
@@ -1477,9 +1478,289 @@ describe('call expression specifics', () => {
             },
           },
         },
-        variants: {},
       });
       "
     `)
   })
+})
+
+test('always sort _conditions after root style props', async () => {
+  const code = `
+import { css } from "../styled-system/css";
+
+css({
+  _hover: {
+    color: "white"
+  },
+  cursor: "pointer",
+})
+`
+
+  expect(await run(code)).toMatchInlineSnapshot(`
+    "import { css } from "../styled-system/css";
+
+    css({
+      cursor: "pointer",
+      _hover: {
+        color: "white",
+      },
+    });
+    "
+  `)
+})
+
+test('always sort arbitrary conditions after _conditions', async () => {
+  const code = `
+import { css } from "../styled-system/css";
+
+css({
+  ['&:hover']: {
+    color: "black"
+  },
+  _hover: {
+    color: "white"
+  },
+})
+`
+
+  expect(await run(code)).toMatchInlineSnapshot(`
+    "import { css } from "../styled-system/css";
+
+    css({
+      _hover: {
+        color: "white",
+      },
+      ["&:hover"]: {
+        color: "black",
+      },
+    });
+    "
+  `)
+})
+
+test('always sort base first', async () => {
+  const code = `
+import { css } from "../styled-system/css";
+
+css({
+  _hover: {
+    color: "white"
+  },
+  base: {
+    color: "red"
+  },
+  cursor: "pointer",
+  color: "black",
+})
+`
+
+  expect(await run(code)).toMatchInlineSnapshot(`
+    "import { css } from "../styled-system/css";
+
+    css({
+      base: {
+        color: "red",
+      },
+      color: "black",
+      cursor: "pointer",
+      _hover: {
+        color: "white",
+      },
+    });
+    "
+  `)
+})
+
+test('sort patterns specific props near their matching property - stack align direction', async () => {
+  const code = `
+import { stack } from '../styled-system/patterns'
+
+stack({
+  bgColor: "red",
+  direction: "column",
+  p: "4",
+  flexDirection: "row",
+  m: "2",
+  align: "self",
+  width: "120",
+  alignItems: "flex-start",
+  mt: "4"
+})
+
+const App = () => {
+  return (
+    <Stack
+      bgColor="red"
+      direction="column"
+      p="4"
+      flexDirection="row"
+      m="2"
+      align="self"
+      width="120"
+      alignItems="flex-start"
+      mt="4"
+    >
+      <span>Hello from Panda</span>
+    </Stack>
+  )
+}
+`
+
+  expect(await run(code)).toMatchInlineSnapshot(`
+    "import { stack } from "../styled-system/patterns";
+
+    stack({
+      direction: "column",
+      flexDirection: "row",
+      align: "self",
+      alignItems: "flex-start",
+      width: "120",
+      m: "2",
+      mt: "4",
+      p: "4",
+      bgColor: "red",
+    });
+
+    const App = () => {
+      return (
+        <Stack
+          direction="column"
+          flexDirection="row"
+          align="self"
+          alignItems="flex-start"
+          width="120"
+          m="2"
+          mt="4"
+          p="4"
+          bgColor="red"
+        >
+          <span>Hello from Panda</span>
+        </Stack>
+      );
+    };
+    "
+  `)
+})
+
+test('sort props', async () => {
+  const code = `
+const App = () => {
+  return (
+    <IconButton
+      title="tw2panda"
+      css={{
+        borderColor: { base: 'sky.500/25', _hover: 'transparent' },
+        borderWidth: '1px',
+        w: 'auto',
+        px: '2',
+        color: { base: 'sky.500', _dark: 'sky.200' },
+        colorPalette: 'sky',
+      }}
+    />
+  )
+}
+`
+
+  expect(await run(code)).toMatchInlineSnapshot(`
+    "const App = () => {
+      return (
+        <IconButton
+          title="tw2panda"
+          css={{
+            colorPalette: "sky",
+            borderColor: { base: "sky.500/25", _hover: "transparent" },
+            borderWidth: "1px",
+            w: "auto",
+            px: "2",
+            color: { base: "sky.500", _dark: "sky.200" },
+          }}
+        />
+      );
+    };
+    "
+  `)
+})
+
+test('pandaStylePropsFirst - true', async () => {
+  const code = `
+const App = () => {
+  return (
+    <IconButton
+      aria-label="tw2panda"
+      title="tw2panda"
+      color="red.300"
+    />
+  )
+}
+`
+
+  expect(await run(code, { pandaStylePropsFirst: true })).toMatchInlineSnapshot(`
+    "const App = () => {
+      return <IconButton color="red.300" aria-label="tw2panda" title="tw2panda" />;
+    };
+    "
+  `)
+})
+
+test('pandaStylePropsFirst - false', async () => {
+  const code = `
+const App = () => {
+  return (
+    <IconButton
+      aria-label="tw2panda"
+      title="tw2panda"
+      color="red.300"
+    />
+  )
+}
+`
+
+  expect(await run(code, { pandaStylePropsFirst: false })).toMatchInlineSnapshot(`
+    "const App = () => {
+      return <IconButton aria-label="tw2panda" title="tw2panda" color="red.300" />;
+    };
+    "
+  `)
+})
+
+test('pandaSortOtherProps - true', async () => {
+  const code = `
+const App = () => {
+  return (
+    <IconButton
+      title="tw2panda"
+      aria-label="tw2panda"
+      color="red.300"
+    />
+  )
+}
+`
+
+  expect(await run(code, { pandaSortOtherProps: true })).toMatchInlineSnapshot(`
+    "const App = () => {
+      return <IconButton aria-label="tw2panda" title="tw2panda" color="red.300" />;
+    };
+    "
+  `)
+})
+
+test('pandaSortOtherProps - false', async () => {
+  const code = `
+const App = () => {
+  return (
+    <IconButton
+      title="tw2panda"
+      aria-label="tw2panda"
+      color="red.300"
+    />
+  )
+}
+`
+
+  expect(await run(code, { pandaSortOtherProps: false })).toMatchInlineSnapshot(`
+    "const App = () => {
+      return <IconButton title="tw2panda" aria-label="tw2panda" color="red.300" />;
+    };
+    "
+  `)
 })

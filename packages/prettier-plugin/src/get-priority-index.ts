@@ -3,6 +3,7 @@
 
 import type { CssSemanticGroup } from '@pandacss/types'
 import type { PluginOptions } from './options'
+import { isCssProperty } from '@pandacss/is-valid-prop'
 
 export const defaultGroupNames = [
   'System',
@@ -52,8 +53,16 @@ export type PriorityGroup = {
  * One is its "group priority", determined by which group property belongs,
  * and the other is its "inGroup priority", determined by index in that group.
  */
-export function getPropPriority(key: string, config: PluginOptions, priorityGroups: PriorityGroup[]): number {
-  const { pandaFirstProps: firstProps = [], pandaLastProps: lastProps = [],  } = config
+export function getPropPriority({
+  key,
+  config,
+  priorityGroups,
+}: {
+  key: string
+  config: PluginOptions
+  priorityGroups: PriorityGroup[]
+}): number {
+  const { pandaFirstProps: firstProps = [], pandaLastProps: lastProps = [] } = config
   const indexInFirstProps = firstProps.indexOf(key)
   const indexInLastProps = lastProps.indexOf(key)
   const componentSpecificProps = [] as string[]
@@ -73,9 +82,14 @@ export function getPropPriority(key: string, config: PluginOptions, priorityGrou
   }
 
   // Then it can be either `stylePropsPriority` or `otherPropsPriority`
-  const groupIndex = priorityGroups.findIndex((group) => {
+  let groupIndex = priorityGroups.findIndex((group) => {
     return group.keys.includes(key)
   })
+
+  // If the property is not in any group but is still a valid CSS prop, it's in the `Other` group
+  if (groupIndex === -1 && isCssProperty(key)) {
+    groupIndex = priorityGroups.findIndex((group) => group.name === 'Other')
+  }
 
   const isStyleProps = groupIndex > -1
   if (isStyleProps) {
@@ -106,7 +120,7 @@ const calcPriorityFromIndex = (index: Index, config: PluginOptions, priorityGrou
   const isComponentSpecBeforeStyle = true
   const basePriorities = {
     firstProps: 0,
-    styleProps: config.pandaStylePropsFirst ? 20_000: 45_000 ,
+    styleProps: config.pandaStylePropsFirst ? 20_000 : 45_000,
     componentSpecificProps: isComponentSpecBeforeStyle ? 10_000 : 30_000,
     otherProps: 40_000,
     lastProps: 50_000,

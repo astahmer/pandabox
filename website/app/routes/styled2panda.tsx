@@ -17,7 +17,7 @@ export default function Index() {
     <Layout
       header={
         <Link to="/">
-          <IconButton css={{ fontSize: 'md' }} title="Home">
+          <IconButton title="Home" css={{ fontSize: 'md' }}>
             <LuChevronLeft />
           </IconButton>
         </Link>

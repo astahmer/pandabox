@@ -11,7 +11,8 @@
     "start": "npx http-server build/client/",
     "start-server": "remix-serve ./build/server/index.js",
     "typecheck": "tsc --noEmit",
-    "types:codegen": "tsx scripts/bundle-types.mts"
+    "types:codegen": "tsx scripts/bundle-types.mts",
+    "fmt": "prettier --write app/components app/routes"
   },
   "imports": {
     "#styled-system/*": "./styled-system/*"
@@ -22,6 +23,7 @@
     "@fontsource/inter": "^5.0.16",
     "@monaco-editor/react": "^4.6.0",
     "@pandabox/codemods": "workspace:^",
+    "@pandabox/prettier-plugin": "workspace:^",
     "@remix-run/css-bundle": "^2.8.0",
     "@remix-run/node": "^2.8.0",
     "@remix-run/react": "^2.8.0",

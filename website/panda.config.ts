@@ -26,13 +26,15 @@ export default defineConfig({
   exclude: [],
 
   conditions: {
-    // next-themes
-    dark: '.dark &, [data-theme="dark"] &',
-    light: '.light &, [data-theme="light"] &',
-    // react-resizable-panels
-    resizeHandleActive: '[data-resize-handle-active] &',
-    panelHorizontalActive: '[data-panel-group-direction="horizontal"] &',
-    panelVerticalActive: '[data-panel-group-direction="vertical"] &',
+    extend: {
+      // next-themes
+      dark: '.dark &, [data-theme="dark"] &',
+      light: '.light &, [data-theme="light"] &',
+      // react-resizable-panels
+      resizeHandleActive: '[data-resize-handle-active] &',
+      panelHorizontalActive: '[data-panel-group-direction="horizontal"] &',
+      panelVerticalActive: '[data-panel-group-direction="vertical"] &',
+    },
   },
 
   // Useful for theme customization
@@ -61,13 +63,15 @@ export default defineConfig({
   },
 
   utilities: {
-    boxSize: {
-      values: basePreset.utilities?.width?.values,
-      transform: (value) => {
-        return {
-          width: value,
-          height: value,
-        }
+    extend: {
+      boxSize: {
+        values: basePreset.utilities?.width?.values,
+        transform: (value) => {
+          return {
+            width: value,
+            height: value,
+          }
+        },
       },
     },
   },

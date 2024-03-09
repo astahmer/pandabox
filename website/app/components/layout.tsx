@@ -36,11 +36,11 @@ export const Layout = ({ children, header }: LayoutProps) => {
         h="100vh"
         maxH="100vh"
         color="text.main"
-        bg={{ base: 'white/6', _dark: 'white/8' }}
         fontFamily="Inter"
+        bg={{ base: 'white/6', _dark: 'white/8' }}
       >
         <Stack w="100%" h="100%">
-          <Flex pt="2" p="3" _light={{ bg: 'gray.100' }}>
+          <Flex p="3" pt="2" _light={{ bg: 'gray.100' }}>
             {header}
             <HStack alignItems="center" ml="auto">
               <a target="blank" href="https://www.astahmer.dev/">
@@ -73,12 +73,12 @@ export const Layout = ({ children, header }: LayoutProps) => {
                 <IconButton
                   title="tw2panda"
                   css={{
-                    px: '2',
-                    w: 'auto',
                     colorPalette: 'sky',
-                    color: { base: 'sky.500', _dark: 'sky.200' },
-                    borderWidth: '1px',
                     borderColor: { base: 'sky.500/25', _hover: 'transparent' },
+                    borderWidth: '1px',
+                    w: 'auto',
+                    px: '2',
+                    color: { base: 'sky.500', _dark: 'sky.200' },
                   }}
                 >
                   <div className={hstack()}>
@@ -91,12 +91,12 @@ export const Layout = ({ children, header }: LayoutProps) => {
                 <IconButton
                   title="tw2panda"
                   css={{
-                    px: '2',
-                    w: 'auto',
                     colorPalette: 'purple',
-                    backgroundColor: 'colorPalette.200/70',
-                    borderWidth: '1px',
                     borderColor: { base: 'purple.300/25', _hover: 'transparent' },
+                    borderWidth: '1px',
+                    w: 'auto',
+                    px: '2',
+                    backgroundColor: 'colorPalette.200/70',
                   }}
                 >
                   <div className={hstack()}>
