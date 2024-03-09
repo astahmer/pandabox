@@ -396,10 +396,10 @@ describe('JSX style props', () => {
     expect(await run(code)).toMatchInlineSnapshot(`
       "import { Box } from "../styled-system/jsx";
       <Box
+        ref={ref}
         className={className}
         key={key}
         dangerouslySetInnerHtml={dangerouslySetInnerHtml}
-        ref={ref}
       >
         Hello
       </Box>;
@@ -449,7 +449,7 @@ describe('JSX style props', () => {
 
     expect(await run(code, { pandaFirstProps: [] })).toMatchInlineSnapshot(`
       "import { Box } from "../styled-system/jsx";
-      <Box className={className} key={key} ref={ref} aria-label="aria-label">
+      <Box ref={ref} className={className} key={key} aria-label="aria-label">
         Hello
       </Box>;
       "
@@ -846,10 +846,10 @@ describe('Call Expression css(xxx) arguments', () => {
       "import { css } from "../styled-system/css";
       <div
         className={css({
+          ref: ref,
           className: className,
           key: key,
           dangerouslySetInnerHTML: dangerouslySetInnerHTML,
-          ref: ref,
         })}
       >
         Hello
@@ -894,9 +894,9 @@ describe('Call Expression css(xxx) arguments', () => {
       "import { css } from "../styled-system/css";
       <div
         className={css({
+          ref: ref,
           className: className,
           key: key,
-          ref: ref,
           ariaLabel: "ariaLabel",
         })}
       >
