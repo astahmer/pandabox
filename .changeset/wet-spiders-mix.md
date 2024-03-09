@@ -15,3 +15,5 @@ Fix an issue where some CSS properties were sorted after conditions due to not b
 ---
 
 Change the default `pandaStylePropsFirst` and `pandaSortOtherProps` options to `false`.
+
+Change `pandaFirstProps` defaults to `['as', 'asChild', 'ref', 'className', 'layerStyle', 'textStyle']`.

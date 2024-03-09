@@ -24,7 +24,7 @@ export class PrettyPanda {
     this.options = {
       pandaFirstProps: prettierOptions?.pandaFirstProps?.length
         ? prettierOptions?.pandaFirstProps
-        : ['as', 'className', 'layerStyle', 'textStyle'],
+        : ['as', 'asChild', 'ref', 'className', 'layerStyle', 'textStyle'],
       pandaLastProps: prettierOptions?.pandaLastProps ?? [],
       pandaOnlyComponents: prettierOptions?.pandaOnlyComponents ?? false,
       pandaOnlyIncluded: prettierOptions?.pandaOnlyIncluded ?? false,

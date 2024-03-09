@@ -112,7 +112,7 @@ css({
 
 ### `pandaFirstProps`
 
-The first props to sort. Defaults to `['as', 'className', 'layerStyle', 'textStyle']`.
+The first props to sort. Defaults to `['as', 'asChild', 'ref', 'className', 'layerStyle', 'textStyle']`.
 
 ### `pandaLastProps`
 
