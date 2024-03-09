@@ -14,16 +14,16 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   return (
     <Layout>
-      <Stack mt={{ sm: '8' }} gap="6" h="100%" pt="8">
+      <Stack gap="6" h="100%" mt={{ sm: '8' }} pt="8">
         <Stack gap="6" alignItems="center">
-          <styled.h1 textStyle="3xl" fontWeight="bold" color="sky.500">
+          <styled.h1 textStyle="3xl" color="sky.500" fontWeight="bold">
             @pandabox
           </styled.h1>
           <styled.h1 textStyle="xl" color={{ base: 'gray.500', _dark: 'gray.300' }}>
             a toolbox for 🐼 Panda CSS
           </styled.h1>
         </Stack>
-        <Grid columns={{ base: 1, sm: 2, md: 3 }} css={container.raw()} gap="4" mt="4" textStyle="md">
+        <Grid textStyle="md" gap="4" mt="4" columns={{ base: 1, sm: 2, md: 3 }} css={container.raw()}>
           <Card
             title="@pandabox/panda-plugins"
             description="Transforms the `styled-system` to fit your exact needs"
@@ -78,19 +78,19 @@ const Card = ({
       // @ts-expect-error
       as={Inner}
       to={to}
-      display="flex"
       href={href}
-      borderRadius="lg"
-      p={{ base: '4', md: '6' }}
-      direction={{ base: 'column', md: 'row' }}
+      display="flex"
       gap={{ base: '5', md: '6' }}
+      direction={{ base: 'column', md: 'row' }}
       justify="space-between"
+      borderRadius="lg"
       minH="initial"
+      p={{ base: '4', md: '6' }}
       css={{
-        transition: 'colors',
-        transitionDuration: '100ms',
         colorPalette: 'gray',
         bg: { base: 'gray.100', _dark: 'gray.700' },
+        transition: 'colors',
+        transitionDuration: '100ms',
         _hover: {
           bg: 'colorPalette.400',
           color: 'white',
@@ -104,7 +104,7 @@ const Card = ({
         <styled.span color={{ _dark: 'sky.300' }} fontSize="sm" fontWeight="semibold">
           {title}
         </styled.span>
-        <styled.span fontSize="xs" color="muted">
+        <styled.span color="muted" fontSize="xs">
           {description}
         </styled.span>
       </Stack>

@@ -18,12 +18,12 @@ pnpm add -D prettier @pandabox/prettier-plugin
 ```json
 {
   "plugins": ["@pandabox/prettier-plugin"],
-  "pandaFirstProps": ["as", "layerStyle", "textStyle"],
+  "pandaFirstProps": ["as", "className", "layerStyle", "textStyle"],
   "pandaLastProps": [],
   "pandaOnlyComponents": false,
   "pandaOnlyIncluded": false,
-  "pandaStylePropsFirst": true,
-  "pandaSortOtherProps": true
+  "pandaStylePropsFirst": false,
+  "pandaSortOtherProps": false
 }
 ```
 
@@ -112,7 +112,7 @@ css({
 
 ### `pandaFirstProps`
 
-The first props to sort. Defaults to `['as', 'layerStyle', 'textStyle']`.
+The first props to sort. Defaults to `['as', 'className', 'layerStyle', 'textStyle']`.
 
 ### `pandaLastProps`
 
@@ -128,11 +128,11 @@ Only sort props in files that are included in the config. Defaults to `false`.
 
 ### `pandaStylePropsFirst`
 
-Whether to sort the style props before the component props. Defaults to `true`.
+Whether to sort the style props before the component props. Defaults to `false`.
 
 ### `pandaSortOtherProps`
 
-Whether to sort the other props alphabetically. Defaults to `true`.
+Whether to sort the other props alphabetically. Defaults to `false`.
 
 ### `pandaGroupOrder`
 

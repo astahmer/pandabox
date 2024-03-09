@@ -24,12 +24,12 @@ export class PrettyPanda {
     this.options = {
       pandaFirstProps: prettierOptions?.pandaFirstProps?.length
         ? prettierOptions?.pandaFirstProps
-        : ['as', 'layerStyle', 'textStyle'],
+        : ['as', 'className', 'layerStyle', 'textStyle'],
       pandaLastProps: prettierOptions?.pandaLastProps ?? [],
       pandaOnlyComponents: prettierOptions?.pandaOnlyComponents ?? false,
       pandaOnlyIncluded: prettierOptions?.pandaOnlyIncluded ?? false,
-      pandaStylePropsFirst: prettierOptions?.pandaStylePropsFirst ?? true,
-      pandaSortOtherProps: prettierOptions?.pandaSortOtherProps ?? true,
+      pandaStylePropsFirst: prettierOptions?.pandaStylePropsFirst ?? false,
+      pandaSortOtherProps: prettierOptions?.pandaSortOtherProps ?? false,
       pandaGroupOrder: prettierOptions?.pandaGroupOrder?.length
         ? (prettierOptions?.pandaGroupOrder as any)
         : defaultGroupNames,
@@ -40,10 +40,11 @@ export class PrettyPanda {
 
   generatePriorityGroups = (context: PandaContext) => {
     const groups = new Map<PriorityGroupName, Set<string>>([
+      ['System', new Set(['base', 'colorPalette'])],
       ['Other', new Set()],
       ['Conditions', new Set()],
       ['Arbitrary conditions', new Set()],
-      ['Css', new Set('css')],
+      ['Css', new Set(['css'])],
     ])
     const otherStyleProps = groups.get('Other')!
 
@@ -114,8 +115,18 @@ export class PrettyPanda {
     return priorityGroups
   }
 
-  getPriority = (key: string) => {
-    return getPropPriority(key, this.options, this.priorityGroups)
+  getPriority = (key: string, identifier?: string) => {
+    if (identifier) {
+      const pattern = this.context.patterns.details.find((p) => p.baseName === identifier || p.match.test(identifier))
+      if (pattern) {
+        const prop = pattern.config.properties?.[key]
+        if (prop && prop.type === 'property' && typeof prop.value === 'string') {
+          return getPropPriority({ key: prop.value, config: this.options, priorityGroups: this.priorityGroups })
+        }
+      }
+    }
+
+    return getPropPriority({ key, config: this.options, priorityGroups: this.priorityGroups })
   }
 
   format = (_text: string) => {
@@ -181,7 +192,7 @@ export class PrettyPanda {
             if (a.type !== NodeType.JSXAttribute || b.type !== NodeType.JSXAttribute) return 0
             if (a.name.type !== NodeType.JSXIdentifier || b.name.type !== NodeType.JSXIdentifier) return 0
 
-            return this.compareIdent(a.name, b.name)
+            return this.compareIdent(a.name, b.name, tagName)
           })
 
           // sort style props inside css={{ ... }} prop
@@ -234,7 +245,7 @@ export class PrettyPanda {
           } else {
             // css / css.raw / {pattern(?.raw)}
             node.arguments.forEach((arg) => {
-              this.sortObjectProperties(arg)
+              this.sortObjectProperties(arg, fnName)
             })
           }
         }
@@ -244,9 +255,9 @@ export class PrettyPanda {
     return this.ast
   }
 
-  sortObjectProperties = (node: TSESTree.Node) => {
+  sortObjectProperties = (node: TSESTree.Node, identifier?: string) => {
     if (node.type !== NodeType.ObjectExpression) return
-    node.properties = this.sortProps(node.properties)
+    node.properties = this.sortProps(node.properties, identifier)
   }
 
   sortCvaConfig = (node: TSESTree.CallExpression) => {
@@ -291,12 +302,12 @@ export class PrettyPanda {
     })
   }
 
-  sortProps = (unsorted: (TSESTree.Property | TSESTree.SpreadElement)[]) => {
+  sortProps = (unsorted: (TSESTree.Property | TSESTree.SpreadElement)[], identifier?: string) => {
     const noSpread = isOnlyProperties(unsorted)
 
     if (noSpread) {
-      const sorted = [...unsorted].sort((a, b) => this.compareProp(a, b))
-      return this.sortNestedProps(sorted)
+      const sorted = [...unsorted].sort((a, b) => this.compareProp(a, b, identifier))
+      return this.sortNestedProps(sorted, identifier)
     }
 
     // contains SpreadElement
@@ -311,7 +322,7 @@ export class PrettyPanda {
         if (start < end) {
           // Sort sections which don't have SpreadElement.
           const sectionToSort = unsorted.slice(start, end) as TSESTree.Property[]
-          const sectionSorted = sectionToSort.sort((a, b) => this.compareProp(a, b))
+          const sectionSorted = sectionToSort.sort((a, b) => this.compareProp(a, b, identifier))
           sorted = sorted.concat(sectionSorted)
         }
         // SpreadElement will be pushed as is.
@@ -323,26 +334,26 @@ export class PrettyPanda {
         end = i + 1
         if (start < end) {
           const sectionToSort = unsorted.slice(start, end) as TSESTree.Property[]
-          const sectionSorted = sectionToSort.sort((a, b) => this.compareProp(a, b))
+          const sectionSorted = sectionToSort.sort((a, b) => this.compareProp(a, b, identifier))
           sorted = sorted.concat(sectionSorted)
         }
       }
     }
 
-    return this.sortNestedProps(sorted)
+    return this.sortNestedProps(sorted, identifier)
   }
 
-  sortNestedProps = (props: (TSESTree.Property | TSESTree.SpreadElement)[]) => {
+  sortNestedProps = (props: (TSESTree.Property | TSESTree.SpreadElement)[], identifier?: string) => {
     return props.map((prop) => {
       if (prop.type === NodeType.Property && prop.value.type === NodeType.ObjectExpression) {
-        prop.value.properties = this.sortProps(prop.value.properties)
+        prop.value.properties = this.sortProps(prop.value.properties, identifier)
       }
 
       return prop
     })
   }
 
-  compareProp = (a: TSESTree.Property, b: TSESTree.Property) => {
+  compareProp = (a: TSESTree.Property, b: TSESTree.Property, identifier?: string) => {
     if (a.type !== NodeType.Property || b.type !== NodeType.Property) return 0
 
     // Sort arbitrary conditions last
@@ -351,12 +362,16 @@ export class PrettyPanda {
 
     if (a.key.type !== NodeType.Identifier || b.key.type !== NodeType.Identifier) return 0
 
-    return this.compareIdent(a.key, b.key)
+    return this.compareIdent(a.key, b.key, identifier)
   }
 
-  compareIdent = (a: TSESTree.Identifier | TSESTree.JSXIdentifier, b: TSESTree.Identifier | TSESTree.JSXIdentifier) => {
-    const aPriority = this.getPriority(a.name.toString())
-    const bPriority = this.getPriority(b.name.toString())
+  compareIdent = (
+    a: TSESTree.Identifier | TSESTree.JSXIdentifier,
+    b: TSESTree.Identifier | TSESTree.JSXIdentifier,
+    identifier?: string,
+  ) => {
+    const aPriority = this.getPriority(a.name.toString(), identifier)
+    const bPriority = this.getPriority(b.name.toString(), identifier)
 
     if (aPriority !== bPriority) {
       return aPriority - bPriority
