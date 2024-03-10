@@ -1,0 +1,166 @@
+{
+  "name": "@pandabox/unplugin",
+  "type": "module",
+  "version": "0.0.0",
+  "packageManager": "pnpm@8.6.12",
+  "description": "Panda CSS as a Vite/Rollup/Webpack/Esbuild plugin",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./astro": {
+      "types": "./dist/astro.d.ts",
+      "import": "./dist/astro.js",
+      "require": "./dist/astro.cjs"
+    },
+    "./rspack": {
+      "types": "./dist/rspack.d.ts",
+      "import": "./dist/rspack.js",
+      "require": "./dist/rspack.cjs"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./dist/vite.js",
+      "require": "./dist/vite.cjs"
+    },
+    "./webpack": {
+      "types": "./dist/webpack.d.ts",
+      "import": "./dist/webpack.js",
+      "require": "./dist/webpack.cjs"
+    },
+    "./rollup": {
+      "types": "./dist/rollup.d.ts",
+      "import": "./dist/rollup.js",
+      "require": "./dist/rollup.cjs"
+    },
+    "./esbuild": {
+      "types": "./dist/esbuild.d.ts",
+      "import": "./dist/esbuild.js",
+      "require": "./dist/esbuild.cjs"
+    },
+    "./nuxt": {
+      "types": "./dist/nuxt.d.ts",
+      "import": "./dist/nuxt.js",
+      "require": "./dist/nuxt.cjs"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js",
+      "require": "./dist/types.cjs"
+    },
+    "./*": "./*"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*",
+        "./*"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch src",
+    "build:fix": "esno scripts/postbuild.ts",
+    "lint": "eslint .",
+    "play": "npm -C playground run dev",
+    "prepublishOnly": "npm run build",
+    "start": "esno src/index.ts",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@pandabox/postcss-plugins": "workspace:^",
+    "@pandacss/config": "^0.33.0",
+    "@pandacss/core": "^0.33.0",
+    "@pandacss/extractor": "^0.33.0",
+    "@pandacss/node": "^0.33.0",
+    "@pandacss/shared": "^0.33.0",
+    "@rollup/pluginutils": "^5.1.0",
+    "magic-string": "^0.30.7",
+    "postcss": "^8.4.35",
+    "ts-morph": "21.0.1",
+    "unplugin": "^1.7.1"
+  },
+  "imports": {
+    "#pandabox/fixtures": "../fixtures/src/index.ts"
+  },
+  "devDependencies": {
+    "@nuxt/kit": "^3.10.3",
+    "@nuxt/schema": "^3.10.3",
+    "@pandacss/preset-base": "^0.33.0",
+    "@pandacss/preset-panda": "^0.33.0",
+    "@pandacss/types": "^0.33.0",
+    "@types/node": "^20.11.21",
+    "chalk": "^5.3.0",
+    "esno": "^4.0.0",
+    "fast-glob": "^3.3.2",
+    "nodemon": "^3.1.0",
+    "rollup": "^4.12.0",
+    "tsup": "^8.0.2",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.4",
+    "vitest": "^1.3.1",
+    "webpack": "^5.90.3"
+  },
+  "peerDependencies": {
+    "@nuxt/kit": "^3",
+    "@nuxt/schema": "^3",
+    "esbuild": "*",
+    "rollup": "^3",
+    "vite": ">=3",
+    "webpack": "^4 || ^5"
+  },
+  "peerDependenciesMeta": {
+    "webpack": {
+      "optional": true
+    },
+    "rollup": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    },
+    "esbuild": {
+      "optional": true
+    },
+    "@nuxt/kit": {
+      "optional": true
+    },
+    "@nuxt/schema": {
+      "optional": true
+    }
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "homepage": "https://astahmer.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astahmer/pandabox.git",
+    "directory": "packages/unplugin"
+  },
+  "author": "Alexandre Stahmer",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "pandacss",
+    "pandabox",
+    "panda",
+    "typesafety",
+    "typescript",
+    "unplugin",
+    "vite",
+    "webpack",
+    "rollup",
+    "esbuild",
+    "transform"
+  ]
+}
