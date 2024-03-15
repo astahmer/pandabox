@@ -11,6 +11,7 @@ export interface PluginOptions {
   pandaStylePropsFirst: boolean
   pandaSortOtherProps: boolean
   pandaGroupOrder: string[]
+  pandaFunctions: string[]
   // componentSpecificProps: string[] | undefined
 }
 
@@ -72,6 +73,13 @@ export const options = {
     category: 'Panda',
     description:
       "The order of the style groups. Defaults to: ['System', 'Container', 'Display', 'Visibility', 'Position', 'Transform', 'Flex Layout', 'Grid Layout', 'Layout', 'Border', 'Border Radius', 'Width', 'Height', 'Margin', 'Padding', 'Color', 'Typography', 'Background', 'Shadow', 'Table', 'List', 'Scroll', 'Interactivity', 'Transition', 'Effect', 'Other', 'Conditions', 'Arbitrary conditions', 'Css']",
+    default: [{ value: [] }],
+  },
+  pandaFunctions: {
+    array: true,
+    type: 'string',
+    category: 'Panda',
+    description: 'Additional functions to sort. Defaults to: []',
     default: [{ value: [] }],
   },
   // componentSpecificProps: {

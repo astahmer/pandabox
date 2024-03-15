@@ -198,30 +198,30 @@ importers:
   packages/prettier-plugin:
     dependencies:
       '@pandacss/config':
-        specifier: ^0.33.0
+        specifier: '>=0.33.0'
         version: 0.33.0
       '@pandacss/core':
-        specifier: ^0.33.0
+        specifier: '>=0.33.0'
         version: 0.33.0
       '@pandacss/is-valid-prop':
         specifier: ^0.34.1
         version: 0.34.1
       '@pandacss/node':
-        specifier: ^0.33.0
+        specifier: '>=0.33.0'
         version: 0.33.0(typescript@5.3.3)
       '@pandacss/preset-base':
-        specifier: ^0.33.0
+        specifier: '>=0.33.0'
         version: 0.33.0
       '@pandacss/shared':
-        specifier: ^0.33.0
+        specifier: '>=0.33.0'
         version: 0.33.0
       micromatch:
         specifier: ^4.0.5
         version: 4.0.5
     devDependencies:
       '@pandacss/types':
-        specifier: ^0.33.0
-        version: 0.33.0
+        specifier: ^0.35.0
+        version: 0.35.0
       '@types/micromatch':
         specifier: ^4.0.6
         version: 4.0.6
@@ -2655,6 +2655,10 @@ packages:
 
   /@pandacss/types@0.33.0:
     resolution: {integrity: sha512-44tlDreSHaDW5medtCCiecgzihzm27mq3YabtHtDiJRUuyIl4+NmzlZZzETWziRmZjtw1jH1oMoGTOKM6+j/Hw==}
+
+  /@pandacss/types@0.35.0:
+    resolution: {integrity: sha512-o049YHTZxJQAB7POc0k5tk7QQByGsMN6JBzQSxlcRp/hry/QYuYikj7SSZRcc2Vd+TVCnVgh8c/W9iznvN0Kag==}
+    dev: true
 
   /@park-ui/panda-preset@0.36.0(@internationalized/date@3.5.2)(@pandacss/dev@0.33.0)(@pandacss/types@0.33.0):
     resolution: {integrity: sha512-WxgeHU9uh2RnBGjXGZzgi6KgrzQ8QuI7G4wNp9ScRTBem0TCqA0zd5D/arG7hheaB0KepuysfZI8tTYFAQK8aw==}

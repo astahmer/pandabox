@@ -6,6 +6,7 @@ Will sort style props based on your local `panda.config.ts`:
 
 - in any Panda function like `css({ ... })` or `stack({ ... })`
 - in the `css` prop of any JSX component
+- etc...
 
 ## Installation
 
@@ -17,13 +18,23 @@ pnpm add -D prettier @pandabox/prettier-plugin
 
 ```json
 {
-  "plugins": ["@pandabox/prettier-plugin"],
+  "plugins": ["@pandabox/prettier-plugin"]
+}
+```
+
+## Options
+
+See below for more details.
+
+```json
+{
   "pandaFirstProps": ["as", "className", "layerStyle", "textStyle"],
   "pandaLastProps": [],
   "pandaOnlyComponents": false,
   "pandaOnlyIncluded": false,
   "pandaStylePropsFirst": false,
-  "pandaSortOtherProps": false
+  "pandaSortOtherProps": false,
+  "pandaFunctions": []
 }
 ```
 
@@ -138,6 +149,11 @@ Whether to sort the other props alphabetically. Defaults to `false`.
 
 The order of the style groups. Defaults to:
 `['System', 'Container', 'Display', 'Visibility', 'Position', 'Transform', 'Flex Layout', 'Grid Layout', 'Layout', 'Border', 'Border Radius', 'Width', 'Height', 'Margin', 'Padding', 'Color', 'Typography', 'Background', 'Shadow', 'Table', 'List', 'Scroll', 'Interactivity', 'Transition', 'Effect', 'Other', 'Conditions', 'Arbitrary conditions', 'Css']`
+
+### `pandaFunctions`
+
+A list of style functions to sort in addition to the default ones (css, cva, patterns, defineRecipe,
+defineSlotRecipe...). Defaults to `[]`.
 
 ### `pandaConfigPath`
 

@@ -2,6 +2,28 @@
 
 This will be the home for utilities around Panda CSS.
 
+# @pandabox/prettier-plugin
+
+Prettier plugin for Panda CSS.
+
+Will sort style props based on your local `panda.config.ts`:
+
+- in any Panda function like `css({ ... })` or `stack({ ... })`
+- in the `css` prop of any JSX component
+- etc...
+
+## Installation
+
+```bash
+pnpm add -D prettier @pandabox/prettier-plugin
+```
+
+```json
+{
+  "plugins": ["@pandabox/prettier-plugin"]
+}
+```
+
 # @pandabox/panda-plugins
 
 - `missing-css-warnings` - Logs a warning message when a CSS rule was used at runtime but couldn't be statically

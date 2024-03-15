@@ -9,7 +9,8 @@ import { getPropPriority, defaultGroupNames, type PriorityGroup, type PriorityGr
 import type { PluginOptions } from './options'
 
 const NodeType = TSESTree.AST_NODE_TYPES
-const cvaOrder = ['base', 'variants', 'defaultVariants']
+const recipeFnNames = ['cva', 'sva', 'defineRecipe', 'defineSlotRecipe']
+const cvaOrder = ['className', 'description', 'slots', 'base', 'variants', 'defaultVariants']
 const pandaConfigFns = ['defineStyles', 'defineRecipe', 'defineSlotRecipe']
 
 export class PrettyPanda {
@@ -33,6 +34,7 @@ export class PrettyPanda {
       pandaGroupOrder: prettierOptions?.pandaGroupOrder?.length
         ? (prettierOptions?.pandaGroupOrder as any)
         : defaultGroupNames,
+      pandaFunctions: prettierOptions?.pandaFunctions ?? [],
       // componentSpecificProps: undefined, // not supported yet
     }
     this.priorityGroups = this.generatePriorityGroups(context)
@@ -219,35 +221,29 @@ export class PrettyPanda {
           if (node.callee.type !== NodeType.Identifier && node.callee.type !== NodeType.MemberExpression) return
 
           // css({ ... })
-          const fnName =
-            node.callee.type === NodeType.Identifier
-              ? node.callee.name
-              : // css.raw({ ... })
-                node.callee.object.type === NodeType.Identifier
-                ? node.callee.object.name
-                : ''
-          if (!fnName) return
+          const names = this.getFnName(node)
+          if (!names) return
 
+          const fnName = names.fnName
           // also sort patterns (e.g. `stack.raw({ direction: "row", mt: "4" })`)
           const foundImport = file.find(fnName)
           const isRuntimeFn = file.matchFn(fnName) && foundImport
 
           // and also sort config functions `defineStyles`, `defineRecipe`, `defineSlotRecipe`
-          const isPandaFn = isRuntimeFn || (foundImport && foundImport.mod === '@pandacss/dev')
+          // or custom functions from the `pandaFunctions` option
+          const isPandaFn =
+            isRuntimeFn ||
+            (foundImport && foundImport.mod === '@pandacss/dev') ||
+            pandaConfigFns.includes(fnName) ||
+            this.options.pandaFunctions.includes(fnName) ||
+            this.options.pandaFunctions.includes(fnName + '.' + names.fnIdentifier)
           if (!isPandaFn) return
 
           if (ignoredLines.includes(node.loc.start.line - 1)) {
             return
           }
 
-          if (fnName === 'cva') {
-            this.sortCvaConfig(node)
-          } else {
-            // css / css.raw / {pattern(?.raw)}
-            node.arguments.forEach((arg) => {
-              this.sortObjectProperties(arg, fnName)
-            })
-          }
+          this.sortFunction(node, fnName)
         }
       },
     })
@@ -260,7 +256,72 @@ export class PrettyPanda {
     node.properties = this.sortProps(node.properties, identifier)
   }
 
-  sortCvaConfig = (node: TSESTree.CallExpression) => {
+  sortFunction = (node: TSESTree.CallExpression, fnName: string) => {
+    const kind = this.guessFnKind(node, fnName)
+    if (!kind) return
+
+    return kind === 'atomic' ? this.sortCssFn(node, fnName) : this.sortCvaConfig(node, kind)
+  }
+
+  getFnName = (node: TSESTree.CallExpression) => {
+    if (node.callee.type !== NodeType.Identifier && node.callee.type !== NodeType.MemberExpression) return
+
+    let fnName = ''
+    let fnIdentifier = ''
+    if (node.callee.type === NodeType.Identifier) {
+      fnName = node.callee.name
+    } else if (node.callee.object.type === NodeType.Identifier) {
+      fnName = node.callee.object.name
+
+      if (node.callee.property.type === NodeType.Identifier) {
+        fnIdentifier = node.callee.property.name
+      } else if (node.callee.property.type === NodeType.Literal && typeof node.callee.property.value === 'string') {
+        fnIdentifier = node.callee.property.value
+      }
+    }
+
+    return { fnName, fnIdentifier }
+  }
+
+  guessFnKind = (node: TSESTree.CallExpression, fnName: string) => {
+    if (node.callee.type !== NodeType.Identifier && node.callee.type !== NodeType.MemberExpression) return
+
+    if (fnName === 'css') {
+      return 'atomic'
+    }
+
+    if (recipeFnNames.includes(fnName)) {
+      return recipeFnNamesToType[fnName as keyof typeof recipeFnNamesToType]
+    }
+
+    const firstArgument = node.arguments[0]
+    if (firstArgument) {
+      if (firstArgument.type === NodeType.ObjectExpression) {
+        const propNames = firstArgument.properties.map((prop) => {
+          if (prop.type !== NodeType.Property) return
+          if (prop.key.type !== NodeType.Identifier) return
+          return prop.key.name
+        })
+
+        const isSva = propNames.includes('slots')
+        const isCva = cvaOrder.some((key) => propNames.includes(key))
+
+        if (isSva) return 'slot-recipe'
+        if (isCva) return 'recipe'
+      }
+    }
+
+    return 'atomic'
+  }
+
+  sortCssFn = (node: TSESTree.CallExpression, fnName: string) => {
+    // css / css.raw / {pattern(?.raw)}
+    node.arguments.forEach((arg) => {
+      this.sortObjectProperties(arg, fnName)
+    })
+  }
+
+  sortCvaConfig = (node: TSESTree.CallExpression, kind: FnKind) => {
     node.arguments.forEach((arg) => {
       if (arg.type !== NodeType.ObjectExpression) return
 
@@ -278,7 +339,18 @@ export class PrettyPanda {
         if (prop.key.type !== NodeType.Identifier) return
 
         if (prop.key.name === 'base') {
-          this.sortObjectProperties(prop.value)
+          if (kind === 'slot-recipe') {
+            const base = prop.value
+            if (base.type !== NodeType.ObjectExpression) return
+            base.properties.forEach((slot) => {
+              if (slot.type !== NodeType.Property) return
+              if (slot.key.type !== NodeType.Identifier) return
+
+              this.sortObjectProperties(slot.value)
+            })
+          } else {
+            this.sortObjectProperties(prop.value)
+          }
         } else if (prop.key.name === 'variants') {
           const variants = prop.value
           if (variants.type !== NodeType.ObjectExpression) return
@@ -288,13 +360,27 @@ export class PrettyPanda {
 
             const variantObj = variant.value
             if (variantObj.type !== NodeType.ObjectExpression) return
+
             variantObj.properties.forEach((variantProp) => {
               if (variantProp.type !== NodeType.Property) return
               if (variantProp.key.type !== NodeType.Identifier) return
 
               const styles = variantProp.value
               if (styles.type !== NodeType.ObjectExpression) return
-              this.sortObjectProperties(styles)
+
+              if (kind === 'slot-recipe') {
+                styles.properties.forEach((slotObj) => {
+                  if (slotObj.type !== NodeType.Property) return
+                  if (slotObj.key.type !== NodeType.Identifier) return
+
+                  const slotStyles = slotObj.value
+                  if (slotStyles.type !== NodeType.ObjectExpression) return
+
+                  this.sortObjectProperties(slotStyles)
+                })
+              } else {
+                this.sortObjectProperties(styles)
+              }
             })
           })
         }
@@ -417,3 +503,12 @@ const isOnlyProperties = (
 ): properties is TSESTree.Property[] => {
   return properties.every((property) => property.type === NodeType.Property)
 }
+
+const recipeFnNamesToType = {
+  cva: 'recipe',
+  sva: 'slot-recipe',
+  defineRecipe: 'recipe',
+  defineSlotRecipe: 'slot-recipe',
+} as const
+
+type FnKind = 'atomic' | 'recipe' | 'slot-recipe'

@@ -149,18 +149,6 @@ export const transformStrictTokensRuntime = (
     }
   }`
 
-  // utility: {
-  //   ${prefix.className ? 'prefix: ' + JSON.stringify(prefix.className) + ',' : ''}
-  //   transform: ${
-  //     utility.hasShorthand
-  //       ? `(prop, value) => {
-  //         const key = resolveShorthand(prop)
-  //         const propKey = classNameByProp.get(key) || hypenateProperty(key)
-  //         return { className: \`$\{propKey}${separator}$\{withoutSpace(value)}\` }
-  //       }`
-  //       : `(key, value) => ({ className: \`$\{classNameByProp.get(key) || hypenateProperty(key)}${separator}$\{withoutSpace(value)}\` })`
-  //   },
-
   if (config?.shorthands) {
     cssFile.code = cssFile.code.replace(
       'transform: (prop, value) => {',

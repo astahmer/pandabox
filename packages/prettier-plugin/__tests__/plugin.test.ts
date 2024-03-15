@@ -1408,7 +1408,6 @@ describe('call expression specifics', () => {
     });
 
     const slotRecipe = defineSlotRecipeAlias({
-      variants: {},
       base: {
         root: {
           '&[data-disabled]': {
@@ -1421,8 +1420,22 @@ describe('call expression specifics', () => {
             backgroundColor: 'darkblue',
           },
           backgroundColor: 'blue',
+        },
+      },
+      slots: ['root', 'input', 'icon'],
+      variants: {
+        variant: {
+          solid: {
+            root: {
+              backgroundColor: 'red',
+              fontSize: 'sm',
+              color: 'blue',
+              display: "flex"
+            }
+          },
+          outline: { root: { color: 'red' } },
         }
-      }
+      },
     });
   `
 
@@ -1447,7 +1460,6 @@ describe('call expression specifics', () => {
       });
 
       const recipe = defineRecipe({
-        variants: {},
         base: {
           color: "white",
           "&[data-disabled]": {
@@ -1460,10 +1472,11 @@ describe('call expression specifics', () => {
             backgroundColor: "darkblue",
           },
         },
+        variants: {},
       });
 
       const slotRecipe = defineSlotRecipeAlias({
-        variants: {},
+        slots: ["root", "input", "icon"],
         base: {
           root: {
             color: "white",
@@ -1476,6 +1489,19 @@ describe('call expression specifics', () => {
             _hover: {
               backgroundColor: "darkblue",
             },
+          },
+        },
+        variants: {
+          variant: {
+            solid: {
+              root: {
+                display: "flex",
+                color: "blue",
+                fontSize: "sm",
+                backgroundColor: "red",
+              },
+            },
+            outline: { root: { color: "red" } },
           },
         },
       });
@@ -1761,6 +1787,84 @@ const App = () => {
     "const App = () => {
       return <IconButton title="tw2panda" aria-label="tw2panda" color="red.300" />;
     };
+    "
+  `)
+})
+
+test('options.pandaFunctions', async () => {
+  const code = `
+  import { define } from '@weliihq/styled-system/dev';
+
+  export const textarea = define.recipe({
+    base: {
+      _disabled: {
+        cursor: 'not-allowed',
+        opacity: '0.5',
+      },
+      focusRingOffsetColor: 'ui-kit.background',
+      border: 'ui-kit.input',
+      bgColor: '[transparent]',
+      borderRadius: 'ui-kit.md',
+      minH: '[80px]',
+      px: 'ui-kit.3',
+
+      display: 'flex',
+      _placeholder: {
+        color: 'ui-kit.muted.foreground',
+      },
+      w: 'ui-kit.full',
+
+      py: 'ui-kit.2',
+      textStyle: 'ui-kit.sm',
+      _focusVisible: {
+        outline: '[2px solid transparent]',
+        outlineOffset: '[2px]',
+        focusRingWidth: '2',
+        focusRingColor: 'ui-kit.ring',
+        focusRingOffsetWidth: '2',
+      },
+    },
+    description: 'Styles for the Textarea component',
+    className: 'textarea',
+  });
+
+`
+
+  expect(await run(code, { pandaFunctions: ['define.recipe'] })).toMatchInlineSnapshot(`
+    "import { define } from "@weliihq/styled-system/dev";
+
+    export const textarea = define.recipe({
+      className: "textarea",
+      description: "Styles for the Textarea component",
+      base: {
+        textStyle: "ui-kit.sm",
+        focusRingOffsetColor: "ui-kit.background",
+        display: "flex",
+        border: "ui-kit.input",
+        borderRadius: "ui-kit.md",
+        w: "ui-kit.full",
+
+        minH: "[80px]",
+        py: "ui-kit.2",
+        px: "ui-kit.3",
+
+        bgColor: "[transparent]",
+        _disabled: {
+          opacity: "0.5",
+          cursor: "not-allowed",
+        },
+        _placeholder: {
+          color: "ui-kit.muted.foreground",
+        },
+        _focusVisible: {
+          focusRingWidth: "2",
+          focusRingColor: "ui-kit.ring",
+          focusRingOffsetWidth: "2",
+          outline: "[2px solid transparent]",
+          outlineOffset: "[2px]",
+        },
+      },
+    });
     "
   `)
 })
