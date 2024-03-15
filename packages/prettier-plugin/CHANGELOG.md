@@ -1,5 +1,11 @@
 # @pandabox/prettier-plugin
 
+## 0.1.0
+
+### Minor Changes
+
+- e404253: Better sorting for sva/defineSlotRecipe sorting + allow sorting custom functions using the `pandaFunctions` option
+
 ## 0.0.6
 
 ### Patch Changes
