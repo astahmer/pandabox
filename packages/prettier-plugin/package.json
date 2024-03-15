@@ -32,7 +32,7 @@
   "peerDependencies": {
     "@pandacss/config": ">=0.33.0",
     "@pandacss/core": ">=0.33.0",
-    "@pandacss/is-valid-prop": "^0.34.1",
+    "@pandacss/is-valid-prop": ">=0.33.0",
     "@pandacss/node": ">=0.33.0",
     "@pandacss/preset-base": ">=0.33.0",
     "@pandacss/shared": ">=0.33.0"

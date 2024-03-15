@@ -204,8 +204,8 @@ importers:
         specifier: '>=0.33.0'
         version: 0.33.0
       '@pandacss/is-valid-prop':
-        specifier: ^0.34.1
-        version: 0.34.1
+        specifier: '>=0.33.0'
+        version: 0.33.0
       '@pandacss/node':
         specifier: '>=0.33.0'
         version: 0.33.0(typescript@5.3.3)
@@ -619,7 +619,7 @@ importers:
         version: 0.33.0(@types/node@20.11.21)(@types/react-dom@18.2.19)(@types/react@18.2.61)(typescript@5.3.3)
       '@park-ui/panda-preset':
         specifier: ^0.36.0
-        version: 0.36.0(@internationalized/date@3.5.2)(@pandacss/dev@0.33.0)(@pandacss/types@0.33.0)
+        version: 0.36.0(@internationalized/date@3.5.2)(@pandacss/dev@0.33.0)(@pandacss/types@0.35.0)
       '@remix-run/dev':
         specifier: ^2.8.0
         version: 2.8.0(@remix-run/serve@2.8.0)(@types/node@20.11.21)(typescript@5.3.3)(vite@5.1.4)
@@ -2530,10 +2530,6 @@ packages:
   /@pandacss/is-valid-prop@0.33.0:
     resolution: {integrity: sha512-P7lvmlH3idILBIBM651dVDecSlRLNpAuxIJltypw5tX5IdRfigouu2h+5n2vQRYThm3fgKp4boH6PA2gXt+kkA==}
 
-  /@pandacss/is-valid-prop@0.34.1:
-    resolution: {integrity: sha512-4eWCqgAJYHuvxCK/DieNzLZb+YXqqgk7sa7J4gNg6sDbITQa00pEHqhBEcaC2AsaGOkVxRNhCZ7cm1gOxTKnZw==}
-    dev: false
-
   /@pandacss/logger@0.33.0:
     resolution: {integrity: sha512-UfZ6Aza579qT3LbX/I2AkphuVxgXEd/lZfQrmEZJ4n1WOIW0E47k10e4q0SVU988pwhMLInnJDskvurSOrirbw==}
     dependencies:
@@ -2660,7 +2656,7 @@ packages:
     resolution: {integrity: sha512-o049YHTZxJQAB7POc0k5tk7QQByGsMN6JBzQSxlcRp/hry/QYuYikj7SSZRcc2Vd+TVCnVgh8c/W9iznvN0Kag==}
     dev: true
 
-  /@park-ui/panda-preset@0.36.0(@internationalized/date@3.5.2)(@pandacss/dev@0.33.0)(@pandacss/types@0.33.0):
+  /@park-ui/panda-preset@0.36.0(@internationalized/date@3.5.2)(@pandacss/dev@0.33.0)(@pandacss/types@0.35.0):
     resolution: {integrity: sha512-WxgeHU9uh2RnBGjXGZzgi6KgrzQ8QuI7G4wNp9ScRTBem0TCqA0zd5D/arG7hheaB0KepuysfZI8tTYFAQK8aw==}
     peerDependencies:
       '@pandacss/dev': '>0.22.0'
@@ -2668,7 +2664,7 @@ packages:
     dependencies:
       '@ark-ui/anatomy': 2.3.1(@internationalized/date@3.5.2)
       '@pandacss/dev': 0.33.0(typescript@5.3.3)
-      '@pandacss/types': 0.33.0
+      '@pandacss/types': 0.35.0
       '@radix-ui/colors': 3.0.0
       deepmerge: 4.3.1
       ts-pattern: 5.0.8
