@@ -121,9 +121,15 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       async configureServer(server) {
         const ctx = await getCtx()
 
-        const sources = new Set([ctx.panda.conf.path, ...(ctx.panda.config.dependencies ?? [])])
+        const sources = new Set(
+          [ctx.panda.conf.path, ...(ctx.panda.conf.dependencies ?? []), ...(ctx.panda.config.dependencies ?? [])].map(
+            (f) => ensureAbsolute(f, ctx.root),
+          ),
+        )
         sources.forEach((file) => server.watcher.add(file))
-        server.watcher.on('change', async (filePath) => {
+
+        server.watcher.on('change', async (file) => {
+          const filePath = ensureAbsolute(file, ctx.root)
           if (!sources.has(filePath)) return
 
           await ctx.reloadContext()
@@ -135,12 +141,6 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
               server.moduleGraph.invalidateModule(mod, new Set(), timestamp, true)
             }
           }
-
-          // Parse/Invalidate all files with new config
-          ctx.files.forEach((_content, file) => {
-            invalidate(file)
-            ctx.panda.project.parseSourceFile(file)
-          })
 
           // Invalidate CSS
           invalidate(outfile)
