@@ -23,8 +23,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@pandacss/shared": "^0.33.0",
-    "@pandacss/types": "^0.33.0"
+    "@pandacss/shared": "^0.36.0",
+    "@pandacss/types": "^0.36.0"
   },
   "devDependencies": {
     "tsup": "^8.0.2",
