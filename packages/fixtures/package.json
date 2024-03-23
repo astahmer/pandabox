@@ -5,11 +5,11 @@
     ".": "./src/index.ts"
   },
   "devDependencies": {
-    "@pandacss/config": "^0.36.0",
-    "@pandacss/node": "^0.36.0",
-    "@pandacss/preset-base": "^0.36.0",
-    "@pandacss/preset-panda": "^0.36.0",
-    "@pandacss/shared": "^0.36.0",
-    "@pandacss/types": "^0.36.0"
+    "@pandacss/config": "^0.36.1",
+    "@pandacss/node": "^0.36.1",
+    "@pandacss/preset-base": "^0.36.1",
+    "@pandacss/preset-panda": "^0.36.1",
+    "@pandacss/shared": "^0.36.1",
+    "@pandacss/types": "^0.36.1"
   }
 }

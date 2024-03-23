@@ -5,6 +5,7 @@ import type {
   PandaPlugin,
   TokenCategory,
 } from '@pandacss/types'
+import type { PandaContext } from '@pandacss/node'
 
 export interface StrictTokensScopeOptions {
   categories?: TokenCategory[]
@@ -20,14 +21,18 @@ export interface StrictTokensScopeOptions {
  */
 export const pluginStrictTokensScope = (options: StrictTokensScopeOptions): PandaPlugin => {
   let logger: LoggerInterface
+  let ctx: PandaContext
+
   return {
     name: 'strict-tokens-scope',
     hooks: {
       'context:created': (context) => {
         logger = context.logger
+        // @ts-expect-error
+        ctx = context.ctx.processor.context
       },
       'codegen:prepare': (args) => {
-        return transformPropTypes(args, options, logger)
+        return transformPropTypes(args, options, ctx, logger)
       },
     },
   }
@@ -36,50 +41,62 @@ export const pluginStrictTokensScope = (options: StrictTokensScopeOptions): Pand
 export const transformPropTypes = (
   args: CodegenPrepareHookArgs,
   options: StrictTokensScopeOptions,
+  ctx: PandaContext,
   logger?: LoggerInterface,
 ) => {
   const { categories = [], props = [] } = options
   if (!categories.length && !props.length) return args.artifacts
 
   const artifact = args.artifacts.find((x) => x.id === 'types-styles')
-  const content = artifact?.files.find((x) => x.file.includes('prop-type'))
+  const content = artifact?.files.find((x) => x.file.includes('style-props'))
   if (!content?.code) return args.artifacts
 
-  const longhands = findPropertiesByType(content.code, categories)
+  const shorthandsByProp = new Map<string, string[]>()
+  ctx.utility.shorthands.forEach((longhand, shorthand) => {
+    shorthandsByProp.set(longhand, (shorthandsByProp.get(longhand) ?? []).concat(shorthand))
+  })
 
-  const shorthandMap = mapShorthandsToProperties(content.code)
-  const shorthands = findShorthandsForProperties(longhands, shorthandMap)
+  const types = ctx.utility.getTypes()
+  const categoryByProp = new Map<string, TokenCategory>()
+  types.forEach((values, prop) => {
+    const categoryType = values.find((type) => type.includes('Tokens['))
+    if (!categoryType) return
 
-  const strictTokenProps = longhands.concat(shorthands).concat(props)
+    const tokenCategory = categoryType.replace('Tokens["', '').replace('"]', '') as TokenCategory
+    if (!categories.includes(tokenCategory)) {
+      return
+    }
+
+    categoryByProp.set(prop, tokenCategory)
+    const shorthands = shorthandsByProp.get(prop)
+
+    if (!shorthands) return
+    shorthands.forEach((shorthand) => {
+      categoryByProp.set(shorthand, tokenCategory)
+    })
+  })
+
+  const strictTokenProps = Array.from(categoryByProp.keys())
   if (!strictTokenProps.length) return args.artifacts
 
   if (logger) {
     logger.debug('plugin:restrict-strict-tokens', `🐼  Strict token props: ${strictTokenProps.join(', ')}`)
   }
 
+  // const regex = new RegExp(`(${strictTokenProps.join('|')})\?: ConditionalValue<WithEscapeHatch<(.+)>>`, 'g')
+  const regex = /(\w+)\?: ConditionalValue<WithEscapeHatch<(.+)>>/g
+
   const transformed =
-    content.code
-      .replace(
-        'type Shorthand<T> = T extends keyof PropertyValueTypes ? PropertyValueTypes[T] : CssValue<T>',
-        'type Shorthand<T> = T extends keyof PropertyValueTypes ? PropertyValueTypes[T] : CssValue<T>',
-      )
-      // strictTokens: true, strictPropertyValues: false
-      .replace('PropOrCondition<T, PropertyTypes[T]>', 'PropOrCondition<T, Restrict<T, PropertyTypes[T], CssValue<T>>>')
-      // strictTokens: true, strictPropertyValues: true
-      .replace(
-        'PropOrCondition<T, T extends StrictableProps ? PropertyTypes[T] : PropertyTypes[T]>',
-        'PropOrCondition<T, Restrict<T, T extends StrictableProps ? PropertyTypes[T] : PropertyTypes[T], CssValue<T>>>',
-      )
-      // strictTokens: true, strictPropertyValues: false
-      .replace(
-        'type PropOrCondition<Key, Value> = ConditionalValue<WithEscapeHatch<Value>>',
-        'type PropOrCondition<Key, Value> = ConditionalValue<Restrict<Key, Value, (string & {})> | WithEscapeHatch<Value>>',
-      )
-      // strictTokens: true, strictPropertyValues: true
-      .replace(
-        'type PropOrCondition<Key, Value> = ConditionalValue<WithEscapeHatch<FilterVagueString<Key, Value>>>',
-        'type PropOrCondition<Key, Value> = ConditionalValue<Restrict<Key, Value, (string & {})> | WithEscapeHatch<FilterVagueString<Key, Value>>>',
-      ) +
+    content.code.replace(regex, (match, prop, value) => {
+      // console.log({ match, prop, value, shouldBeStrict: strictTokenProps.includes(prop) })
+      if (strictTokenProps.includes(prop)) return match
+
+      const longhand = ctx.utility.shorthands.get(prop)
+      // console.log({ prop, longhand, isStrict: strictTokenProps.includes(prop) })
+      if (value.includes('CssProperties')) return match
+
+      return `${prop}?: ConditionalValue<${value} | CssProperties["${longhand || prop}"]>`
+    }) +
     [
       `\n\ntype StrictTokenProps = ${strictTokenProps.map((t) => `"${t}"`).join(' | ')}`,
       `type Restrict<Key, Value, Fallback> = Key extends StrictTokenProps ? Value : Value | Fallback`,
@@ -87,40 +104,4 @@ export const transformPropTypes = (
 
   content.code = transformed
   return args.artifacts
-}
-
-const propertyRegex = /(\w+):.+Tokens\["(\w+)"\]\s?;/g
-const findPropertiesByType = (file: string, tokenCategories: string[]) => {
-  // Match property lines within the interface string
-  const properties = []
-
-  for (const match of file.matchAll(propertyRegex)) {
-    const propertyName = match[1]
-    const propertyType = match[2]
-
-    // Check if the property type is in the given token categories
-    if (tokenCategories.includes(propertyType)) {
-      properties.push(propertyName)
-    }
-  }
-
-  return properties
-}
-
-const shorthandRegex = /(\w+):\s+Shorthand<"(\w+)">;/g
-const mapShorthandsToProperties = (file: string) => {
-  const shorthandMap = {} as Record<string, string>
-
-  for (const match of file.matchAll(shorthandRegex)) {
-    const shorthand = match[1]
-    const fullPropertyName = match[2]
-
-    shorthandMap[fullPropertyName] = shorthand
-  }
-
-  return shorthandMap
-}
-
-const findShorthandsForProperties = (properties: string[], shorthandMap: Record<string, string>) => {
-  return properties.map((property) => shorthandMap[property] || property)
 }

@@ -87,9 +87,9 @@
   "devDependencies": {
     "@nuxt/kit": "^3.10.3",
     "@nuxt/schema": "^3.10.3",
-    "@pandacss/preset-base": "^0.36.0",
-    "@pandacss/preset-panda": "^0.36.0",
-    "@pandacss/types": "^0.36.0",
+    "@pandacss/preset-base": "^0.36.1",
+    "@pandacss/preset-panda": "^0.36.1",
+    "@pandacss/types": "^0.36.1",
     "@types/node": "^20.11.21",
     "chalk": "^5.3.0",
     "esno": "^4.0.0",
@@ -103,9 +103,9 @@
     "webpack": "^5.90.3"
   },
   "peerDependencies": {
-    "@pandacss/config": ">=0.36.0",
-    "@pandacss/core": ">=0.36.0",
-    "@pandacss/node": ">=0.36.0",
+    "@pandacss/config": ">=0.36.1",
+    "@pandacss/core": ">=0.36.1",
+    "@pandacss/node": ">=0.36.1",
     "@nuxt/kit": "^3",
     "@nuxt/schema": "^3",
     "esbuild": "*",

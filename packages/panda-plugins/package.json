@@ -30,8 +30,10 @@
     "postcss": "^8.4.35"
   },
   "devDependencies": {
-    "@pandacss/dev": "^0.36.0",
-    "@pandacss/types": "^0.36.0",
+    "@pandacss/core": "^0.36.1",
+    "@pandacss/dev": "^0.36.1",
+    "@pandacss/node": "^0.36.1",
+    "@pandacss/types": "^0.36.1",
     "cac": "^6.7.14",
     "happy-dom": "^13.6.2",
     "tsup": "^8.0.2",

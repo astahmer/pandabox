@@ -30,12 +30,12 @@
     "#pandabox/fixtures": "../fixtures/src/index.ts"
   },
   "peerDependencies": {
-    "@pandacss/config": ">=0.36.0",
-    "@pandacss/core": ">=0.36.0",
-    "@pandacss/is-valid-prop": ">=0.36.0",
-    "@pandacss/node": ">=0.36.0",
-    "@pandacss/preset-base": ">=0.36.0",
-    "@pandacss/shared": ">=0.36.0"
+    "@pandacss/config": ">=0.36.1",
+    "@pandacss/core": ">=0.36.1",
+    "@pandacss/is-valid-prop": ">=0.36.1",
+    "@pandacss/node": ">=0.36.1",
+    "@pandacss/preset-base": ">=0.36.1",
+    "@pandacss/shared": ">=0.36.1"
   },
   "devDependencies": {
     "@pandacss/types": "^0.35.0",
