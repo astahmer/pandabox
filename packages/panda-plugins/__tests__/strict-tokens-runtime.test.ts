@@ -400,15 +400,7 @@ describe('strict-tokens-runtime', () => {
           "accentColor",
           "caretColor",
           "fill",
-          "stroke",
-          "ringColor",
-          "bg",
-          "bgColor",
-          "borderXColor",
-          "borderYColor",
-          "borderStartColor",
-          "borderEndColor",
-          "shadowColor"
+          "stroke"
         ]
       }
                 const propList = new Set(Object.values(propsByCat).flat())
@@ -799,15 +791,7 @@ describe('strict-tokens-runtime', () => {
           "accentColor",
           "caretColor",
           "fill",
-          "stroke",
-          "ringColor",
-          "bg",
-          "bgColor",
-          "borderXColor",
-          "borderYColor",
-          "borderStartColor",
-          "borderEndColor",
-          "shadowColor"
+          "stroke"
         ],
         "fontSizes": [
           "fontSize"
@@ -898,10 +882,8 @@ describe('strict-tokens-runtime', () => {
                 const tokenValues = {}
                 const propsByCat = {
         "aspectRatios": [],
-        "zIndex": [],
         "spacing": [],
         "breakpoints": [],
-        "borderWidths": [],
         "colors": [
           "color"
         ],
@@ -912,15 +894,11 @@ describe('strict-tokens-runtime', () => {
         "letterSpacings": [],
         "lineHeights": [],
         "shadows": [],
-        "assets": [],
         "radii": [],
-        "opacity": [],
-        "dropShadows": [],
         "blurs": [],
         "easings": [],
         "durations": [],
-        "animations": [],
-        "animationName": []
+        "animations": []
       }
                 const propList = new Set(Object.values(propsByCat).flat())
 
@@ -1147,34 +1125,7 @@ describe('strict-tokens-runtime', () => {
           "scrollSnapMarginTop",
           "scrollSnapMarginBottom",
           "scrollSnapMarginLeft",
-          "scrollSnapMarginRight",
-          "insetX",
-          "insetY",
-          "end",
-          "start",
-          "p",
-          "pl",
-          "pr",
-          "pt",
-          "pb",
-          "paddingY",
-          "px",
-          "paddingEnd",
-          "paddingStart",
-          "ml",
-          "mr",
-          "mt",
-          "mb",
-          "m",
-          "marginY",
-          "marginX",
-          "marginEnd",
-          "marginStart",
-          "ringOffset",
-          "scrollMarginY",
-          "scrollMarginX",
-          "scrollPaddingY",
-          "scrollPaddingX"
+          "scrollSnapMarginRight"
         ]
       }
                 const propList = new Set(Object.values(propsByCat).flat())
