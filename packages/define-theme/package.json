@@ -28,7 +28,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@pandacss/types": "^0.33.0",
+    "@pandacss/types": "^0.36.1",
     "lodash.merge": "^4.6.2"
   },
   "devDependencies": {
