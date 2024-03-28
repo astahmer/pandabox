@@ -1,6 +1,6 @@
 {
   "name": "@pandabox/presets",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "exports": {
     ".": {
       "source": "./src/index.ts",

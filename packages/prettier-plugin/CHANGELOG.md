@@ -1,5 +1,11 @@
 # @pandabox/prettier-plugin
 
+## 0.1.1
+
+### Patch Changes
+
+- 25fed76: Update to panda 0.36.1
+
 ## 0.1.0
 
 ### Minor Changes
