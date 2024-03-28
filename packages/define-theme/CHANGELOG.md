@@ -1,5 +1,11 @@
 # @pandabox/define-theme
 
+## 0.0.4
+
+### Patch Changes
+
+- 25fed76: Update to panda 0.36.1
+
 ## 0.0.3
 
 ### Patch Changes

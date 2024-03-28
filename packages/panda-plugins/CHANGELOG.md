@@ -1,5 +1,11 @@
 # @pandabox/panda-plugins
 
+## 0.0.7
+
+### Patch Changes
+
+- 25fed76: Update to panda 0.36.1
+
 ## 0.0.6
 
 ### Patch Changes

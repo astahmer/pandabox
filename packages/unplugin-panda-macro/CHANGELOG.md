@@ -1,5 +1,12 @@
 # @pandabox/unplugin-panda-macro
 
+## 0.0.4
+
+### Patch Changes
+
+- 4af7ef7: Fix an issue where some unrelated components from Panda would be transformed due to having the same name as some Panda components (JSX Patterns like Stack)
+- 25fed76: Update to panda 0.36.1
+
 ## 0.0.3
 
 ### Patch Changes

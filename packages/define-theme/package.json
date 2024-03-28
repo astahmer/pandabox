@@ -1,6 +1,6 @@
 {
   "name": "@pandabox/define-theme",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "End-to-end type-safe theming for PandaCSS",
   "exports": {
     ".": {
