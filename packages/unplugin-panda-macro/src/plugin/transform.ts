@@ -9,6 +9,7 @@ import { type MacroContext } from './create-context'
 import { createCva } from './create-cva'
 import { getVariableName } from './get-cva-var-name'
 import { combineResult } from './unbox-combine-result'
+import { getImportDeclarations } from './get-import-declarations'
 
 export interface TransformOptions {
   /**
@@ -60,7 +61,12 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
 
   const s = new MagicString(code)
 
-  const importMap = onlyMacroImports ? mapIdentifierToImport(sourceFile) : new Map<string, ImportDeclaration>()
+  const importDeclarations = getImportDeclarations(panda.parserOptions, sourceFile, onlyMacroImports)
+  const importSet = new Set(importDeclarations.map((i) => i.alias))
+  const file = panda.imports.file(importDeclarations)
+
+  const jsxPatternKeys = panda.patterns.details.map((d) => d.jsxName)
+  const isJsxPatternImported = file['createMatch'](file['importMap'].jsx, jsxPatternKeys) as (id: string) => boolean
 
   /**
    * Hash atomic styles and inline the resulting className
@@ -100,8 +106,7 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
         return
       }
 
-      const importNode = importMap.get(identifier)
-      if (!importNode) return
+      if (!importSet.has(identifier)) return
     }
 
     if (result.type?.includes('jsx')) {
@@ -109,6 +114,12 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
       if (!isJsx) return
 
       const tagName = node.getTagNameNode().getText()
+
+      const isJsxPattern = panda.patterns.details.find((node) => node.jsxName === tagName)
+      if (isJsxPattern && !isJsxPatternImported(tagName)) return
+
+      const isPandaComponent = file.isPandaComponent(tagName)
+      if (!isPandaComponent) return
 
       // we don't care about `xxx.div` but we do care about `styled.div`
       if (result.type === 'jsx-factory' && !tagName.includes(factoryName + '.')) {
@@ -338,52 +349,4 @@ const extractCvaUsages = (sourceFile: SourceFile, cvaNames: Set<string>) => {
   })
 
   return cvaUsages
-}
-
-const getModuleSpecifierValue = (node: ImportDeclaration) => {
-  try {
-    return node.getModuleSpecifierValue()
-  } catch {
-    return
-  }
-}
-
-const hasMacroAttribute = (node: ImportDeclaration) => {
-  const attrs = node.getAttributes()
-  if (!attrs) return
-
-  const elements = attrs.getElements()
-  if (!elements.length) return
-
-  return elements.some((n) => {
-    const name = n.getName()
-    if (name === 'type') {
-      const value = n.getValue()
-      if (!Node.isStringLiteral(value)) return
-
-      const type = value.getLiteralText()
-      if (type === 'macro') {
-        return true
-      }
-    }
-  })
-}
-
-const mapIdentifierToImport = (sourceFile: SourceFile) => {
-  const map = new Map<string, ImportDeclaration>()
-  const imports = sourceFile.getImportDeclarations()
-
-  imports.forEach((node) => {
-    const mod = getModuleSpecifierValue(node)
-    if (!mod) return
-    if (!hasMacroAttribute(node)) return
-
-    node.getNamedImports().forEach((specifier) => {
-      const name = specifier.getNameNode().getText()
-      const alias = specifier.getAliasNode()?.getText() || name
-      map.set(alias, node)
-    })
-  })
-
-  return map
 }

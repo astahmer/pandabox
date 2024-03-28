@@ -552,14 +552,14 @@ export const App = () => {
     `)
   })
 
-  test.only('ignore unrelated components', () => {
+  test('ignore unrelated components', () => {
     const ctx = createMacroContext({
       root: '/',
       conf: createConfigResult({}),
     })
     const { panda } = ctx
     const code = `
-  import { Center, styled } from './styled-system/jsx'
+  import { Center, Flex as ActualFlex, styled } from './styled-system/jsx'
   import 'virtual:panda.css'
 
   const Stack = ({ children }: any) => <div data-testid="stack">stack{children}</div>
@@ -569,11 +569,14 @@ export const App = () => {
     return (
       <Center>
         <Stack fontSize="2xl">
-          <styled.div border="2px solid token(colors.red.300)">🐼</styled.div>
+          <styled.div border="2px solid token(colors.red.300)">shouldnt be transformed</styled.div>
         </Stack>
         <Stack2 fontSize="2xl">
-          <styled.div border="2px solid token(colors.red.300)">🐼</styled.div>
+        shouldnt be transformed
         </Stack2>
+        <ActualFlex fontSize="2xl">
+          should be transformed
+        </ActualFlex>
       </Center>
     )
   }
@@ -585,7 +588,7 @@ export const App = () => {
     const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
     expect(result?.code).toMatchInlineSnapshot(`
       "
-        import { Center, styled } from './styled-system/jsx'
+        import { Center, Flex as ActualFlex, styled } from './styled-system/jsx'
         import 'virtual:panda.css'
 
         const Stack = ({ children }: any) => <div data-testid="stack">stack{children}</div>
@@ -594,12 +597,15 @@ export const App = () => {
         export const App = () => {
           return (
             <div className="d_flex items_center justify_center" >
-              <div className="d_flex flex_column gap_10px fs_2xl" >
-                <div className="border_2px_solid_token(colors.red.300)" >🐼</div>
-              </div>
+              <Stack fontSize="2xl">
+                <div className="border_2px_solid_token(colors.red.300)" >shouldnt be transformed</div>
+              </Stack>
               <Stack2 fontSize="2xl">
-                <div className="border_2px_solid_token(colors.red.300)" >🐼</div>
+              shouldnt be transformed
               </Stack2>
+              <div className="d_flex fs_2xl" >
+                should be transformed
+              </div>
             </div>
           )
         }
