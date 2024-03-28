@@ -551,6 +551,61 @@ export const App = () => {
       "
     `)
   })
+
+  test.only('ignore unrelated components', () => {
+    const ctx = createMacroContext({
+      root: '/',
+      conf: createConfigResult({}),
+    })
+    const { panda } = ctx
+    const code = `
+  import { Center, styled } from './styled-system/jsx'
+  import 'virtual:panda.css'
+
+  const Stack = ({ children }: any) => <div data-testid="stack">stack{children}</div>
+  const Stack2 = ({ children }: any) => <div data-testid="stack">stack{children}</div>
+
+  export const App = () => {
+    return (
+      <Center>
+        <Stack fontSize="2xl">
+          <styled.div border="2px solid token(colors.red.300)">🐼</styled.div>
+        </Stack>
+        <Stack2 fontSize="2xl">
+          <styled.div border="2px solid token(colors.red.300)">🐼</styled.div>
+        </Stack2>
+      </Center>
+    )
+  }
+`
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "
+        import { Center, styled } from './styled-system/jsx'
+        import 'virtual:panda.css'
+
+        const Stack = ({ children }: any) => <div data-testid="stack">stack{children}</div>
+        const Stack2 = ({ children }: any) => <div data-testid="stack">stack{children}</div>
+
+        export const App = () => {
+          return (
+            <div className="d_flex items_center justify_center" >
+              <div className="d_flex flex_column gap_10px fs_2xl" >
+                <div className="border_2px_solid_token(colors.red.300)" >🐼</div>
+              </div>
+              <Stack2 fontSize="2xl">
+                <div className="border_2px_solid_token(colors.red.300)" >🐼</div>
+              </Stack2>
+            </div>
+          )
+        }
+      "
+    `)
+  })
 })
 
 describe('grouped', () => {
