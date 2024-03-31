@@ -70,7 +70,9 @@
     "lint": "eslint .",
     "play": "npm -C playground run dev",
     "prepublishOnly": "npm run build",
-    "test": "vitest"
+    "test": "vitest",
+    "debug-test": "VITE_DEBUG_SERVE=1 vitest",
+    "debug-testbuild": "VITE_TEST_BUILD=1 VITE_PRESERVE_BUILD_ARTIFACTS=1 vitest"
   },
   "dependencies": {
     "@pandabox/postcss-plugins": "workspace:^",
@@ -90,6 +92,7 @@
     "@pandacss/preset-panda": "^0.36.1",
     "@pandacss/types": "^0.36.1",
     "@playwright/test": "^1.42.1",
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.11.21",
     "@vitest/browser": "^1.4.0",
     "@vitest/ui": "^1.4.0",
@@ -97,6 +100,7 @@
     "diff-sequences": "^29.6.3",
     "esno": "^4.0.0",
     "fast-glob": "^3.3.2",
+    "fs-extra": "^11.2.0",
     "nodemon": "^3.1.0",
     "playwright": "^1.42.1",
     "pretty-format": "^29.7.0",

@@ -292,6 +292,9 @@ importers:
       '@playwright/test':
         specifier: ^1.42.1
         version: 1.42.1
+      '@types/fs-extra':
+        specifier: ^11.0.4
+        version: 11.0.4
       '@types/node':
         specifier: ^20.11.21
         version: 20.11.21
@@ -313,6 +316,9 @@ importers:
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.2
+      fs-extra:
+        specifier: ^11.2.0
+        version: 11.2.0
       nodemon:
         specifier: ^3.1.0
         version: 3.1.0
@@ -462,7 +468,7 @@ importers:
         specifier: ^0.8.3
         version: 0.8.3(vite@5.1.4)
 
-  packages/unplugin/__tests__/outfile:
+  packages/unplugin/__tests__/scenarios/outfile:
     devDependencies:
       '@pandacss/dev':
         specifier: ^0.36.1
@@ -3472,6 +3478,13 @@ packages:
   /@types/estree@1.0.5:
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
 
+  /@types/fs-extra@11.0.4:
+    resolution: {integrity: sha512-yTbItCNreRooED33qjunPthRcSjERP1r4MqCZc7wv0u2sUkzTFp45tgUfS5+r7FrZPdmCCNflLhVSP/o+SemsQ==}
+    dependencies:
+      '@types/jsonfile': 6.1.4
+      '@types/node': 20.11.24
+    dev: true
+
   /@types/hast@2.3.10:
     resolution: {integrity: sha512-McWspRw8xx8J9HurkVBfYj0xKoE25tOFlHGdx4MJ5xORQrMGZNqJhVQWaIbm6Oyla5kYOXtDiopzKRJzEOkwJw==}
     dependencies:
@@ -3490,6 +3503,12 @@ packages:
 
   /@types/json-schema@7.0.15:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
+    dev: true
+
+  /@types/jsonfile@6.1.4:
+    resolution: {integrity: sha512-D5qGUYwjvnNNextdU59/+fI+spnwtTFmyQP0h+PfIOSkNfpU6AOICUOkm4i0OnSk+NyjdPJrxCDro0sJsWlRpQ==}
+    dependencies:
+      '@types/node': 20.11.24
     dev: true
 
   /@types/lodash.merge@4.6.9:
