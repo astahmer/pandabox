@@ -1,6 +1,6 @@
 import React from 'react'
 import { css } from './styled-system/css'
-import './panda.css'
+import 'virtual:panda.css'
 
 export const App = () => {
   return (
