@@ -7,6 +7,7 @@ import fs from 'node:fs/promises'
 
 import { createContext, type PandaPluginContext } from '../plugin/create-context'
 import { ensureAbsolute } from './ensure-absolute'
+import { codegen } from '@pandacss/node'
 
 const _fileId = 'panda.css'
 const _virtualModuleId = 'virtual:' + _fileId
@@ -51,7 +52,7 @@ export interface PandaPluginHooks {
 export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = (rawOptions) => {
   const options = resolveOptions(rawOptions ?? {})
   const filter = createFilter(options.include, options.exclude)
-  const outfile = options.outfile ? ensureAbsolute(options.outfile, options.cwd) : ids.resolvedVirtualModuleId
+  let outfile = options.outfile ? ensureAbsolute(options.outfile, options.cwd) : ids.resolvedVirtualModuleId
 
   let _ctx: PandaPluginContext
   let initPromise: Promise<PandaPluginContext> | undefined
@@ -64,8 +65,11 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
 
   const init = () => {
     if (initPromise) return initPromise
+
+    // console.log('loadConfig', options)
     // @ts-expect-error
     initPromise = loadConfig({ cwd: options.cwd, file: options.configPath }).then((conf: LoadConfigResult) => {
+      conf.config.cwd = options.cwd
       _ctx = createContext({ root: options.cwd, conf })
     })
 
@@ -119,12 +123,26 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       return null
     },
     vite: {
+      configResolved(config) {
+        if (!options.cwd) {
+          options.cwd = config.root
+          outfile = options.outfile ? ensureAbsolute(options.outfile, options.cwd) : ids.resolvedVirtualModuleId
+        }
+
+        // console.log('configResolved')
+      },
       async configureServer(server) {
+        // console.log('configureServer')
         const ctx = await getCtx()
 
         if (outfile !== ids.resolvedVirtualModuleId) {
           await fs.writeFile(outfile, ctx.toCss(ctx.panda.createSheet(), options))
         }
+
+        const { msg } = await codegen(ctx.panda)
+        // console.log(options)
+        // console.log(ctx.panda.paths.root, ctx.panda.config.cwd)
+        // console.log('codegen done', msg)
 
         const sources = new Set(
           [ctx.panda.conf.path, ...(ctx.panda.conf.dependencies ?? []), ...(ctx.panda.config.dependencies ?? [])].map(
@@ -173,7 +191,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
 const resolveOptions = (options: PandaPluginOptions): RequiredBy<PandaPluginOptions, 'cwd'> => {
   return {
     ...options,
-    cwd: options.cwd || process.cwd(),
+    cwd: options.cwd || '',
     configPath: options.configPath,
     include: options.include || [/\.[cm]?[jt]sx?$/],
     exclude: options.exclude || [/node_modules/, /styled-system/],
