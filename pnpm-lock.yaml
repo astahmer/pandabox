@@ -468,7 +468,7 @@ importers:
         specifier: ^0.8.3
         version: 0.8.3(vite@5.1.4)
 
-  packages/unplugin/__tests__/scenarios/outfile:
+  packages/unplugin/__tests__:
     devDependencies:
       '@pandacss/dev':
         specifier: ^0.36.1
@@ -482,9 +482,6 @@ importers:
       '@vitejs/plugin-react-swc':
         specifier: ^3.6.0
         version: 3.6.0(vite@5.1.4)
-      nodemon:
-        specifier: ^3.1.0
-        version: 3.1.0
       react:
         specifier: ^18.2.0
         version: 18.2.0

@@ -1,15 +1,12 @@
 {
-  "name": "unplugin-test-outfile",
+  "name": "unplugin-scenarios",
   "private": true,
-  "scripts": {
-    "dev": "nodemon -w '../src/**/*.ts' -e .ts -x vite"
-  },
+  "type": "module",
   "devDependencies": {
     "@pandacss/dev": "^0.36.1",
     "@types/react": "^18.2.60",
     "@types/react-dom": "^18.2.19",
     "@vitejs/plugin-react-swc": "^3.6.0",
-    "nodemon": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "vite": "^5.1.4",

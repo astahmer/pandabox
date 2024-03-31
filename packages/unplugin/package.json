@@ -70,9 +70,9 @@
     "lint": "eslint .",
     "play": "npm -C playground run dev",
     "prepublishOnly": "npm run build",
-    "test": "vitest",
-    "debug-test": "VITE_DEBUG_SERVE=1 vitest",
-    "debug-testbuild": "VITE_TEST_BUILD=1 VITE_PRESERVE_BUILD_ARTIFACTS=1 vitest"
+    "test": "vitest run",
+    "debug-test": "VITE_DEBUG_SERVE=1 vitest run",
+    "debug-testbuild": "VITE_TEST_BUILD=1 VITE_PRESERVE_BUILD_ARTIFACTS=1 vitest run"
   },
   "dependencies": {
     "@pandabox/postcss-plugins": "workspace:^",

@@ -1,13 +1,15 @@
 // https://github.com/vitejs/vite/blob/8b3ab0771842bda44129148c07739ebd86bdd62f/playground/vitestSetup.ts
 
 import { Browser, BrowserContext, chromium, Page } from '@playwright/test'
-import path from 'path'
 import fs from 'fs-extra'
-import { createServer, loadConfigFromFile, UserConfig, ViteDevServer } from 'vite'
-import { afterAll, beforeAll, inject } from 'vitest'
+import path from 'path'
+import { RollupError } from 'rollup'
+import { createServer, loadConfigFromFile, Logger, UserConfig, ViteDevServer } from 'vite'
 import type { File } from 'vitest'
+import { afterAll, beforeAll, inject } from 'vitest'
 
 const packageRoot = path.resolve(__dirname, '../')
+const swallowLogs = true
 
 export let page: Page
 export let browser: Browser
@@ -28,6 +30,8 @@ export let testDir: string
  */
 export let testName: string
 
+const serverLogs = [] as string[]
+
 beforeAll(async (s) => {
   const suite = s as any as File
   if (!suite.filepath.includes('scenarios')) {
@@ -40,7 +44,7 @@ beforeAll(async (s) => {
   }
 
   testPath = suite.filepath!
-  testName = slash(testPath).match(/scenarios\/([\w-]+)\//)?.[1]
+  testName = slash(testPath).match(/scenarios\/([\w-]+)\//)?.[1] ?? 'unknown'
   testDir = path.dirname(testPath)
 
   // if this is a test placed under scenarios/xxx/__tests__
@@ -55,17 +59,19 @@ beforeAll(async (s) => {
 
   const configFile = path.resolve(testDir, './vite.config.ts')
   let config: UserConfig = {}
-  console.log('configFile', configFile, {
-    testDir,
-    testName,
-    testPath,
-    workspaceRoot: packageRoot,
-  })
+  // console.log('configFile', configFile, {
+  //   testDir,
+  //   testName,
+  //   testPath,
+  //   workspaceRoot: packageRoot,
+  // })
 
   if (fs.existsSync(configFile)) {
     const viteConfig = await loadConfigFromFile({ command: 'serve', mode: 'development' }, configFile)
-    // console.log('viteConfig', viteConfig)
-    config = viteConfig.config
+    if (viteConfig) {
+      // console.log('viteConfig', viteConfig)
+      config = viteConfig.config
+    }
   }
 
   try {
@@ -91,6 +97,7 @@ beforeAll(async (s) => {
         // tests are flaky when `emptyOutDir` is `true`
         emptyOutDir: false,
       },
+      customLogger: swallowLogs ? createInMemoryLogger(serverLogs) : undefined,
     })
     await server.listen()
     viteTestUrl = server.resolvedUrls?.local[0] || `http://localhost:${server.config.server.port}`
@@ -120,4 +127,36 @@ declare module 'vitest' {
 
 function slash(p: string): string {
   return p.replace(/\\/g, '/')
+}
+
+export function createInMemoryLogger(logs: string[]): Logger {
+  const loggedErrors = new WeakSet<Error | RollupError>()
+  const warnedMessages = new Set<string>()
+
+  const logger: Logger = {
+    hasWarned: false,
+    hasErrorLogged: (err) => loggedErrors.has(err),
+    clearScreen: () => {},
+    info(msg) {
+      logs.push(msg)
+    },
+    warn(msg) {
+      logs.push(msg)
+      logger.hasWarned = true
+    },
+    warnOnce(msg) {
+      if (warnedMessages.has(msg)) return
+      logs.push(msg)
+      logger.hasWarned = true
+      warnedMessages.add(msg)
+    },
+    error(msg, opts) {
+      logs.push(msg)
+      if (opts?.error) {
+        loggedErrors.add(opts.error)
+      }
+    },
+  }
+
+  return logger
 }

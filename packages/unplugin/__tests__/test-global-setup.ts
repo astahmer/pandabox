@@ -9,6 +9,7 @@ import { chromium } from '@playwright/test'
 let browserServer: BrowserServer | undefined
 
 const scenarioDir = 'scenarios'
+const tempDir = path.resolve(__dirname, './' + scenarioDir + '-temp')
 
 export async function setup({ provide }: GlobalSetupContext): Promise<void> {
   process.env.NODE_ENV = process.env.VITE_TEST_BUILD ? 'production' : 'development'
@@ -20,7 +21,6 @@ export async function setup({ provide }: GlobalSetupContext): Promise<void> {
 
   provide('wsEndpoint', browserServer.wsEndpoint())
 
-  const tempDir = path.resolve(__dirname, './' + scenarioDir + '-temp')
   await fs.ensureDir(tempDir)
   await fs.emptyDir(tempDir)
   await fs
@@ -45,6 +45,6 @@ export async function setup({ provide }: GlobalSetupContext): Promise<void> {
 export async function teardown(): Promise<void> {
   await browserServer?.close()
   if (!process.env.VITE_PRESERVE_BUILD_ARTIFACTS) {
-    fs.removeSync(path.resolve(__dirname, './' + scenarioDir + '-temp'))
+    await fs.remove(tempDir)
   }
 }
