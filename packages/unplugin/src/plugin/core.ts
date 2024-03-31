@@ -3,6 +3,7 @@ import type { LoadConfigResult, ParserResultBeforeHookArgs, RequiredBy } from '@
 import { createFilter } from '@rollup/pluginutils'
 import { type TransformResult, type UnpluginFactory } from 'unplugin'
 import type { HmrContext, Plugin } from 'vite'
+import fs from 'node:fs/promises'
 
 import { createContext, type PandaPluginContext } from '../plugin/create-context'
 import { ensureAbsolute } from './ensure-absolute'
@@ -121,6 +122,10 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       async configureServer(server) {
         const ctx = await getCtx()
 
+        if (outfile !== ids.resolvedVirtualModuleId) {
+          await fs.writeFile(outfile, ctx.toCss(ctx.panda.createSheet(), options))
+        }
+
         const sources = new Set(
           [ctx.panda.conf.path, ...(ctx.panda.conf.dependencies ?? []), ...(ctx.panda.config.dependencies ?? [])].map(
             (f) => ensureAbsolute(f, ctx.root),
@@ -148,12 +153,17 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       },
       async handleHotUpdate(hmr: HmrContext) {
         const ctx = await getCtx()
+        if (hmr.file === outfile) return
         if (!ctx.files.has(hmr.file)) return
 
         // Invalidate CSS
         const mod = hmr.server.moduleGraph.getModuleById(outfile)
         if (mod) {
           hmr.server.moduleGraph.invalidateModule(mod, new Set(), hmr.timestamp, true)
+
+          if (outfile !== ids.resolvedVirtualModuleId) {
+            await fs.writeFile(outfile, ctx.toCss(ctx.panda.createSheet(), options))
+          }
         }
       },
     } as Plugin,

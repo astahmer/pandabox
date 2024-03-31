@@ -147,7 +147,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "sideEffects": false,
   "keywords": [
     "pandacss",
     "pandabox",
