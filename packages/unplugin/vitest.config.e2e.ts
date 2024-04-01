@@ -4,7 +4,7 @@ export default defineConfig({
   root: process.cwd(),
   test: {
     hideSkippedTests: true,
-    setupFiles: ['./__tests__/test-setup.ts'],
-    globalSetup: ['./__tests__/test-global-setup.ts'],
+    setupFiles: ['./e2e/test-setup.ts'],
+    globalSetup: ['./e2e/test-global-setup.ts'],
   },
 })
