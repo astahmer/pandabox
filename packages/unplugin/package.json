@@ -70,11 +70,14 @@
     "lint": "eslint .",
     "play": "npm -C playground run dev",
     "prepublishOnly": "npm run build",
-    "start": "esno src/index.ts",
-    "test": "vitest"
+    "e2e": "vitest run -c vitest.config.e2e.ts",
+    "e2e:debug": "VITE_DEBUG_SERVE=1 vitest run -c vitest.config.e2e.ts",
+    "e2e:build": "VITE_TEST_BUILD=1 VITE_PRESERVE_BUILD_ARTIFACTS=1 vitest run -c vitest.config.e2e.ts"
   },
   "dependencies": {
     "@pandabox/postcss-plugins": "workspace:^",
+    "@pandacss/extractor": "^0.36.1",
+    "@pandacss/shared": "^0.36.1",
     "@rollup/pluginutils": "^5.1.0",
     "magic-string": "^0.30.7",
     "postcss": "^8.4.35",
@@ -90,11 +93,17 @@
     "@pandacss/preset-base": "^0.36.1",
     "@pandacss/preset-panda": "^0.36.1",
     "@pandacss/types": "^0.36.1",
+    "@playwright/test": "^1.42.1",
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.11.21",
+    "@vitest/browser": "^1.4.0",
+    "@vitest/ui": "^1.4.0",
     "chalk": "^5.3.0",
     "esno": "^4.0.0",
     "fast-glob": "^3.3.2",
+    "fs-extra": "^11.2.0",
     "nodemon": "^3.1.0",
+    "playwright": "^1.42.1",
     "rollup": "^4.12.0",
     "tsup": "^8.0.2",
     "typescript": "^5.3.3",
@@ -103,11 +112,11 @@
     "webpack": "^5.90.3"
   },
   "peerDependencies": {
+    "@nuxt/kit": "^3",
+    "@nuxt/schema": "^3",
     "@pandacss/config": ">=0.36.1",
     "@pandacss/core": ">=0.36.1",
     "@pandacss/node": ">=0.36.1",
-    "@nuxt/kit": "^3",
-    "@nuxt/schema": "^3",
     "esbuild": "*",
     "rollup": "^3",
     "vite": ">=3",
@@ -147,7 +156,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "sideEffects": false,
   "keywords": [
     "pandacss",
     "pandabox",

@@ -1,0 +1,18 @@
+{
+  "name": "unplugin-scenarios",
+  "private": true,
+  "scripts": {
+    "outfile": "pnpm vite ./scenarios/outfile",
+    "virtual-file": "pnpm vite ./scenarios/virtual-file"
+  },
+  "devDependencies": {
+    "@pandacss/dev": "^0.36.1",
+    "@types/react": "^18.2.60",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react-swc": "^3.6.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "vite": "^5.1.4",
+    "vite-plugin-inspect": "^0.8.3"
+  }
+}

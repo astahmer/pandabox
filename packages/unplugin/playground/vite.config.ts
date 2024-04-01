@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     Inspect(),
     panda({
-      // outfile: './panda.css'
+      outfile: './panda.css',
     }),
     react(),
   ],

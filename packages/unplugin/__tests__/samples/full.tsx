@@ -1,12 +1,10 @@
-import { css, cva } from './styled-system/css'
-import { center } from './styled-system/patterns'
-import { button } from './styled-system/recipes'
-import { Stack, styled } from './styled-system/jsx'
-// import 'virtual:panda.css'
-import './panda.css'
+import { css, cva } from '../styled-system/css'
+import { center } from '../styled-system/patterns'
+import { button } from '../styled-system/recipes'
+import 'virtual:panda.css'
 
 const overrides = css.raw({
-  bg: 'purple.500',
+  bg: 'green.100',
 })
 
 const atomicRecipe = cva({
@@ -25,34 +23,30 @@ const atomicRecipe = cva({
   },
 })
 
-console.log(atomicRecipe({ visual: 'outline' }))
-
 export const App = () => {
   return (
     <div className={center({ h: 'full' })}>
       <div
         className={css(
           {
-            textStyle: '4xl',
             display: 'flex',
             flexDirection: 'column',
+            fontWeight: 'semibold',
             color: 'green.300',
             textAlign: 'center',
-            fontWeight: 'semibold',
+            textStyle: '4xl',
           },
           {
-            color: 'red.500',
             bg: 'yellow.200',
+            color: 'red.500',
           },
           overrides,
         )}
       >
-        <Stack fontSize="2xl">
-          <styled.div border="2px solid token(colors.red.300)">🐼</styled.div>
-          <span>Hello from Panda</span>
-        </Stack>
+        <span>🐼</span>
+        <span>Hello from Panda</span>
       </div>
-      <div className={button({ size: 'lg', visual: 'funky' })}>Button</div>
+      <div className={button({ visual: 'funky', size: 'lg' })}>Button</div>
       <div className={atomicRecipe({ visual: 'solid', size: 'sm' })}>Atomic Button</div>
     </div>
   )

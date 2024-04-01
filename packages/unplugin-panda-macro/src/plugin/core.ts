@@ -86,7 +86,15 @@ export const unpluginFactory: UnpluginFactory<PluginOptions | undefined> = (rawO
       const parserResult = panda.project.parseSourceFile(id)
       if (!parserResult) return null
 
-      return tranformPanda(ctx, { code, id, output: options.output, sourceFile, parserResult })
+      return tranformPanda(ctx, {
+        code,
+        id,
+        output: options.output,
+        sourceFile,
+        parserResult,
+        keepRecipeClassNames: options.keepRecipeClassNames,
+        onlyMacroImports: options.onlyMacroImports,
+      })
     },
     vite: {
       async handleHotUpdate(hmr: HmrContext) {

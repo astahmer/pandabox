@@ -1,38 +1,27 @@
-import { stringify } from '@pandacss/core'
 import { box, extractCallExpressionArguments, unbox } from '@pandacss/extractor'
-import { toHash } from '@pandacss/shared'
-import { type ParserResultInterface, type SystemStyleObject, type RecipeConfig } from '@pandacss/types'
+import { type ParserResultInterface, type RecipeConfig, type ResultItem, type SystemStyleObject } from '@pandacss/types'
 import MagicString from 'magic-string'
-import { CallExpression, Node, SourceFile } from 'ts-morph'
+import { CallExpression, Identifier, Node, SourceFile } from 'ts-morph'
 
-import { type MacroContext } from './create-context'
-import { createCva } from './create-cva'
+import type { PandaPluginContext } from './create-context'
+import { createCva, transformCva } from './create-cva'
 import { getVariableName } from './get-cva-var-name'
+import { getImportDeclarations, type ImportResultWithAttribute } from './get-import-declarations'
 import { combineResult } from './unbox-combine-result'
-import { getImportDeclarations } from './get-import-declarations'
+
+export type OptimizeJsType = 'auto' | 'macro'
+
+type Pretty<T> = { [K in keyof T]: T[K] } & {}
+type ResultType = NonNullable<ResultItem['type']>
+type OptimizeJsMap = Pretty<Partial<Record<Exclude<ResultType, 'sva' | 'jsx' | 'jsx-recipe'>, OptimizeJsType>>>
+
+export type OptimizeJsOption = OptimizeJsType | OptimizeJsMap
 
 export interface TransformOptions {
   /**
-   * @example
-   * ```ts
-   * // `atomic`
-   * const className = css({ display: "flex", flexDirection: "column", color: "red.300" })`
-   * // -> `const className = 'd_flex flex_column text_red.300'`
+   * Will transform your source code to inline the `css` / `cva` / `${patternFn}` resulting classNames or even simplify `styled` JSX factory to their primitive HTML tags
    *
-   * // `grouped`
-   * const className = css({ display: "flex", flexDirection: "column", color: "red.300" })`
-   * // -> `const className = 'hkogUJ'`
-   * ```
-   *
-   * @default `'atomic'`
-   */
-  output?: 'atomic' | 'grouped'
-  /**
-   * Do not transform Panda recipes to `atomic` or `grouped` and instead keep their defaults BEM-like classes
-   */
-  keepRecipeClassNames?: boolean
-  /**
-   * Only transform macro imports
+   * If set to "macro" -> will only transform imports marked as `with { type: "macro" }`
    * @example
    * ```ts
    * import { css } from '../styled-system/css' with { type: "macro" }
@@ -40,9 +29,8 @@ export interface TransformOptions {
    * const className = css({ display: "flex", flexDirection: "column", color: "red.300" })
    * // -> `const className = 'd_flex flex_column text_red.300'`
    * ```
-   *
    */
-  onlyMacroImports?: boolean
+  optimizeJs?: OptimizeJsOption
 }
 
 export interface TransformArgs extends TransformOptions {
@@ -52,61 +40,67 @@ export interface TransformArgs extends TransformOptions {
   parserResult: ParserResultInterface | undefined
 }
 
-export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
-  const { code, id, output = 'atomic', keepRecipeClassNames, onlyMacroImports, sourceFile, parserResult } = options
+export const tranformPanda = (ctx: PandaPluginContext, options: TransformArgs) => {
+  const { code, optimizeJs, sourceFile, parserResult } = options
   if (!parserResult) return null
 
-  const { panda, css, mergeCss, sheet, styles } = ctx
+  const { panda, css, mergeCss } = ctx
   const factoryName = panda.jsx.factoryName || 'styled'
 
   const s = new MagicString(code)
 
+  const onlyMacroImports = optimizeJs === 'macro'
   const importDeclarations = getImportDeclarations(panda.parserOptions, sourceFile, onlyMacroImports)
-  const importSet = new Set(importDeclarations.map((i) => i.alias))
   const file = panda.imports.file(importDeclarations)
 
   const jsxPatternKeys = panda.patterns.details.map((d) => d.jsxName)
   const isJsxPatternImported = file['createMatch'](file['importMap'].jsx, jsxPatternKeys) as (id: string) => boolean
 
-  /**
-   * Hash atomic styles and inline the resulting className
-   */
-  const getGroupClassName = (merged: Record<string, string>) => {
-    const className = toHash(css(merged))
-    const resolved = sheet.serialize({ ['.' + className]: merged })
-
-    styles.set(className, stringify(resolved))
-    return className
-  }
-
-  // TODO find every usage in every file and replace it with the result of the function call ?
   const cvaNames = collectCvaNames(parserResult)
   const cvaUsages = extractCvaUsages(sourceFile, cvaNames)
   const cvaConfigs = new Map<string, CvaConfig>()
+  let needInlineCvaImport = false
+  let needCompoundVariantsImport = false
 
   parserResult.all.forEach((result) => {
+    const fnName = result.name
+    if (!fnName) return
+
     if (!result.box) return
-    // TODO ?
     if (result.type === 'jsx' || result.type === 'jsx-recipe') return
 
     const node = result.box.getNode()
-    const fnName = result.name
 
+    let shouldOnlyTransformMacroImport = onlyMacroImports
     // Early return if we only want to transform macro imports
-    // and the current result is not coming from one
-    if (onlyMacroImports) {
-      if (!fnName) return
+    // for the current result type
+    if (
+      result.type &&
+      !shouldOnlyTransformMacroImport &&
+      typeof optimizeJs === 'object' &&
+      result.type !== 'sva' &&
+      optimizeJs[result.type] === 'macro'
+    ) {
+      shouldOnlyTransformMacroImport = true
+    }
 
-      let identifier: string | undefined
-      if ((result.type?.includes('jsx') && Node.isJsxOpeningElement(node)) || Node.isJsxSelfClosingElement(node)) {
-        identifier = node.getTagNameNode().getText()
-      } else if (Node.isCallExpression(node)) {
-        identifier = node.getExpression().getText()
-      } else {
-        return
-      }
+    const importedIdentifier = getImportedIdentifier(node)
+    if (!importedIdentifier) return
 
-      if (!importSet.has(identifier)) return
+    const importedName = fnName.split('.')[0]
+
+    // Early return if we only want to transform macro imports and the current result is not coming from one
+    // or if the import is marked as `with { type: "runtime" }`
+    const importDecl = importDeclarations.find(
+      (imp) => imp.name === importedName && imp.alias === importedIdentifier,
+    ) as ImportResultWithAttribute
+
+    if (
+      !importDecl ||
+      importDecl.withAttr === 'runtime' ||
+      (shouldOnlyTransformMacroImport && importDecl.withAttr !== 'macro')
+    ) {
+      return
     }
 
     if (result.type?.includes('jsx')) {
@@ -133,7 +127,7 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
           : result.data
 
       const merged = mergeCss(...styleObjects)
-      const className = output === 'atomic' ? css(merged) : getGroupClassName(merged)
+      const className = css(merged)
 
       // Filter out every style props already extracted
       // `<Box color="red" onClick={() => "hello"} />` -> `color` will be filtered out
@@ -173,8 +167,6 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
         }
       }
 
-      ctx.files.add(id)
-
       return
     }
 
@@ -198,6 +190,16 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
 
         const resolve = createCva(recipe, mergeCss)
         cvaConfigs.set(varName, { config: recipe, resolve })
+
+        // Replace cva declarations with an optimized function, in case it's exported and used elsewhere
+        // `const xxx = cva({ ... })` -> `const xxx = () => ""`
+        s.update(node.getStart(), node.getEnd(), transformCva(varName, recipe, css))
+
+        needInlineCvaImport = true
+
+        if (recipe.compoundVariants?.length) {
+          needCompoundVariantsImport = true
+        }
       })
 
       // Replace cva usages with the result of the function call
@@ -207,11 +209,10 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
         if (!cva) return
 
         const computed = cva.resolve(variants)
-        const className = output === 'atomic' ? css(computed) : getGroupClassName(computed)
+        const className = css(computed)
 
         // `className={recipe({ size: "sm" })}` => `className="fs_12px"`
         s.update(data.node.getStart() - 1, data.node.getEnd() + 1, `"${className}"`)
-        ctx.files.add(id)
       })
 
       return
@@ -263,20 +264,17 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
     }
 
     const merged = mergeCss(...Array.from(styleObjects))
-    const getClassName = () => {
-      // Inline the usual recipe classNames (base+variants)
-      if (keepRecipeClassNames && result.type === 'recipe') {
-        return Array.from(classList).join(' ')
-      }
-
-      return output === 'atomic' ? css(merged) : getGroupClassName(merged)
-    }
-
-    const className = getClassName()
+    const className = result.type === 'recipe' ? Array.from(classList).join(' ') : css(merged)
     s.update(node.getStart(), node.getEnd(), `"${className}"`)
-
-    ctx.files.add(id)
   })
+
+  if (needCompoundVariantsImport) {
+    s.prepend(`import { addCompoundVariantCss } from 'virtual:panda-compound-variants';\n`)
+  }
+
+  if (needInlineCvaImport) {
+    s.prepend(`import { inlineCva } from 'virtual:panda-inline-cva';\n`)
+  }
 
   return {
     code: s.toString(),
@@ -343,4 +341,22 @@ const extractCvaUsages = (sourceFile: SourceFile, cvaNames: Set<string>) => {
   })
 
   return cvaUsages
+}
+
+const getImportedIdentifier = (node: Node) => {
+  if (Node.isJsxOpeningElement(node) || Node.isJsxSelfClosingElement(node)) {
+    const tagName = node.getTagNameNode()
+    if (Node.isIdentifier(tagName)) {
+      return tagName.getText()
+    }
+
+    if (Node.isPropertyAccessExpression(tagName)) {
+      return tagName.getExpression().getText().split('.')[0]
+    }
+  }
+
+  if (Node.isCallExpression(node)) {
+    const expr = node.getExpression()
+    return expr.getText().split('.')[0]
+  }
 }

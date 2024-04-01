@@ -214,7 +214,33 @@ describe('atomic', () => {
       "import 'virtual:panda.css'
       import { cva } from '../styled-system/css'
 
-      const atomicRecipe = () => ""
+      const atomicRecipe = cva({
+        base: {
+          display: 'flex',
+        },
+        variants: {
+          visual: {
+            solid: { bg: 'red.200', color: 'white' },
+            outline: { borderWidth: '1px', borderColor: 'red.200' },
+          },
+          size: {
+            sm: { padding: '4', fontSize: '12px' },
+            lg: { padding: '8', fontSize: '24px' },
+          },
+        },
+        compoundVariants: [
+          {
+            visual: 'outline',
+            size: 'lg',
+            css: {
+              borderWidth: '3px',
+            },
+          },
+        ],
+        defaultVariants: {
+          visual: 'solid',
+        },
+      })
 
       export const App = () => {
         return <div className="d_flex bg_red.200 text_white p_4 fs_12px">Atomic Button</div>
@@ -351,7 +377,21 @@ describe('atomic', () => {
         bg: 'green.100',
       })
 
-      const atomicRecipe = () => ""
+      const atomicRecipe = cva({
+        base: {
+          display: 'flex',
+        },
+        variants: {
+          visual: {
+            solid: { bg: 'red.200', color: 'white' },
+            outline: { borderWidth: '1px', borderColor: 'red.200' },
+          },
+          size: {
+            sm: { padding: '4', fontSize: '12px' },
+            lg: { padding: '8', fontSize: '24px' },
+          },
+        },
+      })
 
       export const App = () => {
         return (
@@ -662,7 +702,33 @@ describe('grouped', () => {
       "import 'virtual:panda.css'
       import { cva } from '../styled-system/css'
 
-      const atomicRecipe = () => ""
+      const atomicRecipe = cva({
+        base: {
+          display: 'flex',
+        },
+        variants: {
+          visual: {
+            solid: { bg: 'red.200', color: 'white' },
+            outline: { borderWidth: '1px', borderColor: 'red.200' },
+          },
+          size: {
+            sm: { padding: '4', fontSize: '12px' },
+            lg: { padding: '8', fontSize: '24px' },
+          },
+        },
+        compoundVariants: [
+          {
+            visual: 'outline',
+            size: 'lg',
+            css: {
+              borderWidth: '3px',
+            },
+          },
+        ],
+        defaultVariants: {
+          visual: 'solid',
+        },
+      })
 
       export const App = () => {
         return <div className="kUuLsR">Atomic Button</div>
@@ -777,7 +843,21 @@ describe('grouped', () => {
         bg: 'green.100',
       })
 
-      const atomicRecipe = () => ""
+      const atomicRecipe = cva({
+        base: {
+          display: 'flex',
+        },
+        variants: {
+          visual: {
+            solid: { bg: 'red.200', color: 'white' },
+            outline: { borderWidth: '1px', borderColor: 'red.200' },
+          },
+          size: {
+            sm: { padding: '4', fontSize: '12px' },
+            lg: { padding: '8', fontSize: '24px' },
+          },
+        },
+      })
 
       export const App = () => {
         return (

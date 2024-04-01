@@ -82,6 +82,7 @@
     "@pandacss/shared": "^0.36.1",
     "@rollup/pluginutils": "^5.1.0",
     "magic-string": "^0.30.7",
+    "outdent": "^0.8.0",
     "postcss": "^8.4.35",
     "ts-morph": "21.0.1",
     "unplugin": "^1.7.1"
