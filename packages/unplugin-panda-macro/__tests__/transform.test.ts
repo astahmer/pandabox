@@ -211,10 +211,52 @@ describe('atomic', () => {
 
     const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
     expect(result?.code).toMatchInlineSnapshot(`
-      "import 'virtual:panda.css'
+      "import { inlineCva } from 'virtual:panda-inline-cva';
+      import { addCompoundVariantCss } from 'virtual:panda-compound-variants';
+      import 'virtual:panda.css'
       import { cva } from '../styled-system/css'
 
-      const atomicRecipe = () => ""
+      const atomicRecipe = (function () {
+          const base = {"display":"flex","background":"red.200","color":"white"}
+          const variantStyles = {
+        "visual": {
+          "solid": {
+            "display": "flex",
+            "background": "red.200",
+            "color": "white"
+          },
+          "outline": {
+            "display": "flex",
+            "background": "red.200",
+            "color": "white"
+          }
+        },
+        "size": {
+          "sm": {
+            "display": "flex",
+            "background": "red.200",
+            "color": "white"
+          },
+          "lg": {
+            "display": "flex",
+            "background": "red.200",
+            "color": "white"
+          }
+        }
+      }
+
+          const defaultVariants = {"visual":"solid"}
+
+          return function atomicRecipe(variants) {
+            const classList = [inlineCva(base, defaultVariants, variantStyles, variants)]
+            
+            const compoundVariants = [{"visual":"outline","size":"lg","css":{"borderWidth":"3px"}}]
+
+            addCompoundVariantCss(compoundVariants, variantProps, classList)
+
+            return classList.join(' ')
+          }
+        })()
 
       export const App = () => {
         return <div className="d_flex bg_red.200 text_white p_4 fs_12px">Atomic Button</div>
@@ -342,7 +384,8 @@ describe('atomic', () => {
 
     const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
     expect(result?.code).toMatchInlineSnapshot(`
-      "import { css, cva } from '../styled-system/css'
+      "import { inlineCva } from 'virtual:panda-inline-cva';
+      import { css, cva } from '../styled-system/css'
       import { center } from '../styled-system/patterns'
       import { button } from '../styled-system/recipes'
       import 'virtual:panda.css'
@@ -351,7 +394,36 @@ describe('atomic', () => {
         bg: 'green.100',
       })
 
-      const atomicRecipe = () => ""
+      const atomicRecipe = (function () {
+          const base = {"display":"flex"}
+          const variantStyles = {
+        "visual": {
+          "solid": {
+            "display": "flex"
+          },
+          "outline": {
+            "display": "flex"
+          }
+        },
+        "size": {
+          "sm": {
+            "display": "flex"
+          },
+          "lg": {
+            "display": "flex"
+          }
+        }
+      }
+
+          const defaultVariants = {}
+
+          return function atomicRecipe(variants) {
+            const classList = [inlineCva(base, defaultVariants, variantStyles, variants)]
+            
+
+            return classList.join(' ')
+          }
+        })()
 
       export const App = () => {
         return (
@@ -659,10 +731,52 @@ describe('grouped', () => {
 
     const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
     expect(result?.code).toMatchInlineSnapshot(`
-      "import 'virtual:panda.css'
+      "import { inlineCva } from 'virtual:panda-inline-cva';
+      import { addCompoundVariantCss } from 'virtual:panda-compound-variants';
+      import 'virtual:panda.css'
       import { cva } from '../styled-system/css'
 
-      const atomicRecipe = () => ""
+      const atomicRecipe = (function () {
+          const base = {"display":"flex","background":"red.200","color":"white"}
+          const variantStyles = {
+        "visual": {
+          "solid": {
+            "display": "flex",
+            "background": "red.200",
+            "color": "white"
+          },
+          "outline": {
+            "display": "flex",
+            "background": "red.200",
+            "color": "white"
+          }
+        },
+        "size": {
+          "sm": {
+            "display": "flex",
+            "background": "red.200",
+            "color": "white"
+          },
+          "lg": {
+            "display": "flex",
+            "background": "red.200",
+            "color": "white"
+          }
+        }
+      }
+
+          const defaultVariants = {"visual":"solid"}
+
+          return function atomicRecipe(variants) {
+            const classList = [inlineCva(base, defaultVariants, variantStyles, variants)]
+            
+            const compoundVariants = [{"visual":"outline","size":"lg","css":{"borderWidth":"3px"}}]
+
+            addCompoundVariantCss(compoundVariants, variantProps, classList)
+
+            return classList.join(' ')
+          }
+        })()
 
       export const App = () => {
         return <div className="kUuLsR">Atomic Button</div>
@@ -768,7 +882,8 @@ describe('grouped', () => {
 
     const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
     expect(result?.code).toMatchInlineSnapshot(`
-      "import { css, cva } from '../styled-system/css'
+      "import { inlineCva } from 'virtual:panda-inline-cva';
+      import { css, cva } from '../styled-system/css'
       import { center } from '../styled-system/patterns'
       import { button } from '../styled-system/recipes'
       import 'virtual:panda.css'
@@ -777,7 +892,36 @@ describe('grouped', () => {
         bg: 'green.100',
       })
 
-      const atomicRecipe = () => ""
+      const atomicRecipe = (function () {
+          const base = {"display":"flex"}
+          const variantStyles = {
+        "visual": {
+          "solid": {
+            "display": "flex"
+          },
+          "outline": {
+            "display": "flex"
+          }
+        },
+        "size": {
+          "sm": {
+            "display": "flex"
+          },
+          "lg": {
+            "display": "flex"
+          }
+        }
+      }
+
+          const defaultVariants = {}
+
+          return function atomicRecipe(variants) {
+            const classList = [inlineCva(base, defaultVariants, variantStyles, variants)]
+            
+
+            return classList.join(' ')
+          }
+        })()
 
       export const App = () => {
         return (

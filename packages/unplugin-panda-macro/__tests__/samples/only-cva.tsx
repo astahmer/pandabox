@@ -15,6 +15,18 @@ const atomicRecipe = cva({
       lg: { padding: '8', fontSize: '24px' },
     },
   },
+  compoundVariants: [
+    {
+      visual: 'outline',
+      size: 'lg',
+      css: {
+        borderWidth: '3px',
+      },
+    },
+  ],
+  defaultVariants: {
+    visual: 'solid',
+  },
 })
 
 export const App = () => {

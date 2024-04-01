@@ -4,7 +4,7 @@ import MagicString from 'magic-string'
 import { CallExpression, Node, SourceFile } from 'ts-morph'
 
 import type { PandaPluginContext } from './create-context'
-import { createCva } from './create-cva'
+import { createCva, transformCva } from './create-cva'
 import { getVariableName } from './get-cva-var-name'
 import { getImportDeclarations } from './get-import-declarations'
 import { combineResult } from './unbox-combine-result'
@@ -55,6 +55,8 @@ export const tranformPanda = (ctx: PandaPluginContext, options: TransformArgs) =
   const cvaNames = collectCvaNames(parserResult)
   const cvaUsages = extractCvaUsages(sourceFile, cvaNames)
   const cvaConfigs = new Map<string, CvaConfig>()
+  let needInlineCvaImport = false
+  let needCompoundVariantsImport = false
 
   parserResult.all.forEach((result) => {
     if (!result.box) return
@@ -166,14 +168,18 @@ export const tranformPanda = (ctx: PandaPluginContext, options: TransformArgs) =
         const varName = getVariableName(node)
         if (!varName) return
 
-        cvaConfigs.set(varName, {
-          config: recipe,
-          resolve: createCva(recipe, mergeCss),
-        })
+        const resolve = createCva(recipe, mergeCss)
+        cvaConfigs.set(varName, { config: recipe, resolve })
 
-        // Replace cva declarations with a dummy function, in case it's exported and used elsewhere
+        // Replace cva declarations with an optimized function, in case it's exported and used elsewhere
         // `const xxx = cva({ ... })` -> `const xxx = () => ""`
-        s.update(node.getStart(), node.getEnd(), '() => ""')
+        s.update(node.getStart(), node.getEnd(), transformCva(varName, recipe, css))
+
+        needInlineCvaImport = true
+
+        if (recipe.compoundVariants?.length) {
+          needCompoundVariantsImport = true
+        }
       })
 
       // Replace cva usages with the result of the function call
@@ -241,6 +247,14 @@ export const tranformPanda = (ctx: PandaPluginContext, options: TransformArgs) =
     const className = result.type === 'recipe' ? Array.from(classList).join(' ') : css(merged)
     s.update(node.getStart(), node.getEnd(), `"${className}"`)
   })
+
+  if (needCompoundVariantsImport) {
+    s.prepend(`import { addCompoundVariantCss } from 'virtual:panda-compound-variants';\n`)
+  }
+
+  if (needInlineCvaImport) {
+    s.prepend(`import { inlineCva } from 'virtual:panda-inline-cva';\n`)
+  }
 
   return {
     code: s.toString(),

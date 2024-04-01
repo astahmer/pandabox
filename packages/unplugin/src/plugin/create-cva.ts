@@ -52,3 +52,43 @@ function getCompoundVariantCss(
 
   return result
 }
+
+export const transformCva = (
+  name: string,
+  config: Pick<RecipeConfig, 'base' | 'variants' | 'compoundVariants'>,
+  css: PandaPluginContext['css'],
+) => {
+  const { base, variants, defaultVariants, compoundVariants } = defaults(config)
+
+  return `(function () {
+    const base = ${JSON.stringify(css(base))}
+    const variantStyles = ${JSON.stringify(
+      Object.fromEntries(
+        Object.entries(variants).map(([variantKey, variantMap]) => [
+          variantKey,
+          Object.fromEntries(
+            Object.entries(variantMap).map(([valueKey, variantStyle]) => [valueKey, css(variantStyle)]),
+          ),
+        ]),
+      ),
+      null,
+      2,
+    )}
+
+    const defaultVariants = ${JSON.stringify(defaultVariants)}
+
+    return function ${name}(variants) {
+      ${
+        compoundVariants.length > 0
+          ? `
+      const classList = [inlineCva(base, defaultVariants, variantStyles, variants)]
+      const compoundVariants = ${JSON.stringify(compoundVariants)}
+
+      addCompoundVariantCss(compoundVariants, variantProps, classList)
+      return classList.join(' ')`
+          : `return inlineCva(base, defaultVariants, variantStyles, variants)`
+      }
+
+    }
+  })()`
+}

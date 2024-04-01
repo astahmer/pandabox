@@ -10,12 +10,20 @@ import { createContext, type PandaPluginContext } from '../plugin/create-context
 import { ensureAbsolute } from './ensure-absolute'
 import { tranformPanda } from './transform'
 import path from 'node:path'
+import { addCompoundVariantCss, inlineCva } from './cva-fns'
 
-const _fileId = 'panda.css'
-const _virtualModuleId = 'virtual:' + _fileId
+const createVirtualModuleId = (id: string) => {
+  const base = `virtual:panda${id}`
+  return {
+    id: base,
+    resolved: '\0' + base,
+  }
+}
+
 const ids = {
-  virtualModuleId: 'virtual:' + _fileId,
-  resolvedVirtualModuleId: '\0' + _virtualModuleId,
+  css: createVirtualModuleId('.css'),
+  inlineCva: createVirtualModuleId('-inline-cva'),
+  compoundVariants: createVirtualModuleId('-compound-variants'),
 }
 
 export interface PandaPluginOptions extends Partial<PandaPluginHooks> {
@@ -58,7 +66,7 @@ export interface PandaPluginHooks {
 export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = (rawOptions) => {
   const options = resolveOptions(rawOptions ?? {})
   const filter = createFilter(options.include, options.exclude)
-  let outfile = options.outfile ? ensureAbsolute(options.outfile, options.cwd) : ids.resolvedVirtualModuleId
+  let outfile = options.outfile ? ensureAbsolute(options.outfile, options.cwd) : ids.css.resolved
 
   let _ctx: PandaPluginContext
   let initPromise: Promise<PandaPluginContext> | undefined
@@ -86,11 +94,27 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
     name: 'unplugin-panda',
     enforce: 'pre',
     resolveId(id) {
-      if (id === ids.virtualModuleId) {
-        return ids.resolvedVirtualModuleId
+      if (id === ids.css.id) {
+        return ids.css.resolved
+      }
+
+      if (id === ids.inlineCva.id) {
+        return ids.inlineCva.resolved
+      }
+
+      if (id === ids.compoundVariants.id) {
+        return ids.compoundVariants.resolved
       }
     },
     async load(id) {
+      if (id === ids.inlineCva.resolved) {
+        return `export ${inlineCva.toString()}`
+      }
+
+      if (id === ids.compoundVariants.resolved) {
+        return `export ${addCompoundVariantCss.toString()}`
+      }
+
       if (id !== outfile) return
 
       const ctx = await getCtx()
@@ -145,7 +169,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       configResolved(config) {
         if (!options.cwd) {
           options.cwd = config.configFile ? path.dirname(config.configFile) : config.root
-          outfile = options.outfile ? ensureAbsolute(options.outfile, options.cwd) : ids.resolvedVirtualModuleId
+          outfile = options.outfile ? ensureAbsolute(options.outfile, options.cwd) : ids.css.resolved
         }
 
         // console.log('configResolved')
@@ -154,7 +178,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
         // console.log('configureServer')
         const ctx = await getCtx()
 
-        if (outfile !== ids.resolvedVirtualModuleId) {
+        if (outfile !== ids.css.resolved) {
           await fs.writeFile(outfile, ctx.toCss(ctx.panda.createSheet(), options))
         }
 
@@ -199,7 +223,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
         if (mod) {
           hmr.server.moduleGraph.invalidateModule(mod, new Set(), hmr.timestamp, true)
 
-          if (outfile !== ids.resolvedVirtualModuleId) {
+          if (outfile !== ids.css.resolved) {
             await fs.writeFile(outfile, ctx.toCss(ctx.panda.createSheet(), options))
           }
         }

@@ -25,6 +25,8 @@ const atomicRecipe = cva({
   },
 })
 
+console.log(atomicRecipe({ visual: 'outline' }))
+
 export const App = () => {
   return (
     <div className={center({ h: 'full' })}>
