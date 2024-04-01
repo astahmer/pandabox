@@ -8,7 +8,7 @@ import { codegen } from '@pandacss/node'
 
 import { createContext, type PandaPluginContext } from '../plugin/create-context'
 import { ensureAbsolute } from './ensure-absolute'
-import { tranformPanda } from './transform'
+import { tranformPanda, type TransformOptions } from './transform'
 import path from 'node:path'
 import { addCompoundVariantCss, inlineCva } from './cva-fns'
 
@@ -26,7 +26,7 @@ const ids = {
   compoundVariants: createVirtualModuleId('-compound-variants'),
 }
 
-export interface PandaPluginOptions extends Partial<PandaPluginHooks> {
+export interface PandaPluginOptions extends Partial<PandaPluginHooks>, Pick<TransformOptions, 'optimizeJs'> {
   /** @see https://panda-css.com/docs/references/config#cwd */
   cwd?: string
   /** @see https://panda-css.com/docs/references/cli#--config--c-1 */
@@ -50,10 +50,6 @@ export interface PandaPluginOptions extends Partial<PandaPluginHooks> {
    * Will remove unused CSS variables and keyframes from the generated CSS
    */
   optimizeCss?: boolean
-  /**
-   * Will transform your source code to inline the `css` / `cva` / `${patternFn}` resulting classNames or even simplify `styled` JSX factory to their primitive HTML tags
-   */
-  optimizeJs?: boolean
 }
 
 export interface PandaPluginHooks {
@@ -159,8 +155,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
         id,
         sourceFile,
         parserResult,
-        keepRecipeClassNames: true,
-        onlyMacroImports: false,
+        optimizeJs: options.optimizeJs,
       })
 
       return result
@@ -233,6 +228,19 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
 }
 
 const resolveOptions = (options: PandaPluginOptions): RequiredBy<PandaPluginOptions, 'cwd'> => {
+  let optimizeJs = options.optimizeJs ?? 'auto'
+  if (typeof optimizeJs === 'object') {
+    optimizeJs = {
+      css: optimizeJs.css ?? 'auto',
+      cva: optimizeJs.cva ?? 'auto',
+      pattern: optimizeJs.cva ?? 'auto',
+      recipe: optimizeJs.cva ?? 'auto',
+      'jsx-factory': optimizeJs.cva ?? 'auto',
+      'jsx-pattern': optimizeJs.cva ?? 'auto',
+      ...optimizeJs,
+    }
+  }
+
   return {
     ...options,
     cwd: options.cwd || '',
@@ -240,6 +248,6 @@ const resolveOptions = (options: PandaPluginOptions): RequiredBy<PandaPluginOpti
     include: options.include || [/\.[cm]?[jt]sx?$/],
     exclude: options.exclude || [/node_modules/, /styled-system/],
     optimizeCss: options.optimizeCss ?? true,
-    optimizeJs: options.optimizeJs ?? true,
+    optimizeJs: options.optimizeJs ?? 'auto',
   }
 }

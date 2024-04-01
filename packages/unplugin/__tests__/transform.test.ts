@@ -67,7 +67,7 @@ test('transform css only when using `with` import attribute', () => {
   const sourceFile = panda.project.addSourceFile(id, code)
   const parserResult = panda.project.parseSourceFile(id)
 
-  const result = tranformPanda(ctx, { code, id, sourceFile, parserResult, onlyMacroImports: true })
+  const result = tranformPanda(ctx, { code, id, sourceFile, parserResult, optimizeJs: 'macro' })
   expect(result?.code).toMatchInlineSnapshot(`
       "import 'virtual:panda.css'
           import { box } from '../styled-system/patterns' with { type: "macro" }
@@ -85,7 +85,48 @@ test('transform css only when using `with` import attribute', () => {
     `)
 })
 
-test('transform css only when using with', () => {
+test('transform css only when not using `with` import attribute type: runtime', () => {
+  const ctx = createContext({
+    root: '/',
+    conf: createConfigResult({}),
+  })
+  const { panda } = ctx
+  const code = `import 'virtual:panda.css'
+    import { box } from '../styled-system/patterns' with { type: "runtime" }
+    import { box as box2 } from '../styled-system/patterns' with { type: "runtime" }
+    import { box as box3 } from '../styled-system/patterns'
+    import { box as box4 } from '../styled-system/patterns' with { type: "invalid-runtime" }
+    import { box as box5 } from '../styled-system/patterns' with { invalid: "runtime" }
+
+    box({ display: 'flex' });
+    box2({ flexDirection: 'column' });
+    box3({ fontWeight: 'semibold' });
+    box4({ color: 'green.300' });
+    box5({ textAlign: 'center' });
+    box6({ textStyle: '4xl' });`
+
+  const sourceFile = panda.project.addSourceFile(id, code)
+  const parserResult = panda.project.parseSourceFile(id)
+
+  const result = tranformPanda(ctx, { code, id, sourceFile, parserResult, optimizeJs: 'auto' })
+  expect(result?.code).toMatchInlineSnapshot(`
+    "import 'virtual:panda.css'
+        import { box } from '../styled-system/patterns' with { type: "runtime" }
+        import { box as box2 } from '../styled-system/patterns' with { type: "runtime" }
+        import { box as box3 } from '../styled-system/patterns'
+        import { box as box4 } from '../styled-system/patterns' with { type: "invalid-runtime" }
+        import { box as box5 } from '../styled-system/patterns' with { invalid: "runtime" }
+
+        box({ display: 'flex' });
+        box2({ flexDirection: 'column' });
+        "font_semibold";
+        "text_green.300";
+        "text_center";
+        box6({ textStyle: '4xl' });"
+  `)
+})
+
+test('transform css only when using any import with { type: "macro" }', () => {
   const ctx = createContext({
     root: '/',
     conf: createConfigResult({}),
@@ -108,7 +149,7 @@ test('transform css only when using with', () => {
   const sourceFile = panda.project.addSourceFile(id, code)
   const parserResult = panda.project.parseSourceFile(id)
 
-  const result = tranformPanda(ctx, { code, id, sourceFile, parserResult, onlyMacroImports: true })
+  const result = tranformPanda(ctx, { code, id, sourceFile, parserResult, optimizeJs: 'macro' })
   expect(result?.code).toMatchInlineSnapshot(`
       "import 'virtual:panda.css'
           import { css } from '../styled-system/css' with { type: "macro" }
@@ -123,6 +164,103 @@ test('transform css only when using with', () => {
           css4({ color: 'green.300' });
           css5({ textAlign: 'center' });
           css6({ textStyle: '4xl' });"
+    `)
+})
+
+test('transform css only when specifically using import with { type: "macro" }', () => {
+  const ctx = createContext({
+    root: '/',
+    conf: createConfigResult({}),
+  })
+  const { panda } = ctx
+  const code = `import 'virtual:panda.css'
+    import { css } from '../styled-system/css' with { type: "macro" }
+    import { css as css2 } from '../styled-system/css' with { type: "macro" }
+    import { css as css3 } from '../styled-system/css'
+    import { css as css4 } from '../styled-system/css' with { type: "invalid-macro" }
+    import { css as css5 } from '../styled-system/css' with { invalid: "macro" }
+
+    import { box } from '../styled-system/patterns' with { type: "macro" }
+    import { box as box2 } from '../styled-system/patterns' with { type: "macro" }
+    import { box as box3 } from '../styled-system/patterns'
+    import { box as box4 } from '../styled-system/patterns' with { type: "invalid-macro" }
+    import { box as box5 } from '../styled-system/patterns' with { invalid: "macro" }
+
+    css({ display: 'flex' });
+    css2({ flexDirection: 'column' });
+    css3({ fontWeight: 'semibold' });
+    css4({ color: 'green.300' });
+    css5({ textAlign: 'center' });
+    css6({ textStyle: '4xl' });
+
+    box({ display: 'flex' });
+    box2({ flexDirection: 'column' });
+    box3({ fontWeight: 'semibold' });
+    box4({ color: 'green.300' });
+    box5({ textAlign: 'center' });
+    box6({ textStyle: '4xl' });`
+
+  const sourceFile = panda.project.addSourceFile(id, code)
+  const parserResult = panda.project.parseSourceFile(id)
+
+  const result = tranformPanda(ctx, { code, id, sourceFile, parserResult, optimizeJs: { css: 'macro' } })
+  expect(result?.code).toMatchInlineSnapshot(`
+    "import 'virtual:panda.css'
+        import { css } from '../styled-system/css' with { type: "macro" }
+        import { css as css2 } from '../styled-system/css' with { type: "macro" }
+        import { css as css3 } from '../styled-system/css'
+        import { css as css4 } from '../styled-system/css' with { type: "invalid-macro" }
+        import { css as css5 } from '../styled-system/css' with { invalid: "macro" }
+
+        import { box } from '../styled-system/patterns' with { type: "macro" }
+        import { box as box2 } from '../styled-system/patterns' with { type: "macro" }
+        import { box as box3 } from '../styled-system/patterns'
+        import { box as box4 } from '../styled-system/patterns' with { type: "invalid-macro" }
+        import { box as box5 } from '../styled-system/patterns' with { invalid: "macro" }
+
+        "d_flex";
+        "flex_column";
+        css3({ fontWeight: 'semibold' });
+        css4({ color: 'green.300' });
+        css5({ textAlign: 'center' });
+        css6({ textStyle: '4xl' });
+
+        "d_flex";
+        "flex_column";
+        "font_semibold";
+        "text_green.300";
+        "text_center";
+        box6({ textStyle: '4xl' });"
+  `)
+
+  expect(tranformPanda(ctx, { code, id, sourceFile, parserResult, optimizeJs: { pattern: 'macro' } })?.code)
+    .toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+          import { css } from '../styled-system/css' with { type: "macro" }
+          import { css as css2 } from '../styled-system/css' with { type: "macro" }
+          import { css as css3 } from '../styled-system/css'
+          import { css as css4 } from '../styled-system/css' with { type: "invalid-macro" }
+          import { css as css5 } from '../styled-system/css' with { invalid: "macro" }
+
+          import { box } from '../styled-system/patterns' with { type: "macro" }
+          import { box as box2 } from '../styled-system/patterns' with { type: "macro" }
+          import { box as box3 } from '../styled-system/patterns'
+          import { box as box4 } from '../styled-system/patterns' with { type: "invalid-macro" }
+          import { box as box5 } from '../styled-system/patterns' with { invalid: "macro" }
+
+          "d_flex";
+          "flex_column";
+          "font_semibold";
+          "text_green.300";
+          "text_center";
+          css6({ textStyle: '4xl' });
+
+          "d_flex";
+          "flex_column";
+          box3({ fontWeight: 'semibold' });
+          box4({ color: 'green.300' });
+          box5({ textAlign: 'center' });
+          box6({ textStyle: '4xl' });"
     `)
 })
 
@@ -295,29 +433,6 @@ test('transform recipe', () => {
     }
     "
   `)
-})
-
-test('skip transforming recipe with option', () => {
-  const ctx = createContext({
-    root: '/',
-    conf: createConfigResult({}),
-  })
-  const { panda } = ctx
-  const code = OnlyRecipe
-
-  const sourceFile = panda.project.addSourceFile(id, code)
-  const parserResult = panda.project.parseSourceFile(id)
-
-  const result = tranformPanda(ctx, { code, id, sourceFile, parserResult, keepRecipeClassNames: true })
-  expect(result?.code).toMatchInlineSnapshot(`
-      "import 'virtual:panda.css'
-      import { button } from '../styled-system/recipes'
-
-      export const App = () => {
-        return <div className={"button button--visual_funky button--size_lg button--shape_circle"}>Button</div>
-      }
-      "
-    `)
 })
 
 test('transform csswithraw', () => {

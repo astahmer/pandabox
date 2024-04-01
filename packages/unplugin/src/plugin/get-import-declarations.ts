@@ -3,24 +3,26 @@ import { resolveTsPathPattern } from '@pandacss/config/ts-path'
 import type { ImportResult, ParserOptions } from '@pandacss/core'
 import type { SourceFile } from 'ts-morph'
 import { getModuleSpecifierValue } from './get-module-specifier-value'
-import { hasMacroAttribute } from './has-macro-attribute'
+import { getMacroAttribute } from './has-macro-attribute'
 
 export function getImportDeclarations(context: ParserOptions, sourceFile: SourceFile, onlyMacroImports = false) {
   const { imports, tsOptions } = context
 
-  const importDeclarations: ImportResult[] = []
+  const importDeclarations: ImportResultWithAttribute[] = []
 
   sourceFile.getImportDeclarations().forEach((node) => {
     const mod = getModuleSpecifierValue(node)
     if (!mod) return
-    if (onlyMacroImports && !hasMacroAttribute(node)) return
+
+    // Keep track of the presence of `with { type: "xxx" }`
+    const withAttr = getMacroAttribute(node) as ImportResultWithAttribute['withAttr']
 
     // import { flex, stack } from "styled-system/patterns"
     node.getNamedImports().forEach((specifier) => {
       const name = specifier.getNameNode().getText()
       const alias = specifier.getAliasNode()?.getText() || name
 
-      const result: ImportResult = { name, alias, mod, kind: 'named' }
+      const result: ImportResultWithAttribute = { name, alias, mod, kind: 'named', withAttr }
 
       const found = imports.match(result, (mod) => {
         if (!tsOptions?.pathMappings) return
@@ -36,7 +38,7 @@ export function getImportDeclarations(context: ParserOptions, sourceFile: Source
     const namespace = node.getNamespaceImport()
     if (namespace) {
       const name = namespace.getText()
-      const result: ImportResult = { name, alias: name, mod, kind: 'namespace' }
+      const result: ImportResultWithAttribute = { name, alias: name, mod, kind: 'namespace', withAttr }
 
       const found = imports.match(result, (mod) => {
         if (!tsOptions?.pathMappings) return
@@ -50,4 +52,8 @@ export function getImportDeclarations(context: ParserOptions, sourceFile: Source
   })
 
   return importDeclarations
+}
+
+export interface ImportResultWithAttribute extends ImportResult {
+  withAttr: 'macro' | 'runtime' | null
 }

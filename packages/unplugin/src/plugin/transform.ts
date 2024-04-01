@@ -1,21 +1,27 @@
 import { box, extractCallExpressionArguments, unbox } from '@pandacss/extractor'
-import { type ParserResultInterface, type RecipeConfig, type SystemStyleObject } from '@pandacss/types'
+import { type ParserResultInterface, type RecipeConfig, type ResultItem, type SystemStyleObject } from '@pandacss/types'
 import MagicString from 'magic-string'
-import { CallExpression, Node, SourceFile } from 'ts-morph'
+import { CallExpression, Identifier, Node, SourceFile } from 'ts-morph'
 
 import type { PandaPluginContext } from './create-context'
 import { createCva, transformCva } from './create-cva'
 import { getVariableName } from './get-cva-var-name'
-import { getImportDeclarations } from './get-import-declarations'
+import { getImportDeclarations, type ImportResultWithAttribute } from './get-import-declarations'
 import { combineResult } from './unbox-combine-result'
+
+export type OptimizeJsType = 'auto' | 'macro'
+
+type Pretty<T> = { [K in keyof T]: T[K] } & {}
+type ResultType = NonNullable<ResultItem['type']>
+type OptimizeJsMap = Pretty<Partial<Record<Exclude<ResultType, 'sva' | 'jsx' | 'jsx-recipe'>, OptimizeJsType>>>
+
+export type OptimizeJsOption = OptimizeJsType | OptimizeJsMap
 
 export interface TransformOptions {
   /**
-   * Do not transform Panda recipes to `atomic` or `grouped` and instead keep their defaults BEM-like classes
-   */
-  keepRecipeClassNames?: boolean
-  /**
-   * Only transform macro imports
+   * Will transform your source code to inline the `css` / `cva` / `${patternFn}` resulting classNames or even simplify `styled` JSX factory to their primitive HTML tags
+   *
+   * If set to "macro" -> will only transform imports marked as `with { type: "macro" }`
    * @example
    * ```ts
    * import { css } from '../styled-system/css' with { type: "macro" }
@@ -23,9 +29,8 @@ export interface TransformOptions {
    * const className = css({ display: "flex", flexDirection: "column", color: "red.300" })
    * // -> `const className = 'd_flex flex_column text_red.300'`
    * ```
-   *
    */
-  onlyMacroImports?: boolean
+  optimizeJs?: OptimizeJsOption
 }
 
 export interface TransformArgs extends TransformOptions {
@@ -36,7 +41,7 @@ export interface TransformArgs extends TransformOptions {
 }
 
 export const tranformPanda = (ctx: PandaPluginContext, options: TransformArgs) => {
-  const { code, onlyMacroImports = false, sourceFile, parserResult } = options
+  const { code, optimizeJs, sourceFile, parserResult } = options
   if (!parserResult) return null
 
   const { panda, css, mergeCss } = ctx
@@ -44,14 +49,13 @@ export const tranformPanda = (ctx: PandaPluginContext, options: TransformArgs) =
 
   const s = new MagicString(code)
 
+  const onlyMacroImports = optimizeJs === 'macro'
   const importDeclarations = getImportDeclarations(panda.parserOptions, sourceFile, onlyMacroImports)
-  const importSet = new Set(importDeclarations.map((i) => i.alias))
   const file = panda.imports.file(importDeclarations)
 
   const jsxPatternKeys = panda.patterns.details.map((d) => d.jsxName)
   const isJsxPatternImported = file['createMatch'](file['importMap'].jsx, jsxPatternKeys) as (id: string) => boolean
 
-  // TODO find every usage in every file and replace it with the result of the function call ?
   const cvaNames = collectCvaNames(parserResult)
   const cvaUsages = extractCvaUsages(sourceFile, cvaNames)
   const cvaConfigs = new Map<string, CvaConfig>()
@@ -59,28 +63,44 @@ export const tranformPanda = (ctx: PandaPluginContext, options: TransformArgs) =
   let needCompoundVariantsImport = false
 
   parserResult.all.forEach((result) => {
+    const fnName = result.name
+    if (!fnName) return
+
     if (!result.box) return
-    // TODO ?
     if (result.type === 'jsx' || result.type === 'jsx-recipe') return
 
     const node = result.box.getNode()
-    const fnName = result.name
 
+    let shouldOnlyTransformMacroImport = onlyMacroImports
     // Early return if we only want to transform macro imports
-    // and the current result is not coming from one
-    if (onlyMacroImports) {
-      if (!fnName) return
+    // for the current result type
+    if (
+      result.type &&
+      !shouldOnlyTransformMacroImport &&
+      typeof optimizeJs === 'object' &&
+      result.type !== 'sva' &&
+      optimizeJs[result.type] === 'macro'
+    ) {
+      shouldOnlyTransformMacroImport = true
+    }
 
-      let identifier: string | undefined
-      if ((result.type?.includes('jsx') && Node.isJsxOpeningElement(node)) || Node.isJsxSelfClosingElement(node)) {
-        identifier = node.getTagNameNode().getText()
-      } else if (Node.isCallExpression(node)) {
-        identifier = node.getExpression().getText()
-      } else {
-        return
-      }
+    const importedIdentifier = getImportedIdentifier(node)
+    if (!importedIdentifier) return
 
-      if (!importSet.has(identifier)) return
+    const importedName = fnName.split('.')[0]
+
+    // Early return if we only want to transform macro imports and the current result is not coming from one
+    // or if the import is marked as `with { type: "runtime" }`
+    const importDecl = importDeclarations.find(
+      (imp) => imp.name === importedName && imp.alias === importedIdentifier,
+    ) as ImportResultWithAttribute
+
+    if (
+      !importDecl ||
+      importDecl.withAttr === 'runtime' ||
+      (shouldOnlyTransformMacroImport && importDecl.withAttr !== 'macro')
+    ) {
+      return
     }
 
     if (result.type?.includes('jsx')) {
@@ -321,4 +341,22 @@ const extractCvaUsages = (sourceFile: SourceFile, cvaNames: Set<string>) => {
   })
 
   return cvaUsages
+}
+
+const getImportedIdentifier = (node: Node) => {
+  if (Node.isJsxOpeningElement(node) || Node.isJsxSelfClosingElement(node)) {
+    const tagName = node.getTagNameNode()
+    if (Node.isIdentifier(tagName)) {
+      return tagName.getText()
+    }
+
+    if (Node.isPropertyAccessExpression(tagName)) {
+      return tagName.getExpression().getText().split('.')[0]
+    }
+  }
+
+  if (Node.isCallExpression(node)) {
+    const expr = node.getExpression()
+    return expr.getText().split('.')[0]
+  }
 }
