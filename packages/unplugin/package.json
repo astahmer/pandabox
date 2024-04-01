@@ -76,6 +76,8 @@
   },
   "dependencies": {
     "@pandabox/postcss-plugins": "workspace:^",
+    "@pandacss/extractor": "^0.36.1",
+    "@pandacss/shared": "^0.36.1",
     "@rollup/pluginutils": "^5.1.0",
     "magic-string": "^0.30.7",
     "postcss": "^8.4.35",

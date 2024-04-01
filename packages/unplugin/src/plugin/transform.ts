@@ -1,32 +1,15 @@
-import { stringify } from '@pandacss/core'
 import { box, extractCallExpressionArguments, unbox } from '@pandacss/extractor'
-import { toHash } from '@pandacss/shared'
-import { type ParserResultInterface, type SystemStyleObject, type RecipeConfig } from '@pandacss/types'
+import { type ParserResultInterface, type RecipeConfig, type SystemStyleObject } from '@pandacss/types'
 import MagicString from 'magic-string'
 import { CallExpression, Node, SourceFile } from 'ts-morph'
 
-import { type MacroContext } from './create-context'
+import type { PandaPluginContext } from './create-context'
 import { createCva } from './create-cva'
 import { getVariableName } from './get-cva-var-name'
-import { combineResult } from './unbox-combine-result'
 import { getImportDeclarations } from './get-import-declarations'
+import { combineResult } from './unbox-combine-result'
 
 export interface TransformOptions {
-  /**
-   * @example
-   * ```ts
-   * // `atomic`
-   * const className = css({ display: "flex", flexDirection: "column", color: "red.300" })`
-   * // -> `const className = 'd_flex flex_column text_red.300'`
-   *
-   * // `grouped`
-   * const className = css({ display: "flex", flexDirection: "column", color: "red.300" })`
-   * // -> `const className = 'hkogUJ'`
-   * ```
-   *
-   * @default `'atomic'`
-   */
-  output?: 'atomic' | 'grouped'
   /**
    * Do not transform Panda recipes to `atomic` or `grouped` and instead keep their defaults BEM-like classes
    */
@@ -52,11 +35,11 @@ export interface TransformArgs extends TransformOptions {
   parserResult: ParserResultInterface | undefined
 }
 
-export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
-  const { code, id, output = 'atomic', keepRecipeClassNames, onlyMacroImports, sourceFile, parserResult } = options
+export const tranformPanda = (ctx: PandaPluginContext, options: TransformArgs) => {
+  const { code, onlyMacroImports = false, sourceFile, parserResult } = options
   if (!parserResult) return null
 
-  const { panda, css, mergeCss, sheet, styles } = ctx
+  const { panda, css, mergeCss } = ctx
   const factoryName = panda.jsx.factoryName || 'styled'
 
   const s = new MagicString(code)
@@ -67,17 +50,6 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
 
   const jsxPatternKeys = panda.patterns.details.map((d) => d.jsxName)
   const isJsxPatternImported = file['createMatch'](file['importMap'].jsx, jsxPatternKeys) as (id: string) => boolean
-
-  /**
-   * Hash atomic styles and inline the resulting className
-   */
-  const getGroupClassName = (merged: Record<string, string>) => {
-    const className = toHash(css(merged))
-    const resolved = sheet.serialize({ ['.' + className]: merged })
-
-    styles.set(className, stringify(resolved))
-    return className
-  }
 
   // TODO find every usage in every file and replace it with the result of the function call ?
   const cvaNames = collectCvaNames(parserResult)
@@ -133,7 +105,7 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
           : result.data
 
       const merged = mergeCss(...styleObjects)
-      const className = output === 'atomic' ? css(merged) : getGroupClassName(merged)
+      const className = css(merged)
 
       // Filter out every style props already extracted
       // `<Box color="red" onClick={() => "hello"} />` -> `color` will be filtered out
@@ -173,8 +145,6 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
         }
       }
 
-      ctx.files.add(id)
-
       return
     }
 
@@ -213,11 +183,10 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
         if (!cva) return
 
         const computed = cva.resolve(variants)
-        const className = output === 'atomic' ? css(computed) : getGroupClassName(computed)
+        const className = css(computed)
 
         // `className={recipe({ size: "sm" })}` => `className="fs_12px"`
         s.update(data.node.getStart() - 1, data.node.getEnd() + 1, `"${className}"`)
-        ctx.files.add(id)
       })
 
       return
@@ -269,19 +238,8 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
     }
 
     const merged = mergeCss(...Array.from(styleObjects))
-    const getClassName = () => {
-      // Inline the usual recipe classNames (base+variants)
-      if (keepRecipeClassNames && result.type === 'recipe') {
-        return Array.from(classList).join(' ')
-      }
-
-      return output === 'atomic' ? css(merged) : getGroupClassName(merged)
-    }
-
-    const className = getClassName()
+    const className = result.type === 'recipe' ? Array.from(classList).join(' ') : css(merged)
     s.update(node.getStart(), node.getEnd(), `"${className}"`)
-
-    ctx.files.add(id)
   })
 
   return {

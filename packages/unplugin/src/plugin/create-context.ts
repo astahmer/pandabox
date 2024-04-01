@@ -1,7 +1,9 @@
 import { removeUnusedCssVars, removeUnusedKeyframes } from '@pandabox/postcss-plugins'
 import type { Stylesheet } from '@pandacss/core'
 import { PandaContext, codegen } from '@pandacss/node'
+import { createCss, createMergeCss } from '@pandacss/shared'
 import type { LoadConfigResult } from '@pandacss/types'
+import path from 'node:path'
 import postcss from 'postcss'
 
 import type { PandaPluginOptions } from './core'
@@ -31,11 +33,17 @@ export const createContext = (options: ContextOptions) => {
     return optimized.toString()
   }
 
+  const css = createCss(panda.baseSheetContext)
+  const mergeFns = createMergeCss(panda.baseSheetContext)
+  const mergeCss: (...styles: StyleObject[]) => StyleObject = mergeFns.mergeCss
+
   return {
     // So that we can mutate the `panda` variable and it's still reflected outside
     get panda() {
       return panda
     },
+    css,
+    mergeCss,
     reloadContext: async () => {
       const affecteds = await panda.diff.reloadConfigAndRefreshContext((conf) => {
         panda = new PandaContext(conf)

@@ -4,10 +4,12 @@ import { createFilter } from '@rollup/pluginutils'
 import { type TransformResult, type UnpluginFactory } from 'unplugin'
 import type { HmrContext, Plugin } from 'vite'
 import fs from 'node:fs/promises'
+import { codegen } from '@pandacss/node'
 
 import { createContext, type PandaPluginContext } from '../plugin/create-context'
 import { ensureAbsolute } from './ensure-absolute'
-import { codegen } from '@pandacss/node'
+import { tranformPanda } from './transform'
+import path from 'node:path'
 
 const _fileId = 'panda.css'
 const _virtualModuleId = 'virtual:' + _fileId
@@ -40,6 +42,10 @@ export interface PandaPluginOptions extends Partial<PandaPluginHooks> {
    * Will remove unused CSS variables and keyframes from the generated CSS
    */
   optimizeCss?: boolean
+  /**
+   * Will transform your source code to inline the `css` / `cva` / `${patternFn}` resulting classNames or even simplify `styled` JSX factory to their primitive HTML tags
+   */
+  optimizeJs?: boolean
 }
 
 export interface PandaPluginHooks {
@@ -112,7 +118,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
         }
       }
 
-      panda.project.addSourceFile(id, transformResult.code)
+      const sourceFile = panda.project.addSourceFile(id, transformResult.code)
       const parserResult = panda.project.parseSourceFile(id)
       if (!parserResult) return null
 
@@ -120,12 +126,25 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
         ctx.files.set(id, code)
       }
 
-      return null
+      if (!options.optimizeJs) {
+        return null
+      }
+
+      const result = tranformPanda(ctx, {
+        code,
+        id,
+        sourceFile,
+        parserResult,
+        keepRecipeClassNames: true,
+        onlyMacroImports: false,
+      })
+
+      return result
     },
     vite: {
       configResolved(config) {
         if (!options.cwd) {
-          options.cwd = config.root
+          options.cwd = config.configFile ? path.dirname(config.configFile) : config.root
           outfile = options.outfile ? ensureAbsolute(options.outfile, options.cwd) : ids.resolvedVirtualModuleId
         }
 
@@ -139,6 +158,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
           await fs.writeFile(outfile, ctx.toCss(ctx.panda.createSheet(), options))
         }
 
+        // (re) generate the `styled-system` (outdir) on server (re)start
         const { msg } = await codegen(ctx.panda)
         // console.log(options)
         // console.log(ctx.panda.paths.root, ctx.panda.config.cwd)
@@ -196,5 +216,6 @@ const resolveOptions = (options: PandaPluginOptions): RequiredBy<PandaPluginOpti
     include: options.include || [/\.[cm]?[jt]sx?$/],
     exclude: options.exclude || [/node_modules/, /styled-system/],
     optimizeCss: options.optimizeCss ?? true,
+    optimizeJs: options.optimizeJs ?? true,
   }
 }

@@ -1,7 +1,10 @@
 {
   "name": "unplugin-scenarios",
   "private": true,
-  "type": "module",
+  "scripts": {
+    "outfile": "pnpm vite ./scenarios/outfile",
+    "virtual-file": "pnpm vite ./scenarios/virtual-file"
+  },
   "devDependencies": {
     "@pandacss/dev": "^0.36.1",
     "@types/react": "^18.2.60",
