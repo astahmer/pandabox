@@ -468,7 +468,7 @@ importers:
         specifier: ^0.8.3
         version: 0.8.3(vite@5.1.4)
 
-  packages/unplugin/__tests__:
+  packages/unplugin/e2e:
     devDependencies:
       '@pandacss/dev':
         specifier: ^0.36.1
