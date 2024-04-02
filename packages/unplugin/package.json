@@ -1,7 +1,7 @@
 {
   "name": "@pandabox/unplugin",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "packageManager": "pnpm@8.6.12",
   "description": "Panda CSS as a Vite/Rollup/Webpack/Esbuild plugin",
   "exports": {
