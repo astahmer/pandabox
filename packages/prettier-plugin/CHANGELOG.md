@@ -1,5 +1,11 @@
 # @pandabox/prettier-plugin
 
+## 0.1.2
+
+### Patch Changes
+
+- 581c38c: fix(prettier-plugin): sort compoundVariants/staticCss last for cva/recipes
+
 ## 0.1.1
 
 ### Patch Changes

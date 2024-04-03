@@ -1,6 +1,6 @@
 {
   "name": "@pandabox/prettier-plugin",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Prettier plugin for Panda css",
   "main": "dist/index.js",
   "module": "dist/index.js",
