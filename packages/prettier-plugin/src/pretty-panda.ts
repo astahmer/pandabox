@@ -10,7 +10,16 @@ import type { PluginOptions } from './options'
 
 const NodeType = TSESTree.AST_NODE_TYPES
 const recipeFnNames = ['cva', 'sva', 'defineRecipe', 'defineSlotRecipe']
-const cvaOrder = ['className', 'description', 'slots', 'base', 'variants', 'defaultVariants']
+const cvaOrder = [
+  'className',
+  'description',
+  'slots',
+  'base',
+  'variants',
+  'defaultVariants',
+  'compoundVariants',
+  'staticCss',
+]
 const pandaConfigFns = ['defineStyles', 'defineRecipe', 'defineSlotRecipe']
 
 export class PrettyPanda {
