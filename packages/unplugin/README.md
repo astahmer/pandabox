@@ -17,7 +17,7 @@ import { unplugin } from '@pandabox/unplugin'
 
 export default defineConfig({
   plugins: [
-    unplugin({
+    unplugin.vite({
       /* options */
     }),
   ],

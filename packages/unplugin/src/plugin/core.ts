@@ -4,13 +4,14 @@ import { createFilter } from '@rollup/pluginutils'
 import { type TransformResult, type UnpluginFactory } from 'unplugin'
 import type { HmrContext, Plugin } from 'vite'
 import fs from 'node:fs/promises'
-import { codegen } from '@pandacss/node'
+import { codegen, PandaContext } from '@pandacss/node'
 
 import { createContext, type PandaPluginContext } from '../plugin/create-context'
 import { ensureAbsolute } from './ensure-absolute'
 import { tranformPanda, type TransformOptions } from './transform'
 import path from 'node:path'
 import { addCompoundVariantCss, inlineCva } from './cva-fns'
+import type { SourceFile } from 'ts-morph'
 
 const createVirtualModuleId = (id: string) => {
   const base = `virtual:panda${id}`
@@ -52,11 +53,26 @@ export interface PandaPluginOptions extends Partial<PandaPluginHooks>, Pick<Tran
   optimizeCss?: boolean
 }
 
+interface SourceFileHookArgs {
+  sourceFile: SourceFile
+  context: PandaContext
+}
+
+type MaybePromise<T> = T | Promise<T>
 export interface PandaPluginHooks {
+  contextCreated: (args: { context: PandaContext }) => MaybePromise<void>
   /**
    * A transform callback similar to the `transform` hook of `vite` that allows you to modify the source code before it's parsed.
+   * Called before the source file is parsed by ts-morph and Panda.
    */
-  transform: (args: Omit<ParserResultBeforeHookArgs, 'configure'>) => TransformResult | void
+  transform: (
+    args: Omit<ParserResultBeforeHookArgs, 'configure'> & Pick<SourceFileHookArgs, 'context'>,
+  ) => MaybePromise<TransformResult | void>
+  /**
+   * A callback that allows you to modify or use the ts-morph sourceFile before it's parsed by Panda.
+   * Called after ts-morph has parsed the source file, but before it was parsed by Panda.
+   */
+  onSourceFile: (args: SourceFileHookArgs) => MaybePromise<void>
 }
 
 export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = (rawOptions) => {
@@ -78,9 +94,12 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
 
     // console.log('loadConfig', options)
     // @ts-expect-error
-    initPromise = loadConfig({ cwd: options.cwd, file: options.configPath }).then((conf: LoadConfigResult) => {
+    initPromise = loadConfig({ cwd: options.cwd, file: options.configPath }).then(async (conf: LoadConfigResult) => {
       conf.config.cwd = options.cwd
       _ctx = createContext({ root: options.cwd, conf })
+      if (options.contextCreated) {
+        await options.contextCreated({ context: _ctx.panda })
+      }
     })
 
     return initPromise
@@ -130,7 +149,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       let transformResult: TransformResult = { code, map: undefined }
 
       if (options.transform) {
-        const result = options.transform({ filePath: id, content: code }) || code
+        const result = (await options.transform({ filePath: id, content: code, context: ctx.panda })) || code
         if (typeof result === 'string') {
           transformResult.code = result
         } else if (result) {
@@ -139,6 +158,10 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       }
 
       const sourceFile = panda.project.addSourceFile(id, transformResult.code)
+      if (options.onSourceFile) {
+        await options.onSourceFile({ sourceFile, context: ctx.panda })
+      }
+
       const parserResult = panda.project.parseSourceFile(id)
       if (!parserResult) return null
 
@@ -147,7 +170,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       }
 
       if (!options.optimizeJs) {
-        return null
+        return transformResult.code !== code ? transformResult : null
       }
 
       const result = tranformPanda(ctx, {
