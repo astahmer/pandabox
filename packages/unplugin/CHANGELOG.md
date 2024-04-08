@@ -1,5 +1,17 @@
 # @pandabox/unplugin
 
+## 0.1.1
+
+### Patch Changes
+
+- dfd87f9: - Add `onSourceFile` hook + provide PandaContext in hooks
+
+  - Add `contextCreated` hook
+  - Await hooks to allow for asynchronous operations
+
+  Fix case where if the `transform` hook returns a different code than the original code but `optimizeJs` was disabled,
+  the transformed code would not be returned
+
 ## 0.1.0
 
 ### Minor Changes
