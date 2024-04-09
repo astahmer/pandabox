@@ -1,5 +1,11 @@
 # @pandabox/unplugin
 
+## 0.1.2
+
+### Patch Changes
+
+- fdac578: fix: optimizeJs should be based off transformResult.code
+
 ## 0.1.1
 
 ### Patch Changes
