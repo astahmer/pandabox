@@ -174,7 +174,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       }
 
       const result = tranformPanda(ctx, {
-        code,
+        code: transformResult.code,
         id,
         sourceFile,
         parserResult,
