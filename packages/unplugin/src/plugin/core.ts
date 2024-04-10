@@ -76,7 +76,6 @@ export interface PandaPluginHooks {
 }
 
 export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = (rawOptions) => {
-  console.log('aaaaa')
   const options = resolveOptions(rawOptions ?? {})
   const filter = createFilter(options.include, options.exclude)
   let outfile = options.outfile ? ensureAbsolute(options.outfile, options.cwd) : ids.css.resolved
@@ -272,6 +271,6 @@ const resolveOptions = (options: PandaPluginOptions): RequiredBy<PandaPluginOpti
     include: options.include || [/\.[cm]?[jt]sx?$/],
     exclude: options.exclude || [/node_modules/, /styled-system/],
     optimizeCss: options.optimizeCss ?? true,
-    optimizeJs: options.optimizeJs ?? 'auto',
+    optimizeJs: options.optimizeJs ?? 'macro',
   }
 }
