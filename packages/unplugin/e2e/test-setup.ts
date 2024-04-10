@@ -47,10 +47,10 @@ beforeAll(async (s) => {
   testName = slash(testPath).match(/scenarios\/([\w-]+)\//)?.[1] ?? 'unknown'
   testDir = path.dirname(testPath)
 
-  // if this is a test placed under scenarios/xxx/__tests__
+  // if this is a test placed under scenarios/xxx/e2e
   // start a vite server in that directory.
   if (testName) {
-    testDir = path.resolve(packageRoot, '__tests__', 'scenarios-temp', testName)
+    testDir = path.resolve(packageRoot, 'e2e', 'scenarios-temp', testName)
   }
 
   browser = await chromium.connect(wsEndpoint)

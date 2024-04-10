@@ -63,13 +63,34 @@ export default defineConfig({
 })
 ```
 
-# @pandabox/unplugin-panda-macro
+# @pandabox/unplugin
 
-Directly inline your `styled-system` functions and components results as class names (`atomic` or `grouped`)
+Alternative distribution entrypoint for Panda CSS (other than the [CLI](https://panda-css.com/docs/installation/cli) and
+[PostCSS plugin](https://panda-css.com/docs/installation/postcss)).
+
+Optionally inline your `styled-system` functions and components results as class names (`atomic` or `grouped`) (with
+`optimizeJs` option).
 
 ```bash
-pnpm i @pandabox/unplugin-panda-macro
+pnpm i @pandabox/unplugin
 ```
+
+## Usage
+
+```ts
+import { defineConfig } from 'vite'
+import { unplugin } from '@pandabox/unplugin'
+
+export default defineConfig({
+  plugins: [
+    unplugin.vite({
+      /* options */
+    }),
+  ],
+})
+```
+
+## `optimizeJs` option
 
 From:
 
@@ -133,13 +154,12 @@ export const App = () => {
 
 # @pandabox/utils
 
-```bash
-pnpm i @pandabox/utils
-```
-
-- `assignInlineVars`
-- `cssVar`
-- `wrapValue`
+- `assignInlineVars` is like
+  [the one from vanilla-extract](https://vanilla-extract.style/documentation/packages/dynamic/#assigninlinevars) but
+  type-safe with typings using your own panda.config tokens
+- `cssVar` allows creating creating css vars as JS objects so you can reference them in your panda config or at runtime
+- `wrapValue` will wrap every objects inside the first argument with a { value: xxx }, mostly meant to easily migrate
+  from a chakra theme tokens object to a panda.config tokens object
 
 # @pandabox/postcss-plugins
 
