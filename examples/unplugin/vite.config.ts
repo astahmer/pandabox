@@ -1,7 +1,14 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import Inspect from 'vite-plugin-inspect'
+import react from '@vitejs/plugin-react-swc'
+import pandabox from '@pandabox/unplugin'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    Inspect(),
+    pandabox.vite({
+      outfile: './src/panda.css',
+    }),
+    react(),
+  ],
 })
