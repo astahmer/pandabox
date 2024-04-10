@@ -13,11 +13,11 @@ npm i @pandabox/unplugin
 
 ```ts
 import { defineConfig } from 'vite'
-import { unplugin } from '@pandabox/unplugin'
+import pandabox from '@pandabox/unplugin'
 
 export default defineConfig({
   plugins: [
-    unplugin.vite({
+    pandabox.vite({
       /* options */
     }),
   ],
