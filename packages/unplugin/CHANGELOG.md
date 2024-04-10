@@ -1,5 +1,11 @@
 # @pandabox/unplugin
 
+## 0.1.3
+
+### Patch Changes
+
+- 65d951a: Change `optimizeJs` default value to `macro` + fix HMR when using `outfile` option (and maybe for SSR ?)
+
 ## 0.1.2
 
 ### Patch Changes
