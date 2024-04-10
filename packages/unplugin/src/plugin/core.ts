@@ -2,7 +2,7 @@ import { loadConfig } from '@pandacss/config'
 import type { LoadConfigResult, ParserResultBeforeHookArgs, RequiredBy } from '@pandacss/types'
 import { createFilter } from '@rollup/pluginutils'
 import { type TransformResult, type UnpluginFactory } from 'unplugin'
-import type { HmrContext, Plugin } from 'vite'
+import type { HmrContext, Plugin, ViteDevServer } from 'vite'
 import fs from 'node:fs/promises'
 import { codegen, PandaContext } from '@pandacss/node'
 
@@ -105,6 +105,27 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
     return initPromise
   }
 
+  let server: ViteDevServer
+  const updateCss = (_file: string) => {
+    if (!server) return
+    const mod = server.moduleGraph.getModuleById(outfile)
+    if (!mod) return
+
+    // console.log('invalidate', { from: file })
+    if (outfile !== ids.css.resolved) {
+      getCtx().then((ctx) => fs.writeFile(outfile, ctx.toCss(ctx.panda.createSheet(), options)))
+    }
+
+    const timestamp = Date.now()
+    server.moduleGraph.invalidateModule(mod, new Set(), timestamp, true)
+    server.hot.send({
+      type: `${mod.type}-update` as any,
+      path: mod.url,
+      acceptedPath: mod.url,
+      timestamp,
+    } as any)
+  }
+
   return {
     name: 'unplugin-panda',
     enforce: 'pre',
@@ -135,6 +156,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       const ctx = await getCtx()
       const sheet = ctx.panda.createSheet()
       const css = ctx.toCss(sheet, options)
+      // console.log('load', { id, outfile, resolved: ids.css.resolved })
 
       return css
     },
@@ -143,6 +165,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       return filter(id)
     },
     async transform(code, id) {
+      // console.log('transform', { id })
       const ctx = await getCtx()
       const { panda } = ctx
 
@@ -167,11 +190,14 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
 
       if (!parserResult.isEmpty()) {
         ctx.files.set(id, code)
+        updateCss(id)
       }
 
       if (!options.optimizeJs) {
         return transformResult.code !== code ? transformResult : null
       }
+
+      // console.log(parserResult.toJSON().css.at(0)?.data)
 
       const result = tranformPanda(ctx, {
         code: transformResult.code,
@@ -192,11 +218,14 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
 
         // console.log('configResolved')
       },
-      async configureServer(server) {
+      async configureServer(_server) {
+        server = _server
         // console.log('configureServer')
         const ctx = await getCtx()
 
+        // console.log('configureServer', { outfile, resolved: ids.css.resolved })
         if (outfile !== ids.css.resolved) {
+          ctx.panda.parseFiles()
           await fs.writeFile(outfile, ctx.toCss(ctx.panda.createSheet(), options))
         }
 
@@ -230,21 +259,6 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
           // Invalidate CSS
           invalidate(outfile)
         })
-      },
-      async handleHotUpdate(hmr: HmrContext) {
-        const ctx = await getCtx()
-        if (hmr.file === outfile) return
-        if (!ctx.files.has(hmr.file)) return
-
-        // Invalidate CSS
-        const mod = hmr.server.moduleGraph.getModuleById(outfile)
-        if (mod) {
-          hmr.server.moduleGraph.invalidateModule(mod, new Set(), hmr.timestamp, true)
-
-          if (outfile !== ids.css.resolved) {
-            await fs.writeFile(outfile, ctx.toCss(ctx.panda.createSheet(), options))
-          }
-        }
       },
     } as Plugin,
   }
