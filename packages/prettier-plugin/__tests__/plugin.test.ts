@@ -504,6 +504,56 @@ describe('JSX style props', () => {
       "
     `)
   })
+
+  test('options.pandaIgnoreComponents', async () => {
+    const code = `
+  import { Box } from "../styled-system/jsx";
+  import { DataTable } from "../src/components";
+
+  const App = () => {
+    return <>
+    <Box
+    className={className}
+    onClick={onClick}
+    bg={bg}
+    aria-label="aria-label"
+  >
+    onClick should be the last
+    DataTable shouldnt be sorted
+    <DataTable className={className}
+    onClick={onClick} columns={columns} data={data} />
+  </Box>
+    </>
+  }
+  `
+
+    expect(await run(code, { pandaIgnoreComponents: ['DataTable'] })).toMatchInlineSnapshot(`
+      "import { Box } from "../styled-system/jsx";
+      import { DataTable } from "../src/components";
+
+      const App = () => {
+        return (
+          <>
+            <Box
+              className={className}
+              onClick={onClick}
+              aria-label="aria-label"
+              bg={bg}
+            >
+              onClick should be the last DataTable shouldnt be sorted
+              <DataTable
+                className={className}
+                onClick={onClick}
+                columns={columns}
+                data={data}
+              />
+            </Box>
+          </>
+        );
+      };
+      "
+    `)
+  })
 })
 
 describe('Call Expression css(xxx) arguments', () => {

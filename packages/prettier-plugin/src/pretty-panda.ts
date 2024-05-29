@@ -44,6 +44,7 @@ export class PrettyPanda {
         ? (prettierOptions?.pandaGroupOrder as any)
         : defaultGroupNames,
       pandaFunctions: prettierOptions?.pandaFunctions ?? [],
+      pandaIgnoreComponents: prettierOptions?.pandaIgnoreComponents ?? [],
       // componentSpecificProps: undefined, // not supported yet
     }
     this.priorityGroups = this.generatePriorityGroups(context)
@@ -186,6 +187,7 @@ export class PrettyPanda {
 
           // <> ... </>
           if (!tagName) return
+          if (this.options.pandaIgnoreComponents.includes(tagName)) return
 
           if (this.options.pandaOnlyComponents) {
             const isPandaComponent = file.isPandaComponent(tagName) && file.find(tagIdentifier)

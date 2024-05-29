@@ -12,6 +12,7 @@ export interface PluginOptions {
   pandaSortOtherProps: boolean
   pandaGroupOrder: string[]
   pandaFunctions: string[]
+  pandaIgnoreComponents: string[]
   // componentSpecificProps: string[] | undefined
 }
 
@@ -76,6 +77,13 @@ export const options = {
     default: [{ value: [] }],
   },
   pandaFunctions: {
+    array: true,
+    type: 'string',
+    category: 'Panda',
+    description: 'Additional functions to sort. Defaults to: []',
+    default: [{ value: [] }],
+  },
+  pandaIgnoreComponents: {
     array: true,
     type: 'string',
     category: 'Panda',
