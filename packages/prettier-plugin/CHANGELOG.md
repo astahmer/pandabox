@@ -1,5 +1,11 @@
 # @pandabox/prettier-plugin
 
+## 0.1.3
+
+### Patch Changes
+
+- f080836: Add `pandaIgnoreComponents` option to ignore sorting some components
+
 ## 0.1.2
 
 ### Patch Changes
