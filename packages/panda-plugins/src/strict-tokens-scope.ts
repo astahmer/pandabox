@@ -76,7 +76,7 @@ export const transformPropTypes = (
     })
   })
 
-  const strictTokenProps = Array.from(categoryByProp.keys())
+  const strictTokenProps = props.concat(Array.from(categoryByProp.keys()))
   if (!strictTokenProps.length) return args.artifacts
 
   if (logger) {
