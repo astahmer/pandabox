@@ -10,6 +10,7 @@ import type { PandaContext } from '@pandacss/node'
 export interface StrictTokensScopeOptions {
   categories?: TokenCategory[]
   props?: Array<keyof CssProperties | (string & {})>
+  shouldExclude?: boolean
 }
 
 /**
@@ -44,7 +45,7 @@ export const transformPropTypes = (
   ctx: PandaContext,
   logger?: LoggerInterface,
 ) => {
-  const { categories = [], props = [] } = options
+  const { categories = [], props = [], shouldExclude = false } = options
   if (!categories.length && !props.length) return args.artifacts
 
   const artifact = args.artifacts.find((x) => x.id === 'types-styles')
@@ -80,7 +81,7 @@ export const transformPropTypes = (
   if (!strictTokenProps.length) return args.artifacts
 
   if (logger) {
-    logger.debug('plugin:restrict-strict-tokens', `🐼  Strict token props: ${strictTokenProps.join(', ')}`)
+    logger.debug('plugin:restrict-strict-tokens', `🐼  Exclude token props: ${strictTokenProps.join(', ')}`)
   }
 
   // const regex = new RegExp(`(${strictTokenProps.join('|')})\?: ConditionalValue<WithEscapeHatch<(.+)>>`, 'g')
@@ -88,6 +89,15 @@ export const transformPropTypes = (
 
   const transformed =
     content.code.replace(regex, (match, prop, value) => {
+      if (shouldExclude) {
+        if (strictTokenProps.includes(prop)) {
+          const longhand = ctx.utility.shorthands.get(prop);
+          return `${prop}?: ConditionalValue<${value} | CssProperties["${longhand || prop}"]>`;
+        };
+
+        return match;
+      }
+
       // console.log({ match, prop, value, shouldBeStrict: strictTokenProps.includes(prop) })
       if (strictTokenProps.includes(prop)) return match
 
