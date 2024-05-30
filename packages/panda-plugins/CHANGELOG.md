@@ -1,5 +1,11 @@
 # @pandabox/panda-plugins
 
+## 0.0.8
+
+### Patch Changes
+
+- 02f76f2: Fix an issue with the StrictTokensScope plugin when only using `props` (and no `categories`)
+
 ## 0.0.7
 
 ### Patch Changes
