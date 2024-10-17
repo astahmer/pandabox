@@ -35,9 +35,9 @@ export default function Index() {
             href="https://github.com/astahmer/pandabox/tree/main/packages/prettier-plugin"
           />
           <Card
-            title="@pandabox/unplugin-panda-macro"
+            title="@pandabox/unplugin"
             description="Make your `styled-system` disappear at build-time by inlining the results as class names."
-            href="https://github.com/astahmer/pandabox/tree/main/packages/unplugin-panda-macro"
+            href="https://github.com/astahmer/pandabox/tree/main/packages/unplugin"
           />
           <Card
             title="styled2panda"
