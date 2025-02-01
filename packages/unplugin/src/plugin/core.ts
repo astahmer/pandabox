@@ -12,6 +12,7 @@ import { tranformPanda, type TransformOptions } from './transform'
 import path from 'node:path'
 import { addCompoundVariantCss, inlineCva } from './cva-fns'
 import type { SourceFile } from 'ts-morph'
+import type { OutputAsset } from 'rollup'
 
 const createVirtualModuleId = (id: string) => {
   const base = `virtual:panda${id}`
@@ -26,6 +27,10 @@ const ids = {
   inlineCva: createVirtualModuleId('-inline-cva'),
   compoundVariants: createVirtualModuleId('-compound-variants'),
 }
+
+const premableStart = '/*! PANDA START */'
+const preambleEnd = '/*! PANDA END */'
+const preambleRegex = /\/\*\!\sPANDA\sSTART\s\*\/.*\/\*\!\sPANDA\sEND\s\*\//s
 
 export interface PandaPluginOptions extends Partial<PandaPluginHooks>, Pick<TransformOptions, 'optimizeJs'> {
   /** @see https://panda-css.com/docs/references/config#cwd */
@@ -157,8 +162,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       const sheet = ctx.panda.createSheet()
       const css = ctx.toCss(sheet, options)
       // console.log('load', { id, outfile, resolved: ids.css.resolved })
-
-      return css
+      return `${premableStart}${css}${preambleEnd}`
     },
 
     transformInclude(id) {
@@ -210,6 +214,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       return result
     },
     vite: {
+      name: 'unplugin-panda',
       configResolved(config) {
         if (!options.cwd) {
           options.cwd = config.configFile ? path.dirname(config.configFile) : config.root
@@ -259,6 +264,22 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
           // Invalidate CSS
           invalidate(outfile)
         })
+      },
+      async generateBundle(_, bundles) {
+        const cssBundle = Object.values(bundles).find(
+          (bundle) =>
+            bundle.type === 'asset' &&
+            bundle.name?.endsWith('.css') &&
+            typeof bundle.source === 'string' &&
+            bundle.source.includes(premableStart),
+        ) as OutputAsset | undefined
+        if (cssBundle) {
+          const source = cssBundle.source
+          const ctx = await getCtx()
+          const sheet = ctx.panda.createSheet()
+          const css = ctx.toCss(sheet, options)
+          cssBundle.source = (source as string).replace(preambleRegex, css)
+        }
       },
     } as Plugin,
   }
