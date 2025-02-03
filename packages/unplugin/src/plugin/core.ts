@@ -127,15 +127,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
     if (outfile !== ids.css.resolved) {
       getCtx().then((ctx) => fs.writeFile(outfile, ctx.toCss(ctx.panda.createSheet(), options)))
     }
-
-    const timestamp = Date.now()
-    server.moduleGraph.invalidateModule(mod, new Set(), timestamp, true)
-    server.hot.send({
-      type: `${mod.type}-update` as any,
-      path: mod.url,
-      acceptedPath: mod.url,
-      timestamp,
-    } as any)
+    server.reloadModule(mod)
   }
 
   return {
