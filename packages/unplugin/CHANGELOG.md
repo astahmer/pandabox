@@ -1,5 +1,11 @@
 # @pandabox/unplugin
 
+## 0.1.5
+
+### Patch Changes
+
+- 1baa877: hmr support for virtual module
+
 ## 0.1.4
 
 ### Patch Changes
