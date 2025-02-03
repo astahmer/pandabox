@@ -56,6 +56,13 @@ export interface PandaPluginOptions extends Partial<PandaPluginHooks>, Pick<Tran
    * Will remove unused CSS variables and keyframes from the generated CSS
    */
   optimizeCss?: boolean
+
+  /**
+   * Generate a styled-system folder on server start.
+   *
+   * @default true
+   */
+  codeGen?: boolean
 }
 
 interface SourceFileHookArgs {
@@ -235,7 +242,9 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
         }
 
         // (re) generate the `styled-system` (outdir) on server (re)start
-        const { msg } = await codegen(ctx.panda)
+        if (options.codeGen) {
+          const { msg } = await codegen(ctx.panda)
+        }
         // console.log(options)
         // console.log(ctx.panda.paths.root, ctx.panda.config.cwd)
         // console.log('codegen done', msg)
@@ -307,5 +316,6 @@ const resolveOptions = (options: PandaPluginOptions): RequiredBy<PandaPluginOpti
     exclude: options.exclude || [/node_modules/, /styled-system/],
     optimizeCss: options.optimizeCss ?? true,
     optimizeJs: options.optimizeJs ?? 'macro',
+    codeGen: options.codeGen ?? true,
   }
 }
