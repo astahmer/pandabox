@@ -1,5 +1,12 @@
 # @pandabox/unplugin
 
+## 0.1.6
+
+### Patch Changes
+
+- 7f21dee: minify output css
+- 6c23093: throttle HMR updates
+
 ## 0.1.5
 
 ### Patch Changes
