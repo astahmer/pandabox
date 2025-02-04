@@ -2,7 +2,7 @@ import { loadConfig } from '@pandacss/config'
 import type { LoadConfigResult, ParserResultBeforeHookArgs, RequiredBy } from '@pandacss/types'
 import { createFilter } from '@rollup/pluginutils'
 import { type TransformResult, type UnpluginFactory } from 'unplugin'
-import type { HmrContext, Plugin, ViteDevServer } from 'vite'
+import type { HmrContext, ModuleNode, Plugin, ViteDevServer } from 'vite'
 import fs from 'node:fs/promises'
 import { codegen, PandaContext } from '@pandacss/node'
 
@@ -13,6 +13,7 @@ import path from 'node:path'
 import { addCompoundVariantCss, inlineCva } from './cva-fns'
 import type { SourceFile } from 'ts-morph'
 import type { OutputAsset } from 'rollup'
+import { throttle } from 'es-toolkit'
 
 const createVirtualModuleId = (id: string) => {
   const base = `virtual:panda${id}`
@@ -31,6 +32,7 @@ const ids = {
 const premableStart = '/*! PANDA START */'
 const preambleEnd = '/*! PANDA END */'
 const preambleRegex = /\/\*\!\sPANDA\sSTART\s\*\/.*\/\*\!\sPANDA\sEND\s\*\//s
+const throttleWaitMs = 1000
 
 export interface PandaPluginOptions extends Partial<PandaPluginHooks>, Pick<TransformOptions, 'optimizeJs'> {
   /** @see https://panda-css.com/docs/references/config#cwd */
@@ -118,6 +120,10 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
   }
 
   let server: ViteDevServer
+  /**
+   * Throttle HMR updates to vite server
+   */
+  let throttledReloadModule: (mod: ModuleNode) => void
   const updateCss = (_file: string) => {
     if (!server) return
     const mod = server.moduleGraph.getModuleById(outfile)
@@ -127,7 +133,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
     if (outfile !== ids.css.resolved) {
       getCtx().then((ctx) => fs.writeFile(outfile, ctx.toCss(ctx.panda.createSheet(), options)))
     }
-    server.reloadModule(mod)
+    throttledReloadModule(mod)
   }
 
   return {
@@ -219,12 +225,19 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
           options.cwd = config.configFile ? path.dirname(config.configFile) : config.root
           outfile = options.outfile ? ensureAbsolute(options.outfile, options.cwd) : ids.css.resolved
         }
-
         // console.log('configResolved')
       },
       async configureServer(_server) {
         server = _server
-        // console.log('configureServer')
+        throttledReloadModule = throttle(
+          (mod: ModuleNode) => {
+            // console.log('reloadModule', { file: mod.file })
+            server.reloadModule(mod)
+          },
+          throttleWaitMs,
+          { edges: ['leading', 'trailing'] },
+        )
+
         const ctx = await getCtx()
 
         // console.log('configureServer', { outfile, resolved: ids.css.resolved })
