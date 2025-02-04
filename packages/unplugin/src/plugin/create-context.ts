@@ -21,16 +21,26 @@ export const createContext = (options: ContextOptions) => {
   const root = ensureAbsolute('', options.root)
   const files = new Map<string, string>()
 
-  const toCss = (sheet: Stylesheet, opts: PandaPluginOptions) => {
+  const toCss = async (sheet: Stylesheet, opts: PandaPluginOptions) => {
     panda.appendLayerParams(sheet)
     panda.appendBaselineCss(sheet)
     panda.appendParserCss(sheet)
+    let css = panda.getCss(sheet)
 
-    const css = panda.getCss(sheet)
-    if (!opts.optimizeCss) return css
+    if (opts.optimizeCss) {
+      css = postcss([removeUnusedCssVars, removeUnusedKeyframes]).process(css).toString()
+    }
 
-    const optimized = postcss([removeUnusedCssVars, removeUnusedKeyframes]).process(css)
-    return optimized.toString()
+    if (opts.minifyCss) {
+      // esbuild is a peer dependency
+      const { transform } = await import('esbuild')
+      if (transform) {
+        const { code } = await transform(css, { loader: 'css', minify: true })
+        css = code
+      }
+    }
+
+    return css
   }
 
   const css = createCss(panda.baseSheetContext)
