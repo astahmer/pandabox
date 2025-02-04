@@ -30,6 +30,7 @@ const ids = {
 }
 
 const pandaPreamble = '/*! PANDA_CSS */'
+const throttleWaitMs = 1000
 
 export interface PandaPluginOptions extends Partial<PandaPluginHooks>, Pick<TransformOptions, 'optimizeJs'> {
   /** @see https://panda-css.com/docs/references/config#cwd */
