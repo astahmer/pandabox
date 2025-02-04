@@ -264,6 +264,9 @@ importers:
       '@rollup/pluginutils':
         specifier: ^5.1.0
         version: 5.1.0(rollup@4.12.0)
+      es-toolkit:
+        specifier: 1.32.0
+        version: 1.32.0
       esbuild:
         specifier: '*'
         version: 0.19.12
@@ -839,6 +842,16 @@ packages:
       - '@internationalized/date'
     dev: false
 
+  /@ark/schema@0.39.0:
+    resolution: {integrity: sha512-LQbQUb3Sj461LgklXObAyUJNtsUUCBxZlO2HqRLYvRSqpStm0xTMrXn51DwBNNxeSULvKVpXFwoxiSec9kwKww==}
+    dependencies:
+      '@ark/util': 0.39.0
+    dev: true
+
+  /@ark/util@0.39.0:
+    resolution: {integrity: sha512-90APHVklk8BP4kku7hIh1BgrhuyKYqoZ4O7EybtFRo7cDl9mIyc/QUbGvYDg//73s0J2H0I/gW9pzroA1R4IBQ==}
+    dev: true
+
   /@arktype/attest@0.6.2(typescript@5.3.3):
     resolution: {integrity: sha512-wMHBB9RTH61+MLJbFqsdhSaUrCYR9b0abEUuttLbzmRpqK3XkgJPBMH1NvL1JR1pHm9aFoyFxfrl32jg3nO28A==}
     hasBin: true
@@ -849,7 +862,7 @@ packages:
       '@arktype/util': 0.0.20
       '@typescript/analyze-trace': 0.10.1
       '@typescript/vfs': 1.5.0
-      arktype: 1.0.29-alpha
+      arktype: 2.0.4
       typescript: 5.3.3
     transitivePeerDependencies:
       - supports-color
@@ -4903,8 +4916,11 @@ packages:
     resolution: {integrity: sha512-fExL2kFDC1Q2DUOx3whE/9KoN66IzkY4b4zUHUBFM1ojEYjZZYDcUW3bek/ufGionX9giIKDC5redH2IlGqcQQ==}
     dev: true
 
-  /arktype@1.0.29-alpha:
-    resolution: {integrity: sha512-glMLgVhIQRSkR3tymiS+POAcWVJH09sfrgic0jHnyFL8BlhHAJZX2BzdImU9zYr1y9NBqy+U93ZNrRTHXsKRDw==}
+  /arktype@2.0.4:
+    resolution: {integrity: sha512-S68rWVDnJauwH7/QCm8zCUM3aTe9Xk6oRihdcc3FSUAtxCo/q1Fwq46JhcwB5Ufv1YStwdQRz+00Y/URlvbhAQ==}
+    dependencies:
+      '@ark/schema': 0.39.0
+      '@ark/util': 0.39.0
     dev: true
 
   /array-buffer-byte-length@1.0.1:
@@ -6187,6 +6203,10 @@ packages:
       is-date-object: 1.0.5
       is-symbol: 1.0.4
     dev: true
+
+  /es-toolkit@1.32.0:
+    resolution: {integrity: sha512-ZfSfHP1l6ubgW/B/FRtqb9bYdMvI6jizbOSfbwwJNcOQ1QE6TFsC3jpQkZ900uUPSR3t3SU5Ds7UWKnYz+uP8Q==}
+    dev: false
 
   /esbuild-plugins-node-modules-polyfill@1.6.3(esbuild@0.17.6):
     resolution: {integrity: sha512-nydQGT3RijD8mBd3Hek+2gSAxndgceZU9GIjYYiqU+7CE7veN8utTmupf0frcKpwIXCXWpRofL9CY9k0yU70CA==}
