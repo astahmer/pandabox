@@ -2,7 +2,7 @@ import { loadConfig } from '@pandacss/config'
 import type { LoadConfigResult, ParserResultBeforeHookArgs, RequiredBy } from '@pandacss/types'
 import { createFilter } from '@rollup/pluginutils'
 import { type TransformResult, type UnpluginFactory } from 'unplugin'
-import type { HmrContext, ModuleNode, Plugin, ViteDevServer } from 'vite'
+import type { ModuleNode, Plugin, ViteDevServer } from 'vite'
 import fs from 'node:fs/promises'
 import { codegen, PandaContext } from '@pandacss/node'
 
@@ -29,9 +29,7 @@ const ids = {
   compoundVariants: createVirtualModuleId('-compound-variants'),
 }
 
-const premableStart = '/*! PANDA START */'
-const preambleEnd = '/*! PANDA END */'
-const preambleRegex = /\/\*\!\sPANDA\sSTART\s\*\/.*\/\*\!\sPANDA\sEND\s\*\//s
+const pandaPreamble = '/*! PANDA_CSS */'
 const throttleWaitMs = 1000
 
 export interface PandaPluginOptions extends Partial<PandaPluginHooks>, Pick<TransformOptions, 'optimizeJs'> {
@@ -58,6 +56,13 @@ export interface PandaPluginOptions extends Partial<PandaPluginHooks>, Pick<Tran
    * Will remove unused CSS variables and keyframes from the generated CSS
    */
   optimizeCss?: boolean
+
+  /**
+   * Perform CSS minification
+   *
+   * @default false
+   */
+  minifyCss?: boolean
 
   /**
    * Generate a styled-system folder on server start.
@@ -131,7 +136,9 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
 
     // console.log('invalidate', { from: file })
     if (outfile !== ids.css.resolved) {
-      getCtx().then((ctx) => fs.writeFile(outfile, ctx.toCss(ctx.panda.createSheet(), options)))
+      getCtx()
+        .then((ctx) => ctx.toCss(ctx.panda.createSheet(), options))
+        .then((css) => fs.writeFile(outfile, css))
     }
     throttledReloadModule(mod)
   }
@@ -163,11 +170,13 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
 
       if (id !== outfile) return
 
+      if (!server) return pandaPreamble
+
       const ctx = await getCtx()
       const sheet = ctx.panda.createSheet()
-      const css = ctx.toCss(sheet, options)
+      const css = await ctx.toCss(sheet, options)
       // console.log('load', { id, outfile, resolved: ids.css.resolved })
-      return `${premableStart}${css}${preambleEnd}`
+      return css
     },
 
     transformInclude(id) {
@@ -243,7 +252,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
         // console.log('configureServer', { outfile, resolved: ids.css.resolved })
         if (outfile !== ids.css.resolved) {
           ctx.panda.parseFiles()
-          await fs.writeFile(outfile, ctx.toCss(ctx.panda.createSheet(), options))
+          await fs.writeFile(outfile, await ctx.toCss(ctx.panda.createSheet(), options))
         }
 
         // (re) generate the `styled-system` (outdir) on server (re)start
@@ -285,14 +294,14 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
             bundle.type === 'asset' &&
             bundle.name?.endsWith('.css') &&
             typeof bundle.source === 'string' &&
-            bundle.source.includes(premableStart),
+            bundle.source.includes(pandaPreamble),
         ) as OutputAsset | undefined
         if (cssBundle) {
           const source = cssBundle.source
           const ctx = await getCtx()
           const sheet = ctx.panda.createSheet()
-          const css = ctx.toCss(sheet, options)
-          cssBundle.source = (source as string).replace(preambleRegex, css)
+          const css = await ctx.toCss(sheet, options)
+          cssBundle.source = (source as string).replace(pandaPreamble, css)
         }
       },
     } as Plugin,
@@ -320,6 +329,7 @@ const resolveOptions = (options: PandaPluginOptions): RequiredBy<PandaPluginOpti
     include: options.include || [/\.[cm]?[jt]sx?$/],
     exclude: options.exclude || [/node_modules/, /styled-system/],
     optimizeCss: options.optimizeCss ?? true,
+    minifyCss: options.minifyCss ?? false,
     optimizeJs: options.optimizeJs ?? 'macro',
     codeGen: options.codeGen ?? true,
   }
