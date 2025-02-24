@@ -128,21 +128,24 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
   /**
    * Throttle HMR updates to vite server
    */
-  let throttledReloadModule: (mod: ModuleNode) => void
-  const updateCss = (_file: string) => {
-    if (!server) return
-    const mod = server.moduleGraph.getModuleById(outfile.replaceAll("\\", "/"))
-    if (!mod) return
-
+  const updateCss = async () => {
     // console.log('invalidate', { from: file })
     if (outfile !== ids.css.resolved) {
-      getCtx()
-        .then((ctx) => ctx.toCss(ctx.panda.createSheet(), options))
-        .then((css) => fs.writeFile(outfile, css))
+      const ctx = await getCtx()
+      const css = await ctx.toCss(ctx.panda.createSheet(), options)
+      await fs.writeFile(outfile, css)
+    } else {
+      if (!server) return
+      const mod = server.moduleGraph.getModuleById(outfile.replaceAll("\\", "/"))
+      if (!mod) return
+      await server.reloadModule(mod)
     }
-    throttledReloadModule(mod)
   }
-
+  const requestUpdateCss = throttle(
+    updateCss,
+    throttleWaitMs,
+    { edges: ['leading', 'trailing'] },
+  )
   return {
     name: 'unplugin-panda',
     enforce: 'pre',
@@ -208,7 +211,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
 
       if (!parserResult.isEmpty()) {
         ctx.files.set(id, code)
-        updateCss(id)
+        requestUpdateCss()
       }
 
       if (!options.optimizeJs) {
@@ -238,14 +241,6 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       },
       async configureServer(_server) {
         server = _server
-        throttledReloadModule = throttle(
-          (mod: ModuleNode) => {
-            // console.log('reloadModule', { file: mod.file })
-            server.reloadModule(mod)
-          },
-          throttleWaitMs,
-          { edges: ['leading', 'trailing'] },
-        )
 
         const ctx = await getCtx()
 
