@@ -131,7 +131,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
   let throttledReloadModule: (mod: ModuleNode) => void
   const updateCss = (_file: string) => {
     if (!server) return
-    const mod = server.moduleGraph.getModuleById(outfile)
+    const mod = server.moduleGraph.getModuleById(outfile.replaceAll("\\", "/"))
     if (!mod) return
 
     // console.log('invalidate', { from: file })
