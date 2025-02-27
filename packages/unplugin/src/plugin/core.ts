@@ -125,6 +125,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
   }
 
   let server: ViteDevServer
+  let lastCss: string | undefined
   /**
    * Throttle HMR updates to vite server
    */
@@ -133,7 +134,10 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
     if (outfile !== ids.css.resolved) {
       const ctx = await getCtx()
       const css = await ctx.toCss(ctx.panda.createSheet(), options)
-      await fs.writeFile(outfile, css)
+      if (lastCss !== css) {
+        lastCss = css
+        await fs.writeFile(outfile, css)
+      }
     } else {
       if (!server) return
       const mod = server.moduleGraph.getModuleById(outfile.replaceAll('\\', '/'))
