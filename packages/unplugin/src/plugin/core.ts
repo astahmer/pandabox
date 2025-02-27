@@ -136,16 +136,12 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       await fs.writeFile(outfile, css)
     } else {
       if (!server) return
-      const mod = server.moduleGraph.getModuleById(outfile.replaceAll("\\", "/"))
+      const mod = server.moduleGraph.getModuleById(outfile.replaceAll('\\', '/'))
       if (!mod) return
       await server.reloadModule(mod)
     }
   }
-  const requestUpdateCss = throttle(
-    updateCss,
-    throttleWaitMs,
-    { edges: ['leading', 'trailing'] },
-  )
+  const requestUpdateCss = throttle(updateCss, throttleWaitMs, { edges: ['leading', 'trailing'] })
   return {
     name: 'unplugin-panda',
     enforce: 'pre',
