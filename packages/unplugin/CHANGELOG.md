@@ -1,5 +1,13 @@
 # @pandabox/unplugin
 
+## 0.1.7
+
+### Patch Changes
+
+- 580ef2c: Reduce update CSS calls
+- 580ef2c: Avoid generating output file if no changes
+- 580ef2c: Fix compatibility with Windows paths
+
 ## 0.1.6
 
 ### Patch Changes
