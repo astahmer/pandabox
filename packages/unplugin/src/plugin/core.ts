@@ -68,8 +68,15 @@ export interface PandaPluginOptions extends Partial<PandaPluginHooks>, Pick<Tran
    * Generate a styled-system folder on server start.
    *
    * @default true
+   * @deprecated Use 'codegen' instead
    */
   codeGen?: boolean
+  /**
+   * Generate a styled-system folder on server start.
+   *
+   * @default true
+   */
+  codegen?: boolean
 }
 
 interface SourceFileHookArgs {
@@ -115,7 +122,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
     // @ts-expect-error
     initPromise = loadConfig({ cwd: options.cwd, file: options.configPath }).then(async (conf: LoadConfigResult) => {
       conf.config.cwd = options.cwd
-      _ctx = createContext({ root: options.cwd, conf })
+      _ctx = createContext({ root: options.cwd, conf, codegen: options.codegen })
       if (options.contextCreated) {
         await options.contextCreated({ context: _ctx.panda })
       }
@@ -251,7 +258,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
         }
 
         // (re) generate the `styled-system` (outdir) on server (re)start
-        if (options.codeGen) {
+        if (options.codegen) {
           const { msg } = await codegen(ctx.panda)
         }
         // console.log(options)
@@ -303,7 +310,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
   }
 }
 
-const resolveOptions = (options: PandaPluginOptions): RequiredBy<PandaPluginOptions, 'cwd'> => {
+const resolveOptions = (options: PandaPluginOptions): RequiredBy<PandaPluginOptions, 'cwd'|'codegen'> => {
   let optimizeJs = options.optimizeJs ?? 'auto'
   if (typeof optimizeJs === 'object') {
     optimizeJs = {
@@ -326,6 +333,6 @@ const resolveOptions = (options: PandaPluginOptions): RequiredBy<PandaPluginOpti
     optimizeCss: options.optimizeCss ?? true,
     minifyCss: options.minifyCss ?? false,
     optimizeJs: options.optimizeJs ?? 'macro',
-    codeGen: options.codeGen ?? true,
+    codegen: options.codegen ?? options.codeGen ?? true,
   }
 }
