@@ -12,6 +12,7 @@ import { ensureAbsolute } from './ensure-absolute'
 export interface ContextOptions {
   root: string
   conf: LoadConfigResult
+  codegen?: boolean
 }
 
 export const createContext = (options: ContextOptions) => {
@@ -61,7 +62,9 @@ export const createContext = (options: ContextOptions) => {
 
       // logger.info('ctx:updated', 'config rebuilt ✅')
       await panda.hooks['config:change']?.({ config: panda.config, changes: affecteds })
-      await codegen(panda, Array.from(affecteds.artifacts))
+      if(options.codegen) {
+        await codegen(panda, Array.from(affecteds.artifacts))
+      }
 
       return panda
     },
