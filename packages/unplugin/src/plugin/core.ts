@@ -138,13 +138,13 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
    */
   const updateCss = async () => {
     // console.log('invalidate', { from: file })
+    const ctx = await getCtx()
+    const css = await ctx.toCss(ctx.panda.createSheet(), options)
+    const isCssUpdated = lastCss !== css
+    lastCss = css
+    if (!isCssUpdated) return
     if (outfile !== ids.css.resolved) {
-      const ctx = await getCtx()
-      const css = await ctx.toCss(ctx.panda.createSheet(), options)
-      if (lastCss !== css) {
-        lastCss = css
-        await fs.writeFile(outfile, css)
-      }
+      await fs.writeFile(outfile, css)
     } else {
       if (!server) return
       const mod = server.moduleGraph.getModuleById(outfile.replaceAll('\\', '/'))
@@ -310,7 +310,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
   }
 }
 
-const resolveOptions = (options: PandaPluginOptions): RequiredBy<PandaPluginOptions, 'cwd'|'codegen'> => {
+const resolveOptions = (options: PandaPluginOptions): RequiredBy<PandaPluginOptions, 'cwd' | 'codegen'> => {
   let optimizeJs = options.optimizeJs ?? 'auto'
   if (typeof optimizeJs === 'object') {
     optimizeJs = {
