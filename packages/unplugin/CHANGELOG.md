@@ -1,5 +1,11 @@
 # @pandabox/unplugin
 
+## 0.2.0
+
+### Minor Changes
+
+- d86bc37: only HMR reload the stylesheet if it doesn't match the current CSS
+
 ## 0.1.7
 
 ### Patch Changes
