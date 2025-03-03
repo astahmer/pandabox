@@ -2,8 +2,9 @@ import { css, cva } from './styled-system/css'
 import { center } from './styled-system/patterns'
 import { button } from './styled-system/recipes'
 import { Stack, styled } from './styled-system/jsx'
-// import 'virtual:panda.css'
-import './panda.css'
+import './many-files/many-files_1/import-all';
+// import './many-files/many-files_2/import-all';
+// import './many-files/many-files_3/import-all';
 
 const overrides = css.raw({
   bg: 'purple.500',

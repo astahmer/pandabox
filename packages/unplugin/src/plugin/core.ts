@@ -4,6 +4,7 @@ import { createFilter } from '@rollup/pluginutils'
 import { type TransformResult, type UnpluginFactory } from 'unplugin'
 import type { ModuleNode, Plugin, ViteDevServer } from 'vite'
 import fs from 'node:fs/promises'
+import { Worker } from 'node:worker_threads'
 import { codegen, PandaContext } from '@pandacss/node'
 
 import { createContext, type PandaPluginContext } from '../plugin/create-context'
@@ -70,6 +71,8 @@ export interface PandaPluginOptions extends Partial<PandaPluginHooks>, Pick<Tran
    * @default true
    */
   codeGen?: boolean
+
+  worker?: string
 }
 
 interface SourceFileHookArgs {
@@ -101,6 +104,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
 
   let _ctx: PandaPluginContext
   let initPromise: Promise<PandaPluginContext> | undefined
+  let worker: Worker
 
   const getCtx = async () => {
     await init()
@@ -125,27 +129,66 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
   }
 
   let server: ViteDevServer
-  let lastCss: string | undefined
+
+  let latestCss: string | undefined
+  // Necessary because when using virtual:pandacss in cases with many files,
+  // the css may be empty the first time the page is loaded, and HMR doesn't work if the page hasn't loaded yet.
+  /** The interval ID of the interval used to re-request latestCss until it's successfully delivered. */
+  let lastestCssInterval: ReturnType<typeof setInterval> | undefined;
+  /** Whether latestCss has ever been delivered. */
+  let lastestCssDelivered: boolean = true
+
+  /** repeatedly re-requests the css file until we are sure it's been delivered to the browser */
+  const startLatestCssInterval = ()=>{
+    if (lastestCssInterval === undefined) {
+      lastestCssInterval = setInterval(() => {
+        if (lastestCssDelivered) return
+        console.log('latestCss not delivered. Requesting again')
+        const mod = server.moduleGraph.getModuleById(outfile)
+        if (mod) {
+          server.reloadModule(mod)
+        }
+      }, 1000)
+    }
+  }
+
   /**
    * Throttle HMR updates to vite server
    */
-  const updateCss = async () => {
-    // console.log('invalidate', { from: file })
+  const updateCss = async (rawCss?: string) => {
+    const ctx = await getCtx()
+    const css = rawCss ?? (await ctx.toCss(ctx.panda.createSheet(), options))
+    if (latestCss === css) return
+
     if (outfile !== ids.css.resolved) {
-      const ctx = await getCtx()
-      const css = await ctx.toCss(ctx.panda.createSheet(), options)
-      if (lastCss !== css) {
-        lastCss = css
-        await fs.writeFile(outfile, css)
-      }
+      latestCss = css
+      lastestCssDelivered = false
+      await fs.writeFile(outfile, css)
     } else {
       if (!server) return
       const mod = server.moduleGraph.getModuleById(outfile.replaceAll('\\', '/'))
       if (!mod) return
+      latestCss = css
+      lastestCssDelivered = false
       await server.reloadModule(mod)
+      // the HMR won't work if the page hasn't loaded yet. This will start an interval if necessary
+      startLatestCssInterval();
     }
   }
   const requestUpdateCss = throttle(updateCss, throttleWaitMs, { edges: ['leading', 'trailing'] })
+  const setupWorker = () => {
+    if (!options.worker) return
+    worker = new Worker(options.worker)
+    worker.postMessage({ type: 'init', cwd: options.cwd, configPath: options.configPath })
+    worker.on('message', (message) => {
+      if (message.type === 'setCss') {
+        console.log('got css from worker')
+        // throttling happens in worker
+        updateCss(message.css)
+      }
+    })
+  }
+
   return {
     name: 'unplugin-panda',
     enforce: 'pre',
@@ -170,10 +213,18 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       if (id === ids.compoundVariants.resolved) {
         return `export ${addCompoundVariantCss.toString()}`
       }
-
       if (id !== outfile) return
 
       if (!server) return pandaPreamble
+
+      if (latestCss) {
+        if (!lastestCssDelivered) {
+          clearInterval(lastestCssInterval as ReturnType<typeof setInterval>)
+          lastestCssInterval = undefined;
+          lastestCssDelivered = true
+        }
+        return latestCss
+      }
 
       const ctx = await getCtx()
       const sheet = ctx.panda.createSheet()
@@ -192,6 +243,11 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
 
       let transformResult: TransformResult = { code, map: undefined }
 
+      if (options.worker) {
+        worker.postMessage({ type: 'transform', code, id, cwd: options.cwd, configPath: options.configPath })
+        // TODO: warn if there are other settings not compatible with this one (transform, addSourceFile, etc.)
+        return null
+      }
       if (options.transform) {
         const result = (await options.transform({ filePath: id, content: code, context: ctx.panda })) || code
         if (typeof result === 'string') {
@@ -241,6 +297,9 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
       },
       async configureServer(_server) {
         server = _server
+        if (options.worker) {
+          setupWorker()
+        }
 
         const ctx = await getCtx()
 
@@ -266,6 +325,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
         sources.forEach((file) => server.watcher.add(file))
 
         server.watcher.on('change', async (file) => {
+          // TODO: reload in worker too
           const filePath = ensureAbsolute(file, ctx.root)
           if (!sources.has(filePath)) return
 
@@ -293,6 +353,8 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
         ) as OutputAsset | undefined
         if (cssBundle) {
           const source = cssBundle.source
+          // TODO: get sheet from worker instead 
+          // (this will require keeping track of if anything is in-progress in the worker)
           const ctx = await getCtx()
           const sheet = ctx.panda.createSheet()
           const css = await ctx.toCss(sheet, options)

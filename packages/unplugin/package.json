@@ -10,6 +10,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./worker": {
+      "types": "./dist/worker.d.ts",
+      "import": "./dist/worker.js",
+      "require": "./dist/worker.cjs"
+    },
     "./astro": {
       "types": "./dist/astro.d.ts",
       "import": "./dist/astro.js",

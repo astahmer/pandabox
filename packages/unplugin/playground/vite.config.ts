@@ -7,7 +7,9 @@ export default defineConfig({
   plugins: [
     Inspect(),
     panda({
-      outfile: './panda.css',
+      // exclude: ['./**/many-files/**/*'],
+      // outfile: './panda.css',
+      worker: './worker.mjs',
     }),
     react(),
   ],
