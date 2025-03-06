@@ -6,7 +6,7 @@
     "define-theme": "pnpm --filter @pandabox/define-theme",
     "knip": "knip",
     "release": "changeset publish",
-    "fmt": "prettier --write {packages}/**/*.{ts,tsx}",
+    "fmt": "prettier --write packages/**/*.{ts,tsx}",
     "dev": "pnpm --parallel --filter=./packages/* dev",
     "build": "pnpm --filter @pandabox/* run build",
     "typecheck": "pnpm --filter @pandabox/* run typecheck",
