@@ -62,7 +62,7 @@ export const createContext = (options: ContextOptions) => {
 
       // logger.info('ctx:updated', 'config rebuilt ✅')
       await panda.hooks['config:change']?.({ config: panda.config, changes: affecteds })
-      if(options.codegen) {
+      if (options.codegen) {
         await codegen(panda, Array.from(affecteds.artifacts))
       }
 

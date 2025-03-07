@@ -3,7 +3,7 @@ import type { LoadConfigResult, ParserResultBeforeHookArgs, RequiredBy } from '@
 import { createFilter } from '@rollup/pluginutils'
 import { type TransformResult, type UnpluginFactory } from 'unplugin'
 import type { ModuleNode, Plugin, ViteDevServer } from 'vite'
-import fs from 'node:fs/promises'
+import { writeFile } from 'node:fs/promises'
 import { codegen, PandaContext } from '@pandacss/node'
 
 import { createContext, type PandaPluginContext } from '../plugin/create-context'
@@ -14,6 +14,7 @@ import { addCompoundVariantCss, inlineCva } from './cva-fns'
 import type { SourceFile } from 'ts-morph'
 import type { OutputAsset } from 'rollup'
 import { throttle } from 'es-toolkit'
+import { existsSync } from 'node:fs'
 
 const createVirtualModuleId = (id: string) => {
   const base = `virtual:panda${id}`
@@ -133,6 +134,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
 
   let server: ViteDevServer
   let lastCss: string | undefined
+  let updateCssOnTransform = true
   /**
    * Throttle HMR updates to vite server
    */
@@ -144,7 +146,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
     lastCss = css
     if (!isCssUpdated) return
     if (outfile !== ids.css.resolved) {
-      await fs.writeFile(outfile, css)
+      await writeFile(outfile, css)
     } else {
       if (!server) return
       const mod = server.moduleGraph.getModuleById(outfile.replaceAll('\\', '/'))
@@ -218,7 +220,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
 
       if (!parserResult.isEmpty()) {
         ctx.files.set(id, code)
-        requestUpdateCss()
+        if (updateCssOnTransform) requestUpdateCss()
       }
 
       if (!options.optimizeJs) {
@@ -244,6 +246,7 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
           options.cwd = config.configFile ? path.dirname(config.configFile) : config.root
           outfile = options.outfile ? ensureAbsolute(options.outfile, options.cwd) : ids.css.resolved
         }
+        updateCssOnTransform = config.command !== 'build'
         // console.log('configResolved')
       },
       async configureServer(_server) {
@@ -253,8 +256,15 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
 
         // console.log('configureServer', { outfile, resolved: ids.css.resolved })
         if (outfile !== ids.css.resolved) {
-          ctx.panda.parseFiles()
-          await fs.writeFile(outfile, await ctx.toCss(ctx.panda.createSheet(), options))
+          if (!existsSync(outfile)) await writeFile(outfile, '')
+          let prevState = updateCssOnTransform
+          updateCssOnTransform = false
+          try {
+            for (const file of ctx.panda.getFiles()) await server.transformRequest(file)
+          } finally {
+            updateCssOnTransform = prevState
+          }
+          await updateCss()
         }
 
         // (re) generate the `styled-system` (outdir) on server (re)start
