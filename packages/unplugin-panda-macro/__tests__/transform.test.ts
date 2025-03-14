@@ -545,6 +545,51 @@ export const App = () => {
     `)
   })
 
+  test('transform JSX pattern - Divider', () => {
+    const ctx = createMacroContext({
+      root: '/',
+      conf: createConfigResult({
+        patterns: {
+          extend: {
+            stack: {
+              jsxElement: 'section',
+            },
+          },
+        },
+      }),
+    })
+    const { panda } = ctx
+    const code = `import 'virtual:panda.css'
+import { Divider } from '../styled-system/jsx'
+import { something } from 'some-module'
+
+export const App = () => {
+  return (
+    <Divider />
+  )
+}
+
+`
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+      import { Divider } from '../styled-system/jsx'
+      import { something } from 'some-module'
+
+      export const App = () => {
+        return (
+          <div className="--thickness_1px w_100% border-block-end-width_var(--thickness)" />
+        )
+      }
+
+      "
+    `)
+  })
+
   test('ignore unknown JSX component', () => {
     const ctx = createMacroContext({
       root: '/',
@@ -1004,6 +1049,51 @@ export const App = () => {
           <section className="jdxYbG" onClick={() => console.log('hello')} unresolvable={something}>
             <span>Hello from Panda</span>
           </section>
+        )
+      }
+
+      "
+    `)
+  })
+
+  test('transform JSX pattern - Divider', () => {
+    const ctx = createMacroContext({
+      root: '/',
+      conf: createConfigResult({
+        patterns: {
+          extend: {
+            stack: {
+              jsxElement: 'section',
+            },
+          },
+        },
+      }),
+    })
+    const { panda } = ctx
+    const code = `import 'virtual:panda.css'
+import { Divider } from '../styled-system/jsx'
+import { something } from 'some-module'
+
+export const App = () => {
+  return (
+    <Divider />
+  )
+}
+
+`
+
+    const sourceFile = panda.project.addSourceFile(id, code)
+    const parserResult = panda.project.parseSourceFile(id)
+
+    const result = tranformPanda(ctx, { code, id, output, sourceFile, parserResult })
+    expect(result?.code).toMatchInlineSnapshot(`
+      "import 'virtual:panda.css'
+      import { Divider } from '../styled-system/jsx'
+      import { something } from 'some-module'
+
+      export const App = () => {
+        return (
+          <div className="hrGyrX" />
         )
       }
 

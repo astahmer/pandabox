@@ -159,7 +159,7 @@ export const tranformPanda = (ctx: MacroContext, options: TransformArgs) => {
       s.update(
         node.getStart(),
         node.getEnd(),
-        `<${tag} className="${className}" ${otherProps.map((n) => n.getText()).join(' ')}>`,
+        `<${tag} className="${className}" ${otherProps.map((n) => n.getText()).join(' ')}${Node.isJsxSelfClosingElement(node) ? '/' : ''}>`,
       )
 
       if (Node.isJsxOpeningElement(node)) {
