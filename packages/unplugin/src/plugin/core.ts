@@ -260,7 +260,13 @@ export const unpluginFactory: UnpluginFactory<PandaPluginOptions | undefined> = 
           let prevState = updateCssOnTransform
           updateCssOnTransform = false
           try {
-            for (const file of ctx.panda.getFiles()) await server.transformRequest(file)
+            for (const file of ctx.panda.getFiles()) {
+              if (path.basename(file) === 'panda.buildinfo.json') {
+                ctx.panda.project.parseSourceFile(file)
+              } else {
+                await server.transformRequest(file)
+              }
+            }
           } finally {
             updateCssOnTransform = prevState
           }
