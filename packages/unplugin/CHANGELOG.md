@@ -1,5 +1,11 @@
 # @pandabox/unplugin
 
+## 0.2.2
+
+### Patch Changes
+
+- 9614ea0: Parse the `panda.buildinfo.json` files.
+
 ## 0.2.1
 
 ### Patch Changes
